@@ -3,7 +3,7 @@
     {
       "id": "PUGfr9TDyzM",
       "title": "deneme",
-      "content": "bugün <u>dailyde </u>söylenecekler"
+      "content": "bugün <u>dailyde </u>söylenecekler mi"
     },
     {
       "title": "a",
@@ -16,11 +16,6 @@
       "id": "p7cY0L4rcKI"
     },
     {
-      "id": "fLO4rm-hKPU",
-      "title": "olmuyor",
-      "content": "yoksa oluyor mu"
-    },
-    {
       "title": "güncelleyecek mii",
       "content": "bakalım",
       "id": "Wzo-GHm3nwc"
@@ -28,17 +23,12 @@
     {
       "id": "ZERvAhNYT98",
       "title": "bu peki",
-      "content": "oldu mudddddddddddddddd"
+      "content": "oldu muddddddddddddddddffdf"
     },
     {
-      "title": "peki şimdi",
-      "content": "bu",
-      "id": "79fCJiuWEPE"
-    },
-    {
-      "title": "üüüüüüüüüüüüüüüüüüü",
-      "content": "üüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüüü",
-      "id": "nN0Gq9LIYOA"
+      "id": "nN0Gq9LIYOA",
+      "title": "üüü",
+      "content": "üüüüüüüüüüüüüüüüüü"
     },
     {
       "title": "qqqqqq",
@@ -64,6 +54,27 @@
       "title": "dddddddddddd",
       "content": "dddddddddddddddddddddddddddddddddd",
       "id": "Ph0NKQ_nrM4"
+    },
+    {
+      "title": "fvfvf",
+      "content": "vfvfvfvfv",
+      "id": "Lhp37a-1eBk"
+    },
+    {
+      "title": "yhyhyh",
+      "content": "yhyhyhyhyhy",
+      "id": "Vsbfr78uzLU"
+    },
+    {
+      "title": "rg",
+      "content": "rrg",
+      "id": "mi0iqdzxCV0"
+    },
+    {
+      "title": "",
+      "content": "sds",
+      "id": "EBZlvo8udL8"
     }
-  ]
+  ],
+  "$schema": "./node_modules/json-server/schema.json"
 }

@@ -86,7 +86,8 @@ const handleSave = () => {
   const title = localTitle.value.trim()
   const content = localContent.value.trim()
 
-  if (!title || !content) return
+  if (!content) return
+
 
   emit('save', { title, content })
 }

@@ -1,18 +1,18 @@
 <template>
-  <div>
-    <q-card bordered class="full-height">
-      <q-card-section class="row items-center justify-between">
-        <div class="text-h6">My Notes</div>
-        <AddNoteButton icon="add" round flat color="primary" />
-      </q-card-section>
+  <q-card bordered class="notes-card">
+    <q-card-section class="row items-center justify-between">
+      <div class="text-h6">My Notes</div>
+      <AddNoteButton icon="add" round flat color="primary" />
+    </q-card-section>
 
-      <q-separator />
+    <q-separator />
 
-      <q-card-section v-if="notes.length === 0" class="text-grey">
-        No notes yet.
-      </q-card-section>
+    <q-card-section v-if="notes.length === 0" class="text-grey">
+      No notes yet.
+    </q-card-section>
 
-      <q-list v-else separator>
+    <q-scroll-area v-else class="notes-scroll-area">
+      <q-list separator>
         <q-item
           v-for="note in notes"
           :key="note.id"
@@ -31,8 +31,8 @@
           </q-item-section>
         </q-item>
       </q-list>
-    </q-card>
-  </div>
+    </q-scroll-area>
+  </q-card>
 </template>
 
 <script setup lang="ts">
@@ -56,6 +56,16 @@ const getPreviewText = (html: string) => {
 </script>
 
 <style scoped>
+.notes-card {
+  height: calc(100vh - 75px);
+  display: flex;
+  flex-direction: column;
+}
+
+.notes-scroll-area {
+  flex: 1;
+}
+
 .note-title {
   white-space: nowrap;
   overflow: hidden;
@@ -72,4 +82,5 @@ const getPreviewText = (html: string) => {
   white-space: normal;
   word-break: break-word;
 }
+
 </style>
