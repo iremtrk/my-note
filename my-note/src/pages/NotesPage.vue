@@ -52,14 +52,16 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import NotesList from 'src/components/notes/NotesList.vue'
 import { useNoteEditorStore } from '../stores/note-editor'
 import { useNotesStore } from '../stores/notes'
 import type { Note } from '../types/notes'
+import { useAuthStore } from "src/stores/auth";
 
 const noteEditor = useNoteEditorStore()
 const notesStore = useNotesStore()
+const authStore = useAuthStore()
 
 const startEdit = (note: Note) => {
   noteEditor.openEditNote({
@@ -69,8 +71,22 @@ const startEdit = (note: Note) => {
   })
 }
 
-onMounted(() => {
-  notesStore.fetchNotes()
+// İlk yüklenme için (isReady henüz false olabilir)
+watch(
+  () => authStore.isReady,
+  async (isReady) => {
+    if (isReady && authStore.user) {
+      await notesStore.fetchNotes()
+    }
+  },
+  { immediate: true }
+)
+
+// Sayfaya her dönüşte yeniden fetch et
+onMounted(async () => {
+  if (authStore.isReady && authStore.user) {
+    await notesStore.fetchNotes()
+  }
 })
 </script>
 

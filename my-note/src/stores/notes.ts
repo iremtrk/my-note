@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref } from "vue";
 import axios from "axios";
 import type { Note } from "../types/notes";
+import { useAuthStore } from "./auth";
 
 export const useNotesStore = defineStore("notes", () => {
   const notes = ref<Note[]>([]);
@@ -10,9 +11,21 @@ export const useNotesStore = defineStore("notes", () => {
   const API_URL = "http://localhost:3001/notes";
 
   const fetchNotes = async () => {
-    const response = await axios.get(API_URL);
+    const authStore = useAuthStore();
+    const userId = authStore.user?.id;
+
+    if (!userId) {
+      notes.value = [];
+      selectedNote.value = null;
+      return;
+    }
+
+    const response = await axios.get(`${API_URL}?userId=${userId}`);
+
+
     notes.value = response.data;
-    selectedNote.value = null;
+
+    selectedNote.value = null; //notes.value[0] || null da yapabilirim belki
   };
 
   const selectNote = (note: Note) => {
@@ -20,7 +33,18 @@ export const useNotesStore = defineStore("notes", () => {
   };
 
   const addNote = async (payload: { title: string; content: string }) => {
-    const response = await axios.post(API_URL, payload);
+    const authStore = useAuthStore();
+    const userId = authStore.user?.id;
+
+    if (!userId) {
+      throw new Error("User not found");
+    }
+
+    const response = await axios.post(API_URL, {
+      ...payload,
+      userId,
+    });
+
     notes.value.push(response.data);
     selectedNote.value = response.data;
   };
@@ -29,8 +53,16 @@ export const useNotesStore = defineStore("notes", () => {
     id: string,
     payload: { title: string; content: string },
   ) => {
+    const authStore = useAuthStore();
+    const userId = authStore.user?.id;
+
+    if (!userId) {
+      throw new Error("User not found");
+    }
+
     const response = await axios.put(`${API_URL}/${id}`, {
       id,
+      userId,
       ...payload,
     });
 
@@ -47,11 +79,17 @@ export const useNotesStore = defineStore("notes", () => {
 
   const deleteNote = async (id: string) => {
     await axios.delete(`${API_URL}/${id}`);
+
     notes.value = notes.value.filter((note) => note.id !== id);
 
     if (selectedNote.value?.id === id) {
-      selectedNote.value = null;
+      selectedNote.value = notes.value[0] || null;
     }
+  };
+
+  const clearNotes = () => {
+    notes.value = [];
+    selectedNote.value = null;
   };
 
   return {
@@ -62,5 +100,6 @@ export const useNotesStore = defineStore("notes", () => {
     addNote,
     updateNote,
     deleteNote,
+    clearNotes,
   };
 });
