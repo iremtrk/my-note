@@ -1,22 +1,34 @@
 <template>
-  <div class="q-pa-md">
-
-    <div class="notes-scroll">
-      <NoteCard
-        v-for="note in notesStore.notes"
-        :key="note.id"
-        :note="note"
-        @edit="openEditDialog"
-        @delete="handleDelete"
-      />
+  <div class="notes-layout q-pa-md" :class="{ 'detail-open': selectedNote }">
+    <div class="notes-panel">
+      <div class="notes-scroll">
+        <NoteCard
+          v-for="note in notesStore.notes"
+          :key="note.id"
+          :note="note"
+          @select="handleSelect"
+          @edit="openEditDialog"
+          @delete="handleDelete"
+        />
+      </div>
     </div>
 
+    <div v-if="selectedNote" class="detail-panel">
+      <NoteDetail
+        :note="selectedNote"
+        :card-style="{ height: '500px' }"
+        show-close
+        @edit="openEditDialog"
+        @delete="handleDelete"
+        @close="selectedNote = null"
+      />
+    </div>
   </div>
 
   <NoteEditor
     v-model="editorDialog"
-    :initial-title="selectedNote?.title ?? ''"
-    :initial-content="selectedNote?.content ?? ''"
+    :initial-title="editingNote?.title ?? ''"
+    :initial-content="editingNote?.content ?? ''"
     :is-editing="isEditing"
     @save="handleSave"
     @cancel="closeDialog"
@@ -24,36 +36,30 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from "vue";
-import { useNotesStore } from "src/stores/notes";
+import { onMounted, ref } from "vue";
+import { useNotesStore } from "../stores/notes";
 import NoteCard from "src/components/notes/NoteCard.vue";
 import NoteEditor from "src/components/notes/NoteEditor.vue";
-import type { Note } from "src/types/notes";
+import type { Note } from "../types/notes";
+import NoteDetail from "../components/notes/NoteDetail.vue";
 
 const notesStore = useNotesStore();
 
 const editorDialog = ref(false);
 const isEditing = ref(false);
 const selectedNote = ref<Note | null>(null);
-const slide = ref(0);
+const editingNote = ref<Note | null>(null);
 
 onMounted(() => {
   notesStore.fetchNotes();
 });
 
-const groupedNotes = computed(() => {
-  const groups: Note[][] = [];
-  const size = 3;
-
-  for (let i = 0; i < notesStore.notes.length; i += size) {
-    groups.push(notesStore.notes.slice(i, i + size));
-  }
-
-  return groups;
-});
+const handleSelect = (note: Note) => {
+  selectedNote.value = { ...note };
+};
 
 const openEditDialog = (note: Note) => {
-  selectedNote.value = { ...note };
+  editingNote.value = { ...note };
   isEditing.value = true;
   editorDialog.value = true;
 };
@@ -61,13 +67,20 @@ const openEditDialog = (note: Note) => {
 const closeDialog = () => {
   editorDialog.value = false;
   isEditing.value = false;
-  selectedNote.value = null;
+  editingNote.value = null;
 };
 
 const handleSave = async (payload: { title: string; content: string }) => {
-  if (!selectedNote.value) return;
+  if (!editingNote.value) return;
 
-  await notesStore.updateNote(selectedNote.value.id, payload);
+  await notesStore.updateNote(editingNote.value.id, payload);
+
+  const updated = notesStore.notes.find((n) => n.id === editingNote.value?.id);
+
+  if (updated && selectedNote.value?.id === updated.id) {
+    selectedNote.value = { ...updated };
+  }
+
   closeDialog();
 };
 
@@ -77,25 +90,73 @@ const handleDelete = async (id: string) => {
   if (selectedNote.value?.id === id) {
     selectedNote.value = null;
   }
-
-  if (slide.value >= groupedNotes.value.length && slide.value > 0) {
-    slide.value -= 1;
-  }
 };
 </script>
 
 <style scoped>
-.notes-scroll {
-  display: flex;
+.notes-layout {
+  height: calc(100vh - 82px);
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 16px;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  padding-bottom: 8px;
 }
 
-.notes-scroll > * {
-  flex: 0 0 auto;
-  scroll-snap-align: start;
+.notes-layout.detail-open {
+  grid-template-columns: 1.2fr 0.8fr;
+}
+
+.notes-scroll {
+  height: 500px;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.detail-card {
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+.note-detail-html {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.detail-title {
+  min-width: 0;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  word-break: break-word;
+}
+
+@media (min-width: 768px) {
+  .notes-scroll {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1200px) {
+  .notes-scroll {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .notes-layout:not(.detail-open) .notes-panel {
+    width: 100%;
+  }
 }
 </style>

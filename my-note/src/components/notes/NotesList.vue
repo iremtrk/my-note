@@ -1,5 +1,5 @@
 <template>
-  <q-card bordered class="notes-card">
+  <q-card bordered class="full-height notes-card">
     <q-card-section class="row items-center justify-between">
       <div class="text-h6">My Notes</div>
       <AddNoteButton icon="add" round flat color="primary" />
@@ -11,8 +11,8 @@
       No notes yet.
     </q-card-section>
 
-    <q-scroll-area v-else class="notes-scroll-area">
-      <q-list separator>
+    <q-card-section v-else class="list-section">
+      <q-list separator class="note-scroll">
         <q-item
           v-for="note in notes"
           :key="note.id"
@@ -31,7 +31,7 @@
           </q-item-section>
         </q-item>
       </q-list>
-    </q-scroll-area>
+    </q-card-section>
   </q-card>
 </template>
 
@@ -57,13 +57,23 @@ const getPreviewText = (html: string) => {
 
 <style scoped>
 .notes-card {
-  height: calc(100vh - 75px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.list-section {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
   display: flex;
   flex-direction: column;
 }
 
-.notes-scroll-area {
+.note-scroll {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .note-title {
@@ -82,5 +92,4 @@ const getPreviewText = (html: string) => {
   white-space: normal;
   word-break: break-word;
 }
-
 </style>

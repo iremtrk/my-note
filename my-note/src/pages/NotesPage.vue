@@ -10,10 +10,7 @@
 
     <div class="col-8 full-height">
       <q-card bordered class="full-height detail-card">
-        <q-card-section
-          v-if="notesStore.selectedNote"
-          class="detail-section"
-        >
+        <q-card-section v-if="notesStore.selectedNote" class="detail-section">
           <div class="row items-start justify-between no-wrap detail-header">
             <div class="detail-content">
               <div class="text-h5">{{ notesStore.selectedNote.title }}</div>
@@ -57,7 +54,7 @@ import NotesList from 'src/components/notes/NotesList.vue'
 import { useNoteEditorStore } from '../stores/note-editor'
 import { useNotesStore } from '../stores/notes'
 import type { Note } from '../types/notes'
-import { useAuthStore } from "src/stores/auth";
+import { useAuthStore } from "../stores/auth";
 
 const noteEditor = useNoteEditorStore()
 const notesStore = useNotesStore()
@@ -71,7 +68,6 @@ const startEdit = (note: Note) => {
   })
 }
 
-// İlk yüklenme için (isReady henüz false olabilir)
 watch(
   () => authStore.isReady,
   async (isReady) => {
@@ -82,7 +78,6 @@ watch(
   { immediate: true }
 )
 
-// Sayfaya her dönüşte yeniden fetch et
 onMounted(async () => {
   if (authStore.isReady && authStore.user) {
     await notesStore.fetchNotes()
@@ -109,6 +104,7 @@ onMounted(async () => {
 
 .detail-header {
   flex-shrink: 0;
+  word-break: break-word;
 }
 
 .detail-content {

@@ -8,6 +8,7 @@ import LoginPage from "src/pages/LoginPage.vue";
 import RegisterPage from "src/pages/RegisterPage.vue";
 import HomePage from "src/pages/HomePage.vue";
 import NotesPage from "src/pages/NotesPage.vue";
+import TasksPage from "src/pages/TasksPage.vue"
 
 const routes = [
   {
@@ -50,6 +51,11 @@ const routes = [
         path: "notes",
         name: "notes",
         component: NotesPage,
+      },
+      {
+        path: "tasks",
+        name: "tasks",
+        component: TasksPage,
       },
     ],
   },
