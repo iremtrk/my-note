@@ -29,14 +29,6 @@
               {{ getPreviewText(note.content) }}
             </q-item-label>
           </q-item-section>
-          <q-btn class="deletebtn q-mx-xs q-mt-xs"
-                icon="close"
-                flat
-                size="10px"
-                color="negative"
-                @click="handleDelete"
-                
-              />
         </q-item>
       </q-list>
     </q-card-section>
@@ -46,7 +38,6 @@
 <script setup lang="ts">
 import AddNoteButton from 'src/components/notes/AddNoteButton.vue'
 import type { Note } from '../../types/notes'
-import { useNotesStore } from '../../stores/notes'
 
 defineProps<{
   notes: Note[]
@@ -61,12 +52,6 @@ const getPreviewText = (html: string) => {
   const div = document.createElement('div')
   div.innerHTML = html
   return div.textContent || div.innerText || ''
-}
-const notesStore = useNotesStore()
-
-const handleDelete = async () => {
-  if (!notesStore.selectedNote) return
-  await notesStore.deleteNote(notesStore.selectedNote.id)
 }
 </script>
 
@@ -107,6 +92,4 @@ const handleDelete = async () => {
   white-space: normal;
   word-break: break-word;
 }
-
-
 </style>
