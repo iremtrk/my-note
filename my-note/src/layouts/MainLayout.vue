@@ -54,7 +54,7 @@ const notesStore = useNotesStore()
 
 const handleSave = async (payload: { title: string; content: string }) => {
   if (noteEditor.editingNoteId === null) {
-    await notesStore.addNote(payload)
+    await notesStore.addNote({ ...payload, userId: "current-user-id" })
   } else {
     await notesStore.updateNote(noteEditor.editingNoteId, payload)
   }

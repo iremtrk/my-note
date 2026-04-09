@@ -4,41 +4,41 @@
       <NotesList
         :notes="notesStore.notes"
         :selected-note-id="notesStore.selectedNote?.id ?? null"
-        @select-note="notesStore.selectNote"
+        @select-note="handleSelectNote"
       />
     </div>
 
     <div class="col-8 full-height">
       <q-card bordered class="full-height detail-card">
-        <q-card-section v-if="notesStore.selectedNote" class="detail-section">
-          <div class="row items-start justify-between no-wrap detail-header">
-            <div class="detail-content">
-              <div class="text-h5">{{ notesStore.selectedNote.title }}</div>
-            </div>
+        <template v-if="notesStore.selectedNote">
+          <q-card-section class="row items-center justify-between">
+            <div class="text-h6">Edit Note</div>
 
             <div class="row q-gutter-sm">
-              <q-btn
-                icon="edit"
-                flat
-                round
-                color="black"
-                @click="startEdit(notesStore.selectedNote)"
-              />
               <q-btn
                 icon="delete"
                 flat
                 round
                 color="negative"
-                @click="notesStore.deleteNote(notesStore.selectedNote.id)"
+                @click="handleDelete"
               />
             </div>
-          </div>
+          </q-card-section>
 
-          <div
-            class="text-body1 q-mt-md note-detail-html detail-scroll"
-            v-html="notesStore.selectedNote.content"
-          ></div>
-        </q-card-section>
+          <q-separator />
+
+          <q-card-section class="editor-wrapper">
+            <NoteEditor
+              embedded
+              auto-save
+              :debounce-ms="700"
+              :initial-title="editTitle"
+              :initial-content="editContent"
+              :is-editing="true"
+              @change="handleEditorChange"
+            />
+          </q-card-section>
+        </template>
 
         <q-card-section v-else class="text-grey">
           Select a note.
@@ -49,23 +49,62 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, watch } from 'vue'
+import { onMounted, ref, watch } from 'vue'
 import NotesList from 'src/components/notes/NotesList.vue'
-import { useNoteEditorStore } from '../stores/note-editor'
+import NoteEditor from 'src/components/notes/NoteEditor.vue'
 import { useNotesStore } from '../stores/notes'
 import type { Note } from '../types/notes'
-import { useAuthStore } from "../stores/auth";
+import { useAuthStore } from '../stores/auth'
 
-const noteEditor = useNoteEditorStore()
 const notesStore = useNotesStore()
 const authStore = useAuthStore()
 
-const startEdit = (note: Note) => {
-  noteEditor.openEditNote({
-    id: note.id,
-    title: note.title,
-    content: note.content,
+const editTitle = ref('')
+const editContent = ref('')
+const isFillingEditor = ref(false)
+
+const fillEditorFields = (note: Note | null) => {
+  isFillingEditor.value = true
+  editTitle.value = note?.title ?? ''
+  editContent.value = note?.content ?? ''
+
+  setTimeout(() => {
+    isFillingEditor.value = false
+  }, 0)
+}
+
+const handleSelectNote = (note: Note) => {
+  notesStore.selectNote(note)
+  fillEditorFields(note)
+}
+
+const handleEditorChange = async (payload: {
+  title: string
+  content: string
+}) => {
+  if (!notesStore.selectedNote || isFillingEditor.value) return
+
+  const title = payload.title
+  const content = payload.content
+
+  if (!content) return
+
+  const currentNote = notesStore.selectedNote
+
+  if (title === currentNote.title && content === currentNote.content) return
+
+  editTitle.value = title
+  editContent.value = content
+
+  await notesStore.updateNote(currentNote.id, {
+    title,
+    content,
   })
+}
+
+const handleDelete = async () => {
+  if (!notesStore.selectedNote) return
+  await notesStore.deleteNote(notesStore.selectedNote.id)
 }
 
 watch(
@@ -91,35 +130,15 @@ onMounted(async () => {
 }
 
 .detail-card {
+  height: 100%;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
-.detail-section {
+.editor-wrapper {
   flex: 1;
   min-height: 0;
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-header {
-  flex-shrink: 0;
-  word-break: break-word;
-}
-
-.detail-content {
-  flex: 1;
-  min-width: 0;
-}
-
-.detail-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-}
-
-.note-detail-html {
-  overflow-wrap: anywhere;
-  word-break: break-word;
+  overflow: hidden;
 }
 </style>
