@@ -87,4 +87,5 @@ const handleLogout = () => {
 .logout-section {
   margin-top: auto;
 }
+
 </style>
