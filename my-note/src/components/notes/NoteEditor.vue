@@ -6,9 +6,7 @@
   >
     <q-card class="editor-card modal-editor-card">
       <q-card-section class="row items-center justify-between editor-header">
-        <div class="text-h6">
-          New Note
-        </div>
+        <div class="text-h6">New Note</div>
 
         <div class="row items-center q-gutter-sm">
           <q-btn icon="close" flat round @click="handleCancel" />
@@ -16,7 +14,15 @@
       </q-card-section>
 
       <q-card-section class="editor-body">
-        <q-input v-model="localTitle" label="Title" style="font-size:x-large";  />
+        <q-input
+          v-model="localTitle"
+          class="note-title-input"
+          label="Title"
+          style="font-size: x-large";
+          maxlength="80"
+          counter
+          autogrow
+        />
 
         <div class="editor-wrapper">
           <q-editor
@@ -40,9 +46,7 @@
 
   <q-card v-else bordered class="editor-card side-editor-card">
     <q-card-section class="row items-center justify-between editor-header">
-      <div class="text-h6">
-        Edit Note
-      </div>
+      <div class="text-h6">Edit Note</div>
 
       <div class="row items-center q-gutter-sm">
         <q-btn
@@ -58,7 +62,14 @@
     </q-card-section>
 
     <q-card-section class="editor-body">
-      <q-input v-model="localTitle"  style="font-size:x-large; "/>
+      <q-input 
+      v-model="localTitle" 
+      class="note-title-input"
+      style="font-size: x-large;" 
+      maxlength="80" 
+      counter 
+      autogrow  
+      />
 
       <div class="editor-wrapper">
         <q-editor
@@ -78,15 +89,12 @@
       />
     </q-card-actions>
   </q-card>
-  <ConfirmDeleteDialog
-  v-model="showDeleteConfirm"
-  @confirm="confirmDelete"
-/>
+  <ConfirmDeleteDialog v-model="showDeleteConfirm" @confirm="confirmDelete" />
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from 'vue'
-import ConfirmDeleteDialog from 'src/components/notes/ConfirmDeleteDialog.vue'
+import { ref, watch, onBeforeUnmount } from "vue";
+import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
 
 const props = withDefaults(
   defineProps<{
@@ -94,97 +102,97 @@ const props = withDefaults(
     initialTitle: string;
     initialContent: string;
     isEditing: boolean;
-    variant?: 'modal' | 'side';
+    variant?: "modal" | "side";
   }>(),
   {
     modelValue: false,
-    variant: 'modal',
-  }
-)
+    variant: "modal",
+  },
+);
 
 const emit = defineEmits<{
-  (e: 'update:modelValue', value: boolean): void;
-  (e: 'save', payload: { title: string; content: string }): void;
-  (e: 'cancel'): void;
-  (e: 'delete'): void;
-}>()
+  (e: "update:modelValue", value: boolean): void;
+  (e: "save", payload: { title: string; content: string }): void;
+  (e: "cancel"): void;
+  (e: "delete"): void;
+}>();
 
-const localTitle = ref('')
-const localContent = ref('')
-const isHydrating = ref(false)
-const showDeleteConfirm = ref(false)
+const localTitle = ref("");
+const localContent = ref("");
+const isHydrating = ref(false);
+const showDeleteConfirm = ref(false);
 
-let debounceTimer: ReturnType<typeof setTimeout> | null = null
+let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
 const editorToolbar = [
-  ['left', 'center', 'right', 'justify'],
-  ['bold', 'italic', 'underline'],
-  ['unordered', 'ordered'],
-  ['quote', 'hr'],
-  ['undo', 'redo'],
-  ['fullscreen', 'print'],
-]
+  ["left", "center", "right", "justify"],
+  ["bold", "italic", "underline"],
+  ["unordered", "ordered"],
+  ["quote", "hr"],
+  ["undo", "redo"],
+  ["fullscreen", "print"],
+];
 
 watch(
   () => [props.initialTitle, props.initialContent, props.modelValue],
   () => {
-    isHydrating.value = true
-    localTitle.value = props.initialTitle
-    localContent.value = props.initialContent
+    isHydrating.value = true;
+    localTitle.value = props.initialTitle;
+    localContent.value = props.initialContent;
 
     setTimeout(() => {
-      isHydrating.value = false
-    }, 0)
+      isHydrating.value = false;
+    }, 0);
   },
-  { immediate: true }
-)
+  { immediate: true },
+);
 
 watch([localTitle, localContent], () => {
-  if (!props.isEditing) return
-  if (isHydrating.value) return
+  if (!props.isEditing) return;
+  if (isHydrating.value) return;
 
   if (debounceTimer) {
-    clearTimeout(debounceTimer)
+    clearTimeout(debounceTimer);
   }
 
   debounceTimer = setTimeout(() => {
-    const title = localTitle.value.trim()
-    const content = localContent.value.trim()
+    const title = localTitle.value.trim();
+    const content = localContent.value.trim();
 
-    if (!title && !content) return
+    if (!title && !content) return;
 
-    emit('save', { title, content })
-  }, 700)
-})
+    emit("save", { title, content });
+  }, 700);
+});
 
 const handleSave = () => {
-  const title = localTitle.value.trim()
-  const content = localContent.value.trim()
+  const title = localTitle.value.trim();
+  const content = localContent.value.trim();
 
-  if (!title && !content) return
+  if (!title && !content) return;
 
-  emit('save', { title, content })
-}
+  emit("save", { title, content });
+};
 
 const handleCancel = () => {
   if (debounceTimer) {
-    clearTimeout(debounceTimer)
+    clearTimeout(debounceTimer);
   }
 
-  emit('cancel')
-  emit('update:modelValue', false)
-}
+  emit("cancel");
+  emit("update:modelValue", false);
+};
 
 const confirmDelete = () => {
-  showDeleteConfirm.value = false
-  emit('delete')
-}
+  showDeleteConfirm.value = false;
+  emit("delete");
+};
 
 onBeforeUnmount(() => {
   if (debounceTimer) {
-    clearTimeout(debounceTimer)
+    clearTimeout(debounceTimer);
   }
-})
+});
 </script>
 
 <style scoped>
@@ -264,5 +272,11 @@ onBeforeUnmount(() => {
 :deep(.q-editor__content span) {
   overflow-wrap: anywhere;
   word-break: break-word;
+}
+
+:deep(.note-title-input textarea) {
+  line-height: 1;
+  padding-top: 6px;
+  padding-bottom: 6px;
 }
 </style>

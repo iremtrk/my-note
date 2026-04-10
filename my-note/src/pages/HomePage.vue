@@ -4,11 +4,31 @@
     :class="{ 'detail-open': noteEditor.showSideEditor }"
   >
     <div class="notes-panel">
-      <div class="notes-scroll">
+      <div v-if="showEmptyState" class="empty-state">
+        <q-icon name="sticky_note_2" size="64px" color="primary" />
+
+        <div class="text-h6 q-mt-md">
+          No notes yet
+        </div>
+
+        <div class="text-grey q-mt-sm empty-text">
+          Create your first note.
+        </div>
+
+        <AddNoteButton
+          class="q-mt-lg"
+          color="primary"
+          icon="add"
+          label="Create Your First Note"
+        />
+      </div>
+
+      <div v-else class="notes-scroll">
         <NoteCard
-          v-for="note in notesStore.filteredNotes"
+          v-for="note in displayedNotes"
           :key="note.id"
           :note="note"
+          :is-demo="note.id === DEMO_NOTE.id"
           @select="handleSelect"
           @delete="handleDelete"
         />
@@ -30,17 +50,52 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, watch } from 'vue'
+import { computed, onMounted, onBeforeUnmount, watch } from 'vue'
 import NoteCard from 'src/components/notes/NoteCard.vue'
 import NoteEditor from 'src/components/notes/NoteEditor.vue'
 import { useAuthStore } from '../stores/auth'
 import { useNoteEditorStore } from '../stores/note-editor'
 import { useNotesStore } from '../stores/notes'
 import type { Note } from '../types/notes'
+import AddNoteButton from '../components/notes/AddNoteButton.vue'
 
 const notesStore = useNotesStore()
 const noteEditor = useNoteEditorStore()
 const authStore = useAuthStore()
+
+const DEMO_NOTE: Note = {
+  id: 'demo-note',
+  userId: 'demo-user',
+  title: 'Welcome to My Note',
+  content: `
+    <p><strong>Hello and welcome 👋</strong></p>
+    <p>This is a sample note to help you get started.</p>
+    <ul>
+      <li>Write down your ideas</li>
+      <li>Keep track of your tasks</li>
+      <li>Edit your notes anytime</li>
+    </ul>
+    <p>Create your first real note to begin.</p>
+  `,
+}
+
+const hasSearchQuery = computed(() => notesStore.searchQuery.trim().length > 0)
+
+const showEmptyState = computed(() => {
+  return notesStore.notes.length === 0 && !hasSearchQuery.value
+})
+
+const displayedNotes = computed(() => {
+  if (notesStore.filteredNotes.length > 0) {
+    return notesStore.filteredNotes
+  }
+
+  if (showEmptyState.value) {
+    return [DEMO_NOTE]
+  }
+
+  return []
+})
 
 onMounted(async () => {
   noteEditor.closeAll()
@@ -69,7 +124,12 @@ watch(
   }
 )
 
+
 const handleSelect = (note: Note) => {
+  if (note.id === DEMO_NOTE.id) {
+    return
+  }
+
   notesStore.selectNote(note)
 
   noteEditor.openEditNoteSide({
@@ -115,7 +175,7 @@ const handleSave = async (payload: { title: string; content: string }) => {
 const handleDelete = async (id?: string) => {
   const targetId = id ?? noteEditor.editingNoteId
 
-  if (!targetId) return
+  if (!targetId || targetId === DEMO_NOTE.id) return
 
   await notesStore.deleteNote(targetId)
 
@@ -168,6 +228,25 @@ const handleDelete = async (id?: string) => {
   overflow: hidden;
 }
 
+.empty-state {
+  height: min(500px, 100%);
+  min-height: 0;
+  border: 2px dashed #d6d6d6;
+  border-radius: 20px;
+  background: #fafafa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+}
+
+.empty-text {
+  max-width: 360px;
+  line-height: 1.6;
+}
+
 @media (max-width: 767px) {
   .notes-layout {
     overflow-y: auto;
@@ -183,6 +262,11 @@ const handleDelete = async (id?: string) => {
 
   .detail-panel {
     height: min(500px, 100%);
+  }
+
+  .empty-state {
+    height: auto;
+    min-height: 320px;
   }
 }
 </style>
