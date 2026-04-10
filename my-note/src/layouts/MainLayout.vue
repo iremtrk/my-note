@@ -30,12 +30,14 @@
     </q-page-container>
 
     <NoteEditor
-      v-model="noteEditor.showForm"
+      v-if="noteEditor.showModal"
+      v-model="noteEditor.showModal"
+      variant="modal"
       :initial-title="noteEditor.title"
       :initial-content="noteEditor.content"
       :is-editing="noteEditor.editingNoteId !== null"
       @save="handleSave"
-      @cancel="noteEditor.closeEditor()"
+      @cancel="noteEditor.closeModal()"
     />
   </q-layout>
 </template>
@@ -63,7 +65,7 @@ if (noteEditor.editingNoteId === null) {
     await notesStore.updateNote(noteEditor.editingNoteId, payload)
   }
 
-  noteEditor.closeEditor()
+  noteEditor.closeModal()
 }
 </script>
 

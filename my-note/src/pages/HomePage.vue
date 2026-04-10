@@ -1,5 +1,8 @@
 <template>
-  <div class="notes-layout q-pa-md" :class="{ 'detail-open': selectedNote }">
+  <div
+    class="notes-layout q-pa-md"
+    :class="{ 'detail-open': noteEditor.showSideEditor }"
+  >
     <div class="notes-panel">
       <div class="notes-scroll">
         <NoteCard
@@ -7,96 +10,115 @@
           :key="note.id"
           :note="note"
           @select="handleSelect"
-          @edit="openEditDialog"
           @delete="handleDelete"
         />
       </div>
     </div>
 
-    <div v-if="selectedNote" class="detail-panel">
-      <NoteDetail
-        :note="selectedNote"
-        :card-style="{ height: '500px' }"
-        show-close
-        @edit="openEditDialog"
+    <div v-if="noteEditor.showSideEditor" class="detail-panel">
+      <NoteEditor
+        variant="side"
+        :initial-title="noteEditor.title"
+        :initial-content="noteEditor.content"
+        :is-editing="noteEditor.editingNoteId !== null"
+        @save="handleSave"
+        @cancel="noteEditor.closeSideEditor()"
         @delete="handleDelete"
-        @close="selectedNote = null"
       />
     </div>
   </div>
-
-  <NoteEditor
-    v-model="editorDialog"
-    :initial-title="editingNote?.title ?? ''"
-    :initial-content="editingNote?.content ?? ''"
-    :is-editing="isEditing"
-    @save="handleSave"
-    @cancel="closeDialog"
-  />
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
-import { useNotesStore } from "../stores/notes";
-import NoteCard from "src/components/notes/NoteCard.vue";
-import NoteEditor from "src/components/notes/NoteEditor.vue";
-import type { Note } from "../types/notes";
-import NoteDetail from "../components/notes/NoteDetail.vue";
+import { onMounted, onBeforeUnmount } from 'vue'
+import NoteCard from 'src/components/notes/NoteCard.vue'
+import NoteEditor from 'src/components/notes/NoteEditor.vue'
+import { useAuthStore } from '../stores/auth'
+import { useNoteEditorStore } from '../stores/note-editor'
+import { useNotesStore } from '../stores/notes'
+import type { Note } from '../types/notes'
 
-const notesStore = useNotesStore();
+const notesStore = useNotesStore()
+const noteEditor = useNoteEditorStore()
+const authStore = useAuthStore()
 
-const editorDialog = ref(false);
-const isEditing = ref(false);
-const selectedNote = ref<Note | null>(null);
-const editingNote = ref<Note | null>(null);
+onMounted(async () => {
+  noteEditor.closeAll()
 
-onMounted(() => {
-  notesStore.fetchNotes();
-});
+  if (authStore.user?.id) {
+    await notesStore.fetchNotes(authStore.user.id)
+  }
+})
+
+onBeforeUnmount(() => {
+  noteEditor.closeAll()
+})
 
 const handleSelect = (note: Note) => {
-  selectedNote.value = { ...note };
-};
+  notesStore.selectNote(note)
 
-const openEditDialog = (note: Note) => {
-  editingNote.value = { ...note };
-  isEditing.value = true;
-  editorDialog.value = true;
-};
-
-const closeDialog = () => {
-  editorDialog.value = false;
-  isEditing.value = false;
-  editingNote.value = null;
-};
+  noteEditor.openEditNoteSide({
+    id: note.id,
+    title: note.title,
+    content: note.content,
+  })
+}
 
 const handleSave = async (payload: { title: string; content: string }) => {
-  if (!editingNote.value) return;
+  if (noteEditor.editingNoteId === null) {
+    const userId = authStore.user?.id
+    if (!userId) return
 
-  await notesStore.updateNote(editingNote.value.id, payload);
+    await notesStore.addNote({
+      ...payload,
+      userId,
+    })
 
-  const updated = notesStore.notes.find((n) => n.id === editingNote.value?.id);
-
-  if (updated && selectedNote.value?.id === updated.id) {
-    selectedNote.value = { ...updated };
+    noteEditor.closeSideEditor()
+    return
   }
 
-  closeDialog();
-};
+  const editingId = noteEditor.editingNoteId
 
-const handleDelete = async (id: string) => {
-  await notesStore.deleteNote(id);
+  await notesStore.updateNote(editingId, payload)
 
-  if (selectedNote.value?.id === id) {
-    selectedNote.value = null;
+  const updated = notesStore.notes.find((note) => note.id === editingId)
+
+  if (updated) {
+    notesStore.selectNote(updated)
+
+    noteEditor.openEditNoteSide({
+      id: updated.id,
+      title: updated.title,
+      content: updated.content,
+    })
+  } else {
+    noteEditor.closeSideEditor()
   }
-};
+}
+
+const handleDelete = async (id?: string) => {
+  const targetId = id ?? noteEditor.editingNoteId
+
+  if (!targetId) return
+
+  await notesStore.deleteNote(targetId)
+
+  if (notesStore.selectedNote?.id === targetId) {
+    notesStore.clearSelectedNote()
+  }
+
+  if (noteEditor.editingNoteId === targetId) {
+    noteEditor.closeSideEditor()
+  }
+}
 </script>
 
 <style scoped>
 .notes-layout {
   height: calc(100vh - 82px);
   min-height: 0;
+  overflow: hidden;
   display: grid;
   grid-template-columns: 1fr;
   gap: 16px;
@@ -106,57 +128,46 @@ const handleDelete = async (id: string) => {
   grid-template-columns: 1.2fr 0.8fr;
 }
 
+.notes-panel {
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
+
 .notes-scroll {
-  height: 500px;
+  height: min(500px, 100%);
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
-
   display: grid;
-  grid-template-columns: repeat(1, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
   gap: 16px;
+  align-content: start;
+  justify-content: start;
 }
 
-.detail-card {
-  height: 500px;
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-scroll {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-}
-
-.note-detail-html {
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-.detail-title {
+.detail-panel {
   min-width: 0;
+  min-height: 0;
+  height: min(500px, 100%);
   overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  word-break: break-word;
 }
 
-@media (min-width: 768px) {
-  .notes-scroll {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 1200px) {
-  .notes-scroll {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+@media (max-width: 767px) {
+  .notes-layout {
+    overflow-y: auto;
   }
 
-  .notes-layout:not(.detail-open) .notes-panel {
-    width: 100%;
+  .notes-layout.detail-open {
+    grid-template-columns: 1fr;
+  }
+
+  .notes-scroll {
+    grid-template-columns: 1fr;
+  }
+
+  .detail-panel {
+    height: min(500px, 100%);
   }
 }
 </style>

@@ -1,61 +1,71 @@
 <template>
-  <q-card class="my-card bg-primary text-white" clickable @click="$emit('select', note)">
-    <q-card-section >
+  <q-card
+    class="my-card bg-primary text-white"
+    clickable
+    @click="emit('select', note)"
+  >
+    <q-card-section class="row items-start justify-between no-wrap">
       <div class="text-h6 note-title">
         {{ note.title }}
       </div>
-    </q-card-section>
-
-    <q-card-section class="note-content" style="height: 75px;">
-      <div v-html="note.content" class="note-content"></div>
-    </q-card-section>
-
-    <q-separator dark />
-
-    <!-- <q-card-actions align="right">
-      <q-btn
-        flat
-        color="white"
-        icon="edit"
-        @click="emit('edit', note)"
-      />
 
       <q-btn
+        icon="close"
         flat
+        round
+        dense
         color="white"
-        icon="delete"
-        @click="emit('delete', note.id)"
+        class="card-delete-btn"
+        @click.stop="showDeleteConfirm = true"
       />
-    </q-card-actions> -->
+    </q-card-section>
+
+    <q-card-section class="card-preview">
+      <div class="note-content">
+        {{ previewText }}
+      </div>
+    </q-card-section>
   </q-card>
+
+  <ConfirmDeleteDialog
+    v-model="showDeleteConfirm"
+    @confirm="emit('delete', note.id)"
+  />
 </template>
 
 <script setup lang="ts">
+import { ref, computed } from "vue";
+import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
 import type { Note } from "../../types/notes";
-import { computed } from "vue";
 
-const props =defineProps<{
-  note: Note;
-}>();
+const showDeleteConfirm = ref(false);
 
 const emit = defineEmits<{
-  (e:"select",note:Note): void
-  (e: "edit", note: Note): void;
+  (e: "select", note: Note): void;
   (e: "delete", id: string): void;
 }>();
 
-const previewText = computed(()=>{
-  const div =document.createElement("div")
+const props = defineProps<{
+  note: Note;
+}>();
+
+const previewText = computed(() => {
+  const div = document.createElement("div");
   div.innerHTML = props.note.content;
   return div.textContent || div.innerText || "";
-})
+});
 </script>
 
 <style scoped>
 .my-card {
   width: 100%;
   max-width: 250px;
-  cursor:pointer
+  cursor: pointer;
+  position: relative;
+}
+
+.card-preview {
+  height: 75px;
 }
 
 .note-content {
@@ -66,13 +76,18 @@ const previewText = computed(()=>{
   overflow: hidden;
   word-break: break-word;
   overflow-wrap: anywhere;
-
 }
 
-.note-title{
+.note-title {
+  flex: 1;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.card-delete-btn {
+  flex-shrink: 0;
+  margin-left: 8px;
+}
 </style>
