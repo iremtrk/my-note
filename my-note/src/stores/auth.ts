@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
 import axios from "axios";
+import bcrypt from "bcryptjs";
 import type { LoginPayload, RegisterPayload, User } from "../types/auth";
 
 export const useAuthStore = defineStore("auth", () => {
@@ -32,7 +33,9 @@ export const useAuthStore = defineStore("auth", () => {
       throw new Error("User not found");
     }
 
-    if (foundUser.password.trim() !== password) {
+    const isPasswordValid = await bcrypt.compare(password, foundUser.password);
+
+    if (!isPasswordValid) {
       throw new Error("Invalid password");
     }
 
@@ -41,33 +44,34 @@ export const useAuthStore = defineStore("auth", () => {
     isReady.value = true;
   };
 
-const register = async (payload: RegisterPayload) => {
-  const name = payload.name.trim();
-  const email = payload.email.trim();
-  const password = payload.password.trim();
+  const register = async (payload: RegisterPayload) => {
+    const name = payload.name.trim();
+    const email = payload.email.trim();
+    const password = payload.password;
 
-  const existingUserResponse = await axios.get<User[]>(
-    `${API_URL}?email=${email}`,
-  );
+    const existingUserResponse = await axios.get<User[]>(
+      `${API_URL}?email=${email}`
+    );
 
-  if (existingUserResponse.data.length > 0) {
-    throw new Error("This email is already registered");
-  }
+    if (existingUserResponse.data.length > 0) {
+      throw new Error("This email is already registered");
+    }
 
-  await axios.post<User>(API_URL, {
-    name,
-    email,
-    password,
-  });
+    await axios.post<User>(API_URL, {
+      name,
+      email,
+      password,
+    });
 
-  isReady.value = true;
-};
+    isReady.value = true;
+  };
 
   const logout = () => {
     user.value = null;
     isReady.value = true;
     localStorage.removeItem("user");
   };
+
   return {
     user,
     isReady,

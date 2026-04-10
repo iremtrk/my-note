@@ -120,17 +120,13 @@ const handleLogin = async () => {
     });
 
     router.push("/app/notes");
-
   } catch (err: any) {
-
     if (err.inner) {
       err.inner.forEach((error: any) => {
         if (error.path === "email") emailError.value = error.message;
         if (error.path === "password") passwordError.value = error.message;
       });
-
     } else {
-
       Notify.create({
         type: "negative",
         message: "Login failed. Please check your credentials.",

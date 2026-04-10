@@ -94,6 +94,7 @@ import { useAuthStore } from "../stores/auth";
 import { useRouter } from "vue-router";
 import { registerSchema } from "../validation/auth";
 import { Notify } from "quasar";
+import bcrypt from "bcryptjs";
 
 const authStore = useAuthStore();
 const router = useRouter();
@@ -127,10 +128,12 @@ const handleRegister = async () => {
       { abortEarly: false }
     );
 
+    const hashedPassword = await bcrypt.hash(password.value, 10);
+
     await authStore.register({
       name: name.value.trim(),
       email: email.value.trim(),
-      password: password.value,
+      password: hashedPassword,
     });
 
     Notify.create({
@@ -149,7 +152,6 @@ const handleRegister = async () => {
         if (error.path === "email") emailError.value = error.message;
         if (error.path === "password") passwordError.value = error.message;
       });
-
     } else {
       const message =
         err?.message?.toLowerCase().includes("already") ||

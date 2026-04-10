@@ -13,16 +13,10 @@
       "id": "o3k4gTY"
     },
     {
-      "name": "meri",
-      "email": "meri@gmail.com",
-      "password": "123456",
-      "id": "AD4iNTT"
-    },
-    {
-      "name": "meri",
-      "email": "peri@gmail.com",
-      "password": "123456",
-      "id": "9-Re-Be"
+      "name": "mary",
+      "email": "mary@gmail.com",
+      "password": "$2b$10$xp9J.sd8cQYHVAsbegfvWOPzsnu0EdnN6gKed5pGe/pgiPhdz2/am",
+      "id": "_xwfKp8"
     }
   ],
   "notes": [
@@ -157,6 +151,18 @@
       "content": "gjfgh",
       "userId": "9-Re-Be",
       "id": 27
+    },
+    {
+      "title": "side bardaki add new note",
+      "content": "side bardaki add new note",
+      "userId": "_xwfKp8",
+      "id": 28
+    },
+    {
+      "title": "notestaki new note",
+      "content": "notestaki new note",
+      "userId": "_xwfKp8",
+      "id": 29
     }
   ]
 }
