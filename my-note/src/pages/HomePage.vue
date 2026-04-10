@@ -6,7 +6,7 @@
     <div class="notes-panel">
       <div class="notes-scroll">
         <NoteCard
-          v-for="note in notesStore.notes"
+          v-for="note in notesStore.filteredNotes"
           :key="note.id"
           :note="note"
           @select="handleSelect"
@@ -30,7 +30,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount } from 'vue'
+import { onMounted, onBeforeUnmount, watch } from 'vue'
 import NoteCard from 'src/components/notes/NoteCard.vue'
 import NoteEditor from 'src/components/notes/NoteEditor.vue'
 import { useAuthStore } from '../stores/auth'
@@ -53,6 +53,21 @@ onMounted(async () => {
 onBeforeUnmount(() => {
   noteEditor.closeAll()
 })
+
+watch(
+  () => notesStore.searchQuery,
+  () => {
+    if (
+      notesStore.selectedNote &&
+      !notesStore.filteredNotes.some(
+        (note) => note.id === notesStore.selectedNote?.id
+      )
+    ) {
+      notesStore.clearSelectedNote()
+      noteEditor.closeSideEditor()
+    }
+  }
+)
 
 const handleSelect = (note: Note) => {
   notesStore.selectNote(note)

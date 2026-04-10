@@ -2,6 +2,20 @@
   <div class="sidebar-container">
     <q-list bordered padding>
       <q-item>
+        <q-input
+          v-model="notesStore.searchQuery"
+          outlined
+          dense
+          placeholder="Search notes..."
+          class="full-width"
+        >
+          <template #prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </q-item>
+
+      <q-item>
         <AddNoteButton
           label="New Note"
           icon="add"
@@ -64,12 +78,15 @@
 import AddNoteButton from 'src/components/notes/AddNoteButton.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '../../stores/auth'
+import { useNotesStore } from '../../stores/notes'
 
 const router = useRouter()
 const authStore = useAuthStore()
+const notesStore = useNotesStore()
 
 const handleLogout = () => {
   authStore.logout()
+  notesStore.searchQuery = ''
   router.push('/login')
 }
 </script>

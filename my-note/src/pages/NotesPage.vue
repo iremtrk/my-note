@@ -2,7 +2,7 @@
   <div class="row q-col-gutter-md notes-page">
     <div class="col-4 full-height">
       <NotesList
-        :notes="notesStore.notes"
+        :notes="filteredNotes"
         :selected-note-id="notesStore.selectedNote?.id ?? null"
         @select-note="handleSelectNote"
         @delete-note="handleDelete"
@@ -32,7 +32,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, watch } from 'vue'
+import { onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import NoteEditor from 'src/components/notes/NoteEditor.vue'
 import NotesList from 'src/components/notes/NotesList.vue'
 import { useAuthStore } from '../stores/auth'
@@ -43,6 +43,25 @@ import type { Note } from '../types/notes'
 const noteEditor = useNoteEditorStore()
 const notesStore = useNotesStore()
 const authStore = useAuthStore()
+
+const stripHtml = (html: string) => {
+  const div = document.createElement('div')
+  div.innerHTML = html
+  return div.textContent || div.innerText || ''
+}
+
+const filteredNotes = computed(() => {
+  const query = notesStore.searchQuery.trim().toLowerCase()
+
+  if (!query) return notesStore.notes
+
+  return notesStore.notes.filter((note) => {
+    const titleMatch = note.title.toLowerCase().includes(query)
+    const contentMatch = stripHtml(note.content).toLowerCase().includes(query)
+
+    return titleMatch || contentMatch
+  })
+})
 
 const handleSelectNote = (note: Note) => {
   notesStore.selectNote(note)
@@ -112,6 +131,19 @@ watch(
   },
   { immediate: true }
 )
+
+watch(filteredNotes, (newFilteredNotes) => {
+  if (!notesStore.selectedNote) return
+
+  const stillVisible = newFilteredNotes.some(
+    (note) => note.id === notesStore.selectedNote?.id
+  )
+
+  if (!stillVisible) {
+    notesStore.clearSelectedNote()
+    noteEditor.closeSideEditor()
+  }
+})
 
 onMounted(async () => {
   noteEditor.closeAll()

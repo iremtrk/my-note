@@ -1,10 +1,10 @@
 <template>
   <q-card
-    class="my-card bg-primary text-white"
+    :style="{ background: getColor(note.id) }"
+    class="my-card"
     clickable
-    @click="emit('select', note)"
-  >
-    <q-card-section class="row items-start justify-between no-wrap">
+    @click="emit('select', note)">
+    <q-card-section class="row items-start justify-between no-wrap" >
       <div class="text-h6 note-title">
         {{ note.title }}
       </div>
@@ -14,7 +14,6 @@
         flat
         round
         dense
-        color="white"
         class="card-delete-btn"
         @click.stop="showDeleteConfirm = true"
       />
@@ -54,6 +53,13 @@ const previewText = computed(() => {
   div.innerHTML = props.note.content;
   return div.textContent || div.innerText || "";
 });
+
+const colors = ["#fef3c7", "#dbeafe", "#dcfce7", "#fce7f3", "#ede9fe"];
+
+const getColor = (id: string | number) => {
+  const num = Number(id)
+  return colors[num % colors.length]
+}
 </script>
 
 <style scoped>
@@ -62,7 +68,9 @@ const previewText = computed(() => {
   max-width: 250px;
   cursor: pointer;
   position: relative;
+  border-radius: 20px;
 }
+
 
 .card-preview {
   height: 75px;
