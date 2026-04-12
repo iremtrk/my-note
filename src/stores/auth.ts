@@ -8,7 +8,6 @@ export const useAuthStore = defineStore("auth", () => {
   const API_URL = "http://localhost:3001/users";
 
   const user = ref<User | null>(null);
-  const isReady = ref(false);
 
   const isAuthenticated = computed(() => !!user.value);
 
@@ -18,8 +17,6 @@ export const useAuthStore = defineStore("auth", () => {
     if (storedUser) {
       user.value = JSON.parse(storedUser);
     }
-
-    isReady.value = true;
   };
 
   const login = async (payload: LoginPayload) => {
@@ -41,7 +38,6 @@ export const useAuthStore = defineStore("auth", () => {
 
     user.value = foundUser;
     localStorage.setItem("user", JSON.stringify(foundUser));
-    isReady.value = true;
   };
 
   const register = async (payload: RegisterPayload) => {
@@ -62,19 +58,15 @@ export const useAuthStore = defineStore("auth", () => {
       email,
       password,
     });
-
-    isReady.value = true;
   };
 
   const logout = () => {
     user.value = null;
-    isReady.value = true;
     localStorage.removeItem("user");
   };
 
   return {
     user,
-    isReady,
     isAuthenticated,
     loadUserFromLocalStorage,
     login,

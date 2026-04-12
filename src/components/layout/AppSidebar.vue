@@ -90,10 +90,10 @@
 </template>
 
 <script setup lang="ts">
-import AddNoteButton from 'src/components/notes/AddNoteButton.vue'
+import AddNoteButton from '@/components/notes/AddNoteButton.vue'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '../../stores/auth'
-import { useNotesStore } from '../../stores/notes'
+import { useAuthStore } from '@/stores/auth'
+import { useNotesStore } from '@/stores/notes'
 
 const router = useRouter()
 const authStore = useAuthStore()

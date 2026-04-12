@@ -36,6 +36,7 @@
 import { ref, computed } from "vue";
 import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
 import type { Note } from "../../types/notes";
+import { stripHtml } from "../../utils/html";
 
 const showDeleteConfirm = ref(false);
 
@@ -48,11 +49,7 @@ const props = defineProps<{
   note: Note;
 }>();
 
-const previewText = computed(() => {
-  const div = document.createElement("div");
-  div.innerHTML = props.note.content;
-  return div.textContent || div.innerText || "";
-});
+const previewText = computed(() => stripHtml(props.note.content));
 
 const colors = ["#fef3c7", "#dbeafe", "#dcfce7", "#fce7f3", "#ede9fe"];
 

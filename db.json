@@ -1,0 +1,48 @@
+{
+  "users": [
+    {
+      "name": "mary",
+      "email": "mary@gmail.com",
+      "password": "$2b$10$xp9J.sd8cQYHVAsbegfvWOPzsnu0EdnN6gKed5pGe/pgiPhdz2/am",
+      "id": "_xwfKp8"
+    },
+    {
+      "name": "irem",
+      "email": "irem@gmail.com",
+      "password": "$2b$10$CdfcK0FLK3uyIOKfQtyHDOyEAOqshsF0YQPJN1VyIeLUamiOGmnlS",
+      "id": "wWedmDf"
+    }
+  ],
+  "notes": [
+    {
+      "title": "side bardaki add new note",
+      "content": "side bardaki add new note",
+      "userId": "_xwfKp8",
+      "id": 28
+    },
+    {
+      "title": "notestaki new note",
+      "content": "notestaki new note",
+      "userId": "_xwfKp8",
+      "id": 29
+    },
+    {
+      "title": "wow",
+      "content": "wow",
+      "userId": "_xwfKp8",
+      "id": 30
+    },
+    {
+      "title": "&",
+      "content": "bunu bul",
+      "userId": "_xwfKp8",
+      "id": 31
+    },
+    {
+      "title": "ilk notum",
+      "content": "ilk notumun denemesini yapıyorum",
+      "userId": "wWedmDf",
+      "id": 32
+    }
+  ]
+}

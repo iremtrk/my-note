@@ -40,7 +40,7 @@
             </div>
 
             <q-item-label caption class="note-preview q-mt-xs">
-              {{ getPreviewText(note.content) }}
+              {{ stripHtml(note.content) }}
             </q-item-label>
           </q-item-section>
         </q-item>
@@ -59,6 +59,7 @@ import { ref } from "vue";
 import AddNoteButton from "src/components/notes/AddNoteButton.vue";
 import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
 import type { Note } from "../../types/notes";
+import { stripHtml } from "../../utils/html";
 
 defineProps<{
   notes: Note[];
@@ -85,11 +86,7 @@ const confirmDelete = () => {
   deletingNoteId.value = null;
 };
 
-const getPreviewText = (html: string) => {
-  const div = document.createElement("div");
-  div.innerHTML = html;
-  return div.textContent || div.innerText || "";
-};
+
 </script>
 
 <style scoped>

@@ -45,10 +45,10 @@
 <script setup lang="ts">
 import { ref } from "vue";
 import AppSidebar from "../components/layout/AppSidebar.vue";
-import NoteEditor from 'src/components/notes/NoteEditor.vue'
-import { useNoteEditorStore } from '../stores/note-editor'
-import { useNotesStore } from '../stores/notes'
-import { useAuthStore } from '../stores/auth'
+import NoteEditor from '@/components/notes/NoteEditor.vue'
+import { useNoteEditorStore } from '@/stores/note-editor'
+import { useNotesStore } from '@/stores/notes'
+import { useAuthStore } from '@/stores/auth'
 
 const drawer = ref(true)
 

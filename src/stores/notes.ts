@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import axios from "axios";
 import type { Note } from "../types/notes";
+import { stripHtml } from "../utils/html";
 
 export const useNotesStore = defineStore("notes", () => {
   const notes = ref<Note[]>([]);
@@ -87,11 +88,10 @@ export const useNotesStore = defineStore("notes", () => {
     if (!query) return notes.value;
 
     return notes.value.filter((note) => {
-      const title = note.title.toLowerCase();
-      const content = note.content.toLowerCase();
-
-      return title.includes(query) || content.includes(query);
-    });
+      const title = note.title.toLowerCase()
+      const content = stripHtml(note.content).toLowerCase()
+      return title.includes(query) || content.includes(query)
+    })
   });
 
   return {
