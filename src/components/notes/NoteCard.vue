@@ -3,26 +3,36 @@
     :style="{ background: getColor(note.id) }"
     class="my-card"
     clickable
-    @click="emit('select', note)">
-    <q-card-section class="row items-start justify-between no-wrap" >
+    @click="emit('select', note)"
+  >
+    <q-card-section class="row items-start justify-between no-wrap">
       <div class="text-h6 note-title">
         {{ note.title }}
       </div>
 
-      <q-btn
-        icon="close"
-        flat
-        round
-        dense
-        class="card-delete-btn"
-        @click.stop="showDeleteConfirm = true"
-      />
+      <div class="row items-center">
+        <q-btn
+          :icon="note.starred ? 'star' : 'star_border'"
+          :color="note.starred ? 'pink' : 'grey-5'"
+          flat round dense
+          class="star-btn"
+          @click.stop="emit('toggle-star', note.id)"
+        />
+        <q-btn
+          icon="close"
+          flat round dense
+          class="card-delete-btn"
+          @click.stop="showDeleteConfirm = true"
+        />
+      </div>
     </q-card-section>
 
     <q-card-section class="card-preview">
-      <div class="note-content">
-        {{ previewText }}
-      </div>
+      <div class="note-content">{{ previewText }}</div>
+    </q-card-section>
+
+    <q-card-section class="card-footer">
+      <span class="note-date">{{ formattedDate }}</span>
     </q-card-section>
   </q-card>
 
@@ -33,30 +43,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
-import type { Note } from "../../types/notes";
-import { stripHtml } from "../../utils/html";
+import { ref, computed } from 'vue'
+import ConfirmDeleteDialog from '@/components/notes/ConfirmDeleteDialog.vue'
+import type { Note } from '@/types/notes'
+import { stripHtml } from '@/utils/html'
+import { formatNoteDate } from '@/utils/date'
 
-const showDeleteConfirm = ref(false);
+const showDeleteConfirm = ref(false)
 
 const emit = defineEmits<{
-  (e: "select", note: Note): void;
-  (e: "delete", id: string): void;
-}>();
+  (e: 'select', note: Note): void
+  (e: 'delete', id: string | number): void
+  (e: 'toggle-star', id: string | number): void
+}>()
 
-const props = defineProps<{
-  note: Note;
-}>();
+const props = defineProps<{ note: Note }>()
 
-const previewText = computed(() => stripHtml(props.note.content));
+const previewText = computed(() => stripHtml(props.note.content))
+const formattedDate = computed(() => formatNoteDate(props.note.createdAt))
 
-const colors = ["#fef3c7", "#dbeafe", "#dcfce7", "#fce7f3", "#ede9fe"];
-
-const getColor = (id: string | number) => {
-  const num = Number(id)
-  return colors[num % colors.length]
-}
+const colors = ['#fef3c7', '#dbeafe', '#dcfce7', '#fce7f3', '#ede9fe']
+const getColor = (id: string | number) => colors[Number(id) % colors.length]
 </script>
 
 <style scoped>
@@ -64,13 +71,12 @@ const getColor = (id: string | number) => {
   width: 100%;
   max-width: 250px;
   cursor: pointer;
-  position: relative;
   border-radius: 20px;
 }
 
-
 .card-preview {
-  height: 75px;
+  height: 60px;
+  padding-bottom: 4px;
 }
 
 .note-content {
@@ -91,8 +97,17 @@ const getColor = (id: string | number) => {
   text-overflow: ellipsis;
 }
 
-.card-delete-btn {
-  flex-shrink: 0;
-  margin-left: 8px;
+.card-footer {
+  padding-top: 4px;
+  display: flex;
+  justify-content: flex-end;
 }
+
+.note-date {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+.star-btn { flex-shrink: 0; }
+.card-delete-btn { flex-shrink: 0; margin-left: 2px; }
 </style>

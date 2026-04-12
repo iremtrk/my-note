@@ -6,6 +6,7 @@
         :selected-note-id="notesStore.selectedNote?.id ?? null"
         @select-note="handleSelect"
         @delete-note="handleDelete"
+        @toggle-star="notesStore.toggleStar"
       />
     </div>
 

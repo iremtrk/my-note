@@ -2,7 +2,7 @@ import { onMounted, onBeforeUnmount } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useNoteEditorStore } from '@/stores/note-editor'
 import { useNotesStore } from '@/stores/notes'
-import type { Note } from '../types/notes'
+import type { Note } from '@/types/notes'
 
 export function useNoteActions() {
   const noteEditor = useNoteEditorStore()
@@ -11,7 +11,6 @@ export function useNoteActions() {
 
   const handleSelect = (note: Note) => {
     notesStore.selectNote(note)
-
     noteEditor.openEditNoteSide({
       id: note.id,
       title: note.title,
@@ -24,17 +23,21 @@ export function useNoteActions() {
       const userId = authStore.user?.id
       if (!userId) return
 
-      await notesStore.addNote({ ...payload, userId })
+      await notesStore.addNote({
+        ...payload,
+        userId,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        starred: false,
+      })
       noteEditor.closeSideEditor()
       return
     }
 
     const editingId = noteEditor.editingNoteId
-
     await notesStore.updateNote(editingId, payload)
 
     const updated = notesStore.notes.find((note) => note.id === editingId)
-
     if (updated) {
       notesStore.selectNote(updated)
       noteEditor.openEditNoteSide({
@@ -47,26 +50,19 @@ export function useNoteActions() {
     }
   }
 
-  const handleDelete = async (id?: string) => {
+  const handleDelete = async (id?: string | number) => {
     const targetId = id ?? noteEditor.editingNoteId
-
     if (!targetId) return
 
     await notesStore.deleteNote(targetId)
 
-    if (notesStore.selectedNote?.id === targetId) {
-      notesStore.clearSelectedNote()
-    }
-
-    if (noteEditor.editingNoteId === targetId) {
-      noteEditor.closeSideEditor()
-    }
+    if (notesStore.selectedNote?.id === targetId) notesStore.clearSelectedNote()
+    if (noteEditor.editingNoteId === targetId) noteEditor.closeSideEditor()
   }
 
   const setupLifecycle = () => {
     onMounted(async () => {
       noteEditor.closeAll()
-
       if (authStore.user?.id) {
         await notesStore.fetchNotes(authStore.user.id)
       }

@@ -15,34 +15,58 @@
   ],
   "notes": [
     {
-      "title": "side bardaki add new note",
-      "content": "side bardaki add new note",
-      "userId": "_xwfKp8",
-      "id": 28
-    },
-    {
-      "title": "notestaki new note",
-      "content": "notestaki new note",
-      "userId": "_xwfKp8",
-      "id": 29
-    },
-    {
-      "title": "wow",
-      "content": "wow",
-      "userId": "_xwfKp8",
-      "id": 30
-    },
-    {
-      "title": "&",
-      "content": "bunu bul",
-      "userId": "_xwfKp8",
-      "id": 31
-    },
-    {
-      "title": "ilk notum",
-      "content": "ilk notumun denemesini yapıyorum",
+      "title": "dvsvv",
+      "content": "gegegeg",
       "userId": "wWedmDf",
-      "id": 32
+      "createdAt": "2026-04-12T20:42:22.982Z",
+      "updatedAt": "2026-04-12T20:42:22.982Z",
+      "starred": false,
+      "id": 36
+    },
+    {
+      "title": "egergeg",
+      "content": "egegege",
+      "userId": "wWedmDf",
+      "createdAt": "2026-04-12T20:42:32.855Z",
+      "updatedAt": "2026-04-12T20:42:32.855Z",
+      "starred": false,
+      "id": 37
+    },
+    {
+      "title": "tgrtgr",
+      "content": "rgrgrg",
+      "userId": "wWedmDf",
+      "createdAt": "2026-04-12T20:42:43.314Z",
+      "updatedAt": "2026-04-12T20:42:43.314Z",
+      "starred": false,
+      "id": 38
+    },
+    {
+      "title": "fgkjsndfkjgs",
+      "content": "jfgwıuhrewıu",
+      "userId": "wWedmDf",
+      "createdAt": "2026-04-12T20:42:53.201Z",
+      "updatedAt": "2026-04-12T20:42:53.201Z",
+      "starred": true,
+      "id": 39
+    },
+    {
+      "title": "teırtıutu",
+      "content": "krtgoetkgeorg",
+      "userId": "wWedmDf",
+      "createdAt": "2026-04-12T20:43:02.337Z",
+      "updatedAt": "2026-04-12T20:43:02.337Z",
+      "starred": false,
+      "id": 40
+    },
+    {
+      "title": "sfjwfıfweıf",
+      "content": "jfıwjjewrnfwjerf",
+      "userId": "wWedmDf",
+      "createdAt": "2026-04-12T20:43:13.770Z",
+      "updatedAt": "2026-04-12T20:43:13.770Z",
+      "starred": false,
+      "id": 41
     }
   ]
 }

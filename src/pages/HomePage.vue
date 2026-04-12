@@ -6,44 +6,64 @@
     <div class="notes-panel">
       <div v-if="notesStore.notes.length === 0" class="empty-state">
         <q-icon name="sticky_note_2" size="64px" color="primary" />
-
-        <div class="text-h6 q-mt-md">
-          No notes yet
-        </div>
-
-        <div class="text-grey q-mt-sm empty-text">
-          Create your first note.
-        </div>
-
-        <AddNoteButton
-          class="q-mt-lg"
-          color="primary"
-          icon="add"
-          label="Create Your First Note"
-        />
+        <div class="text-h6 q-mt-md">No notes yet</div>
+        <div class="text-grey q-mt-sm empty-text">Create your first note.</div>
+        <AddNoteButton class="q-mt-lg" color="primary" icon="add" label="Create Your First Note" />
       </div>
 
-      <div v-else class="notes-scroll">
-        <NoteCard
-          v-for="note in notesStore.filteredNotes"
-          :key="note.id"
-          :note="note"
-          @select="handleSelect"
-          @delete="handleDelete"
-        />
-      </div>
-    </div>
+      <template v-else>
+        <div class="row items-center justify-end q-mb-md">
+          <q-btn icon="sort" flat round dense color="grey-7" no-caps>
+            <q-menu anchor="bottom right" self="top right">
+              <q-list style="min-width: 200px">
+                <q-item-label header class="text-caption text-grey-6">Sort By</q-item-label>
+                <q-item
+                  v-for="opt in sortOptions"
+                  :key="opt.value"
+                  clickable
+                  v-close-popup
+                  :active="notesStore.sortOrder === opt.value"
+                  active-class="text-primary"
+                  @click="notesStore.sortOrder = opt.value"
+                >
+                  <q-item-section avatar>
+                    <q-icon :name="opt.icon" size="18px" />
+                  </q-item-section>
+                  <q-item-section>{{ opt.label }}</q-item-section>
+                  <q-item-section side v-if="notesStore.sortOrder === opt.value">
+                    <q-icon name="check" size="16px" color="primary" />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
+        </div>
 
-    <div v-if="noteEditor.showSideEditor" class="detail-panel">
-      <NoteEditor
-        variant="side"
-        :initial-title="noteEditor.title"
-        :initial-content="noteEditor.content"
-        :is-editing="noteEditor.editingNoteId !== null"
-        @save="handleSave"
-        @cancel="noteEditor.closeSideEditor()"
-        @delete="handleDelete"
-      />
+        <div class="content-area">
+          <div class="notes-scroll">
+            <NoteCard
+              v-for="note in notesStore.filteredNotes"
+              :key="note.id"
+              :note="note"
+              @select="handleSelect"
+              @delete="handleDelete"
+              @toggle-star="notesStore.toggleStar"
+            />
+          </div>
+
+          <div v-if="noteEditor.showSideEditor" class="detail-panel">
+            <NoteEditor
+              variant="side"
+              :initial-title="noteEditor.title"
+              :initial-content="noteEditor.content"
+              :is-editing="noteEditor.editingNoteId !== null"
+              @save="handleSave"
+              @cancel="noteEditor.closeSideEditor()"
+              @delete="handleDelete"
+            />
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -54,11 +74,18 @@ import NoteCard from '@/components/notes/NoteCard.vue'
 import NoteEditor from '@/components/notes/NoteEditor.vue'
 import AddNoteButton from '@/components/notes/AddNoteButton.vue'
 import { useNoteActions } from '@/composables/useNoteActions'
+import type { SortOrder } from '@/stores/notes'
 
 const { noteEditor, notesStore, handleSelect, handleSave, handleDelete, setupLifecycle } =
   useNoteActions()
 
 setupLifecycle()
+
+const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
+  { label: 'Newest', value: 'newest', icon: 'arrow_downward' },
+  { label: 'Oldest', value: 'oldest', icon: 'arrow_upward' },
+  { label: 'Last Updated', value: 'updated', icon: 'update' },
+]
 
 watch(
   () => notesStore.searchQuery,
@@ -79,23 +106,31 @@ watch(
   height: calc(100vh - 82px);
   min-height: 0;
   overflow: hidden;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-.notes-layout.detail-open {
-  grid-template-columns: 1.2fr 0.8fr;
+  display: flex;
+  flex-direction: column;
 }
 
 .notes-panel {
-  min-width: 0;
+  flex: 1;
   min-height: 0;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.content-area {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  max-height: 500px;
+}
+
+.content-area:has(.detail-panel) {
+  grid-template-columns: 1.2fr 0.8fr;
 }
 
 .notes-scroll {
-  height: min(500px, 100%);
   min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;
@@ -107,15 +142,12 @@ watch(
 }
 
 .detail-panel {
-  min-width: 0;
   min-height: 0;
-  height: min(500px, 100%);
   overflow: hidden;
 }
 
 .empty-state {
-  height: min(500px, 100%);
-  min-height: 0;
+  flex: 1;
   border: 2px dashed #d6d6d6;
   border-radius: 20px;
   background: #fafafa;
@@ -137,21 +169,13 @@ watch(
     overflow-y: auto;
   }
 
-  .notes-layout.detail-open {
-    grid-template-columns: 1fr;
-  }
-
-  .notes-scroll {
+  .content-area,
+  .content-area:has(.detail-panel) {
     grid-template-columns: 1fr;
   }
 
   .detail-panel {
-    height: min(500px, 100%);
-  }
-
-  .empty-state {
-    height: auto;
-    min-height: 320px;
+    height: 600px;
   }
 }
 </style>

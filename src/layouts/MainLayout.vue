@@ -57,11 +57,12 @@ const notesStore = useNotesStore()
 const authStore = useAuthStore()
 
 const handleSave = async (payload: { title: string; content: string }) => {
-if (noteEditor.editingNoteId === null) {
-  const userId = authStore.user?.id
-  if (!userId) return
-  await notesStore.addNote({ ...payload, userId })
-} else {
+  if (noteEditor.editingNoteId === null) {
+    const userId = authStore.user?.id
+    if (!userId) return
+    const now = new Date().toISOString()
+    await notesStore.addNote({ ...payload, userId, createdAt: now, updatedAt: now, starred: false })
+  } else {
     await notesStore.updateNote(noteEditor.editingNoteId, payload)
   }
 
