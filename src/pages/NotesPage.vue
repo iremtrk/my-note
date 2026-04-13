@@ -25,7 +25,7 @@
 
       <q-card v-else bordered class="full-height detail-card">
         <q-card-section class="text-grey">
-          Select a note.
+          {{t('notes.empty')}}
         </q-card-section>
       </q-card>
     </div>
@@ -37,6 +37,10 @@ import { watch } from 'vue'
 import NoteEditor from '@/components/notes/NoteEditor.vue'
 import NotesList from '@/components/notes/NotesList.vue'
 import { useNoteActions } from '@/composables/useNoteActions'
+import { I18n, useI18n } from "vue-i18n";
+
+const {t} =useI18n()
+
 
 const { noteEditor, notesStore, handleSelect, handleSave, handleDelete, setupLifecycle } =
   useNoteActions()
@@ -69,4 +73,5 @@ watch(
   display: flex;
   flex-direction: column;
 }
+
 </style>

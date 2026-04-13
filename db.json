@@ -11,6 +11,12 @@
       "email": "irem@gmail.com",
       "password": "$2b$10$CdfcK0FLK3uyIOKfQtyHDOyEAOqshsF0YQPJN1VyIeLUamiOGmnlS",
       "id": "wWedmDf"
+    },
+    {
+      "name": "rose",
+      "email": "rose@gmail.com",
+      "password": "$2b$10$KQ6svWy61X1UeWM32d4Z..vIZJmLhKEG9g8Srwmyfuux2swg/3tKm",
+      "id": "LhXusSq"
     }
   ],
   "notes": [
@@ -43,10 +49,10 @@
     },
     {
       "title": "fgkjsndfkjgs",
-      "content": "jfgwıuhrewıu",
+      "content": "jfgwıuhrewıuıdjssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss",
       "userId": "wWedmDf",
       "createdAt": "2026-04-12T20:42:53.201Z",
-      "updatedAt": "2026-04-12T20:42:53.201Z",
+      "updatedAt": "2026-04-13T08:37:27.092Z",
       "starred": true,
       "id": 39
     },
@@ -67,6 +73,24 @@
       "updatedAt": "2026-04-12T20:43:13.770Z",
       "starred": false,
       "id": 41
+    },
+    {
+      "title": "hyh",
+      "content": "hyhyhy",
+      "userId": "LhXusSq",
+      "createdAt": "2026-04-13T12:06:41.659Z",
+      "updatedAt": "2026-04-13T12:06:41.659Z",
+      "starred": false,
+      "id": 42
+    },
+    {
+      "title": "f",
+      "content": "ffffffffffffff",
+      "userId": "LhXusSq",
+      "createdAt": "2026-04-13T12:07:55.285Z",
+      "updatedAt": "2026-04-13T12:07:55.285Z",
+      "starred": false,
+      "id": 43
     }
   ]
 }

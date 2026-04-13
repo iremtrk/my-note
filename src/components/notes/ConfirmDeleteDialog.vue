@@ -6,24 +6,24 @@
   >
     <q-card class="delete-dialog">
       <q-card-section class="dialog-header no-wrap">
-        <div class="text-h6 dialog-title">{{ title }}</div>
+        <div class="text-h6 dialog-title">{{ finalTitle }}</div>
       </q-card-section>
 
       <q-card-section class="dialog-message">
-        {{ message }}
+        {{ finalMessage }}
       </q-card-section>
 
       <q-card-actions align="right" class="dialog-actions">
         <q-btn
           flat
-          label="Cancel"
+          :label=finalCancelLabel
           class="cancel-btn"
           @click="emit('update:modelValue', false)"
         />
         <q-btn
           unelevated
           color="negative"
-          :label="confirmLabel"
+          :label="finalConfirmLabel"
           class="delete-btn"
           @click="handleConfirm"
         />
@@ -33,24 +33,27 @@
 </template>
 
 <script setup lang="ts">
-withDefaults(
-  defineProps<{
-    modelValue: boolean
-    title?: string
-    message?: string
-    confirmLabel?: string
-  }>(),
-  {
-    title: 'Delete note',
-    message: 'Are you sure you want to delete this note?',
-    confirmLabel: 'Delete',
-  }
-)
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+const props = defineProps<{
+  modelValue: boolean
+  title?: string
+  message?: string
+  confirmLabel?: string
+}>()
 
 const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
   (e: 'confirm'): void
 }>()
+
+const { t } = useI18n()
+
+const finalTitle = computed(() => t('confirm.deleteTitle'))
+const finalMessage = computed(() => t('confirm.deleteMessage'))
+const finalConfirmLabel = computed(() => t('confirm.delete'))
+const finalCancelLabel=computed(()=>t('confirm.cancel'))
 
 const handleConfirm = () => {
   emit('confirm')

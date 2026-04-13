@@ -6,7 +6,7 @@
           v-model="notesStore.searchQuery"
           outlined
           dense
-          placeholder="Search notes..."
+          :placeholder="t('sidebar.searchNotes')"
           class="full-width"
         >
           <template #prepend>
@@ -17,7 +17,7 @@
 
       <q-item>
         <AddNoteButton
-          label="New Note"
+          :label="t('sidebar.newNote')"
           icon="add"
           color="primary"
           button-class="full-width"
@@ -34,7 +34,7 @@
         <q-item-section avatar>
           <q-icon name="home" />
         </q-item-section>
-        <q-item-section>Home</q-item-section>
+        <q-item-section>{{t('sidebar.home')}}</q-item-section>
       </q-item>
 
       <q-item
@@ -46,7 +46,7 @@
         <q-item-section avatar>
           <q-icon name="note" />
         </q-item-section>
-        <q-item-section>Notes</q-item-section>
+        <q-item-section>{{t('sidebar.notes')}}</q-item-section>
       </q-item>
 
       <q-item
@@ -58,7 +58,7 @@
         <q-item-section avatar>
           <q-icon name="task" />
         </q-item-section>
-        <q-item-section>Tasks</q-item-section>
+        <q-item-section>{{t('sidebar.tasks')}}</q-item-section>
       </q-item>
     </q-list>
 
@@ -73,7 +73,7 @@
     </q-avatar>
 
     <span class="text-weight-medium">
-      Welcome, {{ authStore.user?.name }}
+      {{t('sidebar.welcome')}}, {{ authStore.user?.name }}
     </span>
   </div>
 
@@ -94,6 +94,9 @@ import AddNoteButton from '@/components/notes/AddNoteButton.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useNotesStore } from '@/stores/notes'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()

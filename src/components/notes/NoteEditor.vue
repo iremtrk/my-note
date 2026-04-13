@@ -6,7 +6,7 @@
   >
     <q-card class="editor-card modal-editor-card">
       <q-card-section class="row items-center justify-between editor-header">
-        <div class="text-h6">New Note</div>
+        <div class="text-h6">{{t('editor.newNote')}}</div>
 
         <div class="row items-center q-gutter-sm">
           <q-btn icon="close" flat round @click="handleCancel" />
@@ -17,7 +17,7 @@
         <q-input
           v-model="localTitle"
           class="note-title-input"
-          label="Title"
+          :label="t('editor.title')"
           style="font-size: x-large";
           maxlength="80"
           counter
@@ -37,7 +37,7 @@
         <q-btn
           v-if="!isEditing"
           color="primary"
-          label="Add"
+          :label="t('editor.add')"
           @click="handleSave"
         />
       </q-card-actions>
@@ -46,7 +46,7 @@
 
   <q-card v-else bordered class="editor-card side-editor-card">
     <q-card-section class="row items-center justify-between editor-header">
-      <div class="text-h6">Edit Note</div>
+      <div class="text-h6">{{ t('editor.editNote') }}</div>
 
       <div class="row items-center q-gutter-sm">
         <q-btn
@@ -95,6 +95,9 @@
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from "vue";
 import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
+import { I18n, useI18n } from "vue-i18n";
+
+const {t} =useI18n()
 
 const props = withDefaults(
   defineProps<{

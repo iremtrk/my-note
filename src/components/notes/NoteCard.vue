@@ -1,6 +1,6 @@
 <template>
   <q-card
-    :style="{ background: getColor(note.id) }"
+    :style="{ background: getColor(note.id), color:$q.dark.isActive ? '#f5f5f5' : '#222'}"
     class="my-card"
     clickable
     @click="emit('select', note)"
@@ -48,6 +48,9 @@ import ConfirmDeleteDialog from '@/components/notes/ConfirmDeleteDialog.vue'
 import type { Note } from '@/types/notes'
 import { stripHtml } from '@/utils/html'
 import { formatNoteDate } from '@/utils/date'
+import { useQuasar } from 'quasar'
+
+const $q = useQuasar()
 
 const showDeleteConfirm = ref(false)
 
@@ -62,11 +65,17 @@ const props = defineProps<{ note: Note }>()
 const previewText = computed(() => stripHtml(props.note.content))
 const formattedDate = computed(() => formatNoteDate(props.note.createdAt))
 
-const colors = ['#fef3c7', '#dbeafe', '#dcfce7', '#fce7f3', '#ede9fe']
-const getColor = (id: string | number) => colors[Number(id) % colors.length]
+const lightColors = ['#fef3c7', '#dbeafe', '#dcfce7', '#fce7f3', '#ede9fe']
+const darkColors = ['#3a2f12', '#1e3a5f', '#1f4d3a', '#4a2238', '#352a56']
+
+const getColor = (id: string | number) => {
+  const palette = $q.dark.isActive ? darkColors : lightColors
+  return palette[Number(id) % palette.length]
+}
 </script>
 
 <style scoped>
+
 .my-card {
   width: 100%;
   max-width: 250px;

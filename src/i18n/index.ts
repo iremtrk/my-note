@@ -1,0 +1,14 @@
+import { createI18n } from 'vue-i18n'
+import tr from './tr'
+import en from './en'
+
+export const i18n = createI18n({
+  legacy: false,
+  globalInjection: true,
+  locale: localStorage.getItem('locale') || 'tr',
+  fallbackLocale: 'en',
+  messages: {
+    tr,
+    en
+  }
+})

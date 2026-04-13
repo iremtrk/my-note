@@ -4,6 +4,9 @@
 
 <script setup lang="ts">
 import { useNoteEditorStore } from '@/stores/note-editor'
+import { useI18n } from "vue-i18n";
+
+const t = useI18n
 
 defineOptions({ inheritAttrs: false })
 

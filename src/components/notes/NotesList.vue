@@ -1,14 +1,15 @@
 <template>
   <q-card bordered class="full-height notes-card">
     <q-card-section class="row items-center justify-between">
-      <div class="text-h6">My Notes</div>
+      <div class="text-h6">{{ t('noteList.header') }}</div>
 
       <div class="row items-center q-gutter-xs">
-        <!-- Filtre dropdown -->
         <q-btn icon="sort" flat round dense color="grey-7">
           <q-menu anchor="bottom right" self="top right">
             <q-list style="min-width: 180px">
-              <q-item-label header class="text-caption text-grey-6">Sırala</q-item-label>
+              <q-item-label header class="text-caption text-grey-6">
+                {{ t('noteList.sort') }}
+              </q-item-label>
 
               <q-item
                 v-for="opt in sortOptions"
@@ -31,14 +32,20 @@
           </q-menu>
         </q-btn>
 
-        <q-btn icon="add" round flat color="primary" @click="noteEditor.openNewNoteModal()" />
+        <q-btn
+          icon="add"
+          round
+          flat
+          color="primary"
+          @click="noteEditor.openNewNoteModal()"
+        />
       </div>
     </q-card-section>
 
     <q-separator />
 
     <q-card-section v-if="notes.length === 0" class="text-grey">
-      No notes yet.
+      {{ t('noteList.empty') }}
     </q-card-section>
 
     <q-card-section v-else class="list-section">
@@ -62,12 +69,18 @@
                 <q-btn
                   :icon="note.starred ? 'star' : 'star_border'"
                   :color="note.starred ? 'primary' : 'grey-5'"
-                  flat round dense size="sm"
+                  flat
+                  round
+                  dense
+                  size="sm"
                   @click.stop="$emit('toggle-star', note.id)"
                 />
                 <q-btn
                   icon="close"
-                  flat round dense size="sm"
+                  flat
+                  round
+                  dense
+                  size="sm"
                   color="grey-7"
                   class="delete-btn"
                   @click.stop="openDeleteConfirm(note.id)"
@@ -92,7 +105,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import ConfirmDeleteDialog from '@/components/notes/ConfirmDeleteDialog.vue'
 import type { Note } from '@/types/notes'
 import { stripHtml } from '@/utils/html'
@@ -100,6 +113,9 @@ import { formatNoteDate } from '@/utils/date'
 import { useNoteEditorStore } from '@/stores/note-editor'
 import { useNotesStore } from '@/stores/notes'
 import type { SortOrder } from '@/stores/notes'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n({ useScope: 'global' })
 
 defineProps<{
   notes: Note[]
@@ -115,11 +131,11 @@ const emit = defineEmits<{
 const noteEditor = useNoteEditorStore()
 const notesStore = useNotesStore()
 
-const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
-  { label: 'Oluşturma: Yeniden Eskiye', value: 'newest', icon: 'arrow_downward' },
-  { label: 'Oluşturma: Eskiden Yeniye', value: 'oldest', icon: 'arrow_upward' },
-  { label: 'Son Güncellenen', value: 'updated', icon: 'update' },
-]
+const sortOptions = computed<{ label: string; value: SortOrder; icon: string }[]>(() => [
+  { label: t('noteList.sortNewest'), value: 'newest', icon: 'arrow_upward' },
+  { label: t('noteList.sortOldest'), value: 'oldest', icon: 'arrow_upward' },
+  { label: t('noteList.sortUpdated'), value: 'updated', icon: 'update' },
+])
 
 const showDeleteConfirm = ref(false)
 const deletingNoteId = ref<string | number | null>(null)

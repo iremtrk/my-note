@@ -1,0 +1,85 @@
+export default {
+  authLayout: {
+    loginTitle: 'Notlarını, görevlerini ve fikirlerini tek bir yerde topla.',
+    loginSubtitle: 'Günlük akışını düzenle, önemli görevleri takip et ve düşüncelerini kaybetme.',
+    loginFeature1: 'Kişisel notlar oluştur ve yönet',
+    loginFeature2: 'Günlük görevlerini takip et',
+    loginFeature3: 'Her şeyi sade ve erişilebilir tut',
+
+    registerTitle: 'Kendi not ve görev alanını oluşturmaya başla.',
+    registerSubtitle: 'Fikirlerini kaydetmek, gününü planlamak ve her şeyi tek yerden yönetmek için hesap oluştur.',
+    registerFeature1: 'Notlarını güvenle sakla',
+    registerFeature2: 'Günlük görev akışını düzenle',
+    registerFeature3: 'İçeriklerine istediğin zaman eriş'
+  },
+
+  login: {
+    title: 'Tekrar hoş geldin',
+    subtitle: 'Notlarını ve görevlerini yönetmeye devam etmek için giriş yap.',
+    email: 'E-posta',
+    password: 'Şifre',
+    button: 'Giriş Yap',
+    goRegister: 'Hesabın yok mu? Kayıt ol',
+    success: 'Giriş başarılı',
+    failed: 'Giriş başarısız. Bilgilerini kontrol et.'
+  },
+
+  register: {
+    title: 'Hesap oluştur',
+    subtitle: 'Notlarını ve görevlerini yönetmeye başlamak için kayıt ol.',
+    name: 'İsim',
+    email: 'E-posta',
+    password: 'Şifre',
+    button: 'Kayıt Ol',
+    goLogin: 'Zaten hesabın var mı? Giriş yap',
+    success: 'Hesap başarıyla oluşturuldu',
+    successCaption: 'Artık bilgilerinle giriş yapabilirsin.',
+    emailTaken: 'Bu e-posta zaten kayıtlı',
+    emailTakenCaption: 'Giriş yapmayı ya da başka bir e-posta kullanmayı deneyebilirsin.',
+    failed: 'Kayıt başarısız',
+    failedCaption: 'Bir şeyler yanlış gitti. Lütfen tekrar dene.'
+  },
+  main: {
+    header: "Notlarım",
+  },
+  sidebar: {
+    searchNotes: "Not ara..",
+    newNote: "Yeni Not",
+    home: "Anasayfa",
+    notes: "Notlar",
+    tasks: "Görevler",
+    welcome: "Hoşgeldin",
+  },
+  home:{
+    noNote:"Henüz not yok",
+    firstNote:"İlk notunu oluştur",
+    firstNoteBtn:"İlk not",
+    sort:"Sırala",
+    sortNewest: 'En Yeni',
+    sortOldest: 'En Eski',
+    sortUpdated: 'Son Güncellenen'
+  },
+    notes:{
+    empty:"Bir not seçin"
+  },
+  confirm: {
+    deleteTitle: "Notu sil",
+    deleteMessage: "Bu notu silmek istediğine emin misin?",
+    delete: "Sİl",
+    cancel: "İptal",
+  },
+   editor:{
+    editNote:"Notu Düzenle",
+    newNote:"Not Ekle",
+    title:"Başlık",
+    add:"Ekle"
+  },
+    noteList:{
+    header:"Notlarım",
+    sort:"Sırala",
+    empty: 'Henüz not yok.',
+    sortNewest: 'En Yeni',
+    sortOldest: 'En Eski',
+    sortUpdated: 'Son Güncellenen'
+  }
+};

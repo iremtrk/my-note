@@ -1,15 +1,15 @@
 <template>
   <q-card-section class="q-pb-none">
-    <div class="text-h5 text-weight-bold">Welcome back</div>
+    <div class="text-h5 text-weight-bold">{{ t('login.title') }}</div>
     <div class="text-grey-7 q-mt-sm">
-      Login to continue managing your notes and tasks.
+      {{ t('login.subtitle') }}
     </div>
   </q-card-section>
 
   <q-card-section class="column q-gutter-md">
     <q-input
       v-model="email"
-      label="Email"
+      :label="t('login.email')"
       outlined
       rounded
       :error="!!emailError"
@@ -19,7 +19,7 @@
 
     <q-input
       v-model="password"
-      label="Password"
+      :label="t('login.password')"
       type="password"
       outlined
       rounded
@@ -31,7 +31,7 @@
 
   <q-card-actions vertical class="q-px-md q-pb-md">
     <q-btn
-      label="Login"
+      :label="t('login.button')"
       color="primary"
       unelevated
       rounded
@@ -41,7 +41,7 @@
 
     <q-btn
       flat
-      label="Don't have an account? Register"
+      :label="t('login.goRegister')"
       class="q-mt-sm"
       @click="$router.push('/register')"
     />
@@ -54,6 +54,9 @@ import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { loginSchema } from '@/validation/auth'
 import { Notify } from 'quasar'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -81,7 +84,7 @@ const handleLogin = async () => {
 
     Notify.create({
       type: 'positive',
-      message: 'Login successful',
+      message: t('login.success'),
       position: 'top',
     })
 
@@ -95,7 +98,7 @@ const handleLogin = async () => {
     } else {
       Notify.create({
         type: 'negative',
-        message: 'Login failed. Please check your credentials.',
+        message: t('login.failed'),
         position: 'top',
       })
       console.error(err)

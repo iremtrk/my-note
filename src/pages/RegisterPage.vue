@@ -1,15 +1,15 @@
 <template>
   <q-card-section class="q-pb-none">
-    <div class="text-h5 text-weight-bold">Create account</div>
+    <div class="text-h5 text-weight-bold">{{ t('register.title') }}</div>
     <div class="text-grey-7 q-mt-sm">
-      Register to start managing your notes and tasks.
+      {{ t('register.subtitle') }}
     </div>
   </q-card-section>
 
   <q-card-section class="column q-gutter-md">
     <q-input
       v-model="name"
-      label="Name"
+      :label="t('register.name')"
       outlined
       rounded
       :error="!!nameError"
@@ -19,7 +19,7 @@
 
     <q-input
       v-model="email"
-      label="Email"
+      :label="t('register.email')"
       outlined
       rounded
       :error="!!emailError"
@@ -29,7 +29,7 @@
 
     <q-input
       v-model="password"
-      label="Password"
+      :label="t('register.password')"
       type="password"
       outlined
       rounded
@@ -41,7 +41,7 @@
 
   <q-card-actions vertical class="q-px-md q-pb-md">
     <q-btn
-      label="Register"
+      :label="t('register.button')"
       color="primary"
       unelevated
       rounded
@@ -52,7 +52,7 @@
 
     <q-btn
       flat
-      label="Already have an account? Login"
+      :label="t('register.goLogin')"
       class="q-mt-sm"
       @click="$router.push('/login')"
     />
@@ -66,6 +66,9 @@ import { useRouter } from 'vue-router'
 import { registerSchema } from '@/validation/auth'
 import { Notify } from 'quasar'
 import bcrypt from 'bcryptjs'
+import { useI18n } from 'vue-i18n'
+
+const { t } = useI18n({ useScope: 'global' })
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -105,8 +108,8 @@ const handleRegister = async () => {
 
     Notify.create({
       type: 'positive',
-      message: 'Account created successfully',
-      caption: 'You can now login with your credentials.',
+      message: t('register.success'),
+      caption: t('register.successCaption'),
       position: 'top',
       timeout: 2500,
     })
@@ -126,10 +129,10 @@ const handleRegister = async () => {
 
       Notify.create({
         type: isEmailTaken ? 'warning' : 'negative',
-        message: isEmailTaken ? 'This email is already registered' : 'Registration failed',
+        message: isEmailTaken ? t('register.emailTaken') :  t('register.failed'),
         caption: isEmailTaken
-          ? 'Please login or use another email.'
-          : 'Something went wrong. Please try again.',
+          ? t('register.emailTakenCaption')
+          : t('register.failedCaption'),
         position: 'top',
         timeout: 3000,
       })

@@ -6,9 +6,9 @@
     <div class="notes-panel">
       <div v-if="notesStore.notes.length === 0" class="empty-state">
         <q-icon name="sticky_note_2" size="64px" color="primary" />
-        <div class="text-h6 q-mt-md">No notes yet</div>
-        <div class="text-grey q-mt-sm empty-text">Create your first note.</div>
-        <AddNoteButton class="q-mt-lg" color="primary" icon="add" label="Create Your First Note" />
+        <div class="text-h6 q-mt-md">{{ t('home.noNote') }}</div>
+        <div class="text-grey q-mt-sm empty-text">{{t('home.firstNote')}}</div>
+        <AddNoteButton class="q-mt-lg" color="primary" icon="add" :label="t('home.firstNoteBtn')" />
       </div>
 
       <template v-else>
@@ -16,7 +16,7 @@
           <q-btn icon="sort" flat round dense color="grey-7" no-caps>
             <q-menu anchor="bottom right" self="top right">
               <q-list style="min-width: 200px">
-                <q-item-label header class="text-caption text-grey-6">Sort By</q-item-label>
+                <q-item-label header class="text-caption text-grey-6">{{ t('home.sort') }}</q-item-label>
                 <q-item
                   v-for="opt in sortOptions"
                   :key="opt.value"
@@ -75,6 +75,9 @@ import NoteEditor from '@/components/notes/NoteEditor.vue'
 import AddNoteButton from '@/components/notes/AddNoteButton.vue'
 import { useNoteActions } from '@/composables/useNoteActions'
 import type { SortOrder } from '@/stores/notes'
+import { I18n, useI18n } from 'vue-i18n'
+
+const {t}=useI18n()
 
 const { noteEditor, notesStore, handleSelect, handleSave, handleDelete, setupLifecycle } =
   useNoteActions()
@@ -82,9 +85,9 @@ const { noteEditor, notesStore, handleSelect, handleSave, handleDelete, setupLif
 setupLifecycle()
 
 const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
-  { label: 'Newest', value: 'newest', icon: 'arrow_downward' },
-  { label: 'Oldest', value: 'oldest', icon: 'arrow_upward' },
-  { label: 'Last Updated', value: 'updated', icon: 'update' },
+  { label: t('home.sortNewest'), value: 'newest', icon: 'arrow_downward' },
+  { label: t('home.sortOldest'), value: 'oldest', icon: 'arrow_upward' },
+  { label: t('home.sortUpdated'), value: 'updated', icon: 'update' },
 ]
 
 watch(

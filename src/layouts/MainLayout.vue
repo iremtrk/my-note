@@ -2,22 +2,36 @@
   <q-layout view="hHh Lpr lFf">
     <q-header elevated class="bg-primary">
       <q-toolbar>
+        <q-btn flat dense icon="menu" @click="drawer = !drawer" />
+
+        <q-toolbar-title>{{ t("main.header") }}</q-toolbar-title>
+
+        <q-btn-dropdown
+          flat
+          :label="locale.toUpperCase()"
+          dropdown-icon="translate"
+        >
+          <q-list>
+            <q-item clickable v-close-popup @click="changeLocale('tr')">
+              <q-item-section>TR</q-item-section>
+            </q-item>
+
+            <q-item clickable v-close-popup @click="changeLocale('en')">
+              <q-item-section>EN</q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
+        
         <q-btn
           flat
-          dense
-          icon="menu"
-          @click="drawer = !drawer"
+          round
+          :icon="$q.dark.isActive ? 'dark_mode' : 'light_mode'"
+          @click="toggleDark"
         />
-        <q-toolbar-title>My App</q-toolbar-title>
       </q-toolbar>
     </q-header>
 
-    <q-drawer
-      v-model="drawer"
-      show-if-above
-      bordered
-      :breakpoint="768"
-    >
+    <q-drawer v-model="drawer" show-if-above bordered :breakpoint="768">
       <AppSidebar />
     </q-drawer>
 
@@ -44,30 +58,53 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
+import { useQuasar } from "quasar";
 import AppSidebar from "../components/layout/AppSidebar.vue";
-import NoteEditor from '@/components/notes/NoteEditor.vue'
-import { useNoteEditorStore } from '@/stores/note-editor'
-import { useNotesStore } from '@/stores/notes'
-import { useAuthStore } from '@/stores/auth'
+import NoteEditor from "@/components/notes/NoteEditor.vue";
+import { useNoteEditorStore } from "@/stores/note-editor";
+import { useNotesStore } from "@/stores/notes";
+import { useAuthStore } from "@/stores/auth";
+import { useI18n } from "vue-i18n";
 
-const drawer = ref(true)
+const $q = useQuasar();
+const { t, locale } = useI18n();
 
-const noteEditor = useNoteEditorStore()
-const notesStore = useNotesStore()
-const authStore = useAuthStore()
+const changeLocale = (lang: "tr" | "en") => {
+  locale.value = lang;
+  localStorage.setItem("locale", lang);
+};
+
+const toggleDark = () => {
+  $q.dark.toggle();
+  localStorage.setItem("dark", String($q.dark.isActive));
+};
+
+const drawer = ref(true);
+
+const noteEditor = useNoteEditorStore();
+const notesStore = useNotesStore();
+const authStore = useAuthStore();
 
 const handleSave = async (payload: { title: string; content: string }) => {
   if (noteEditor.editingNoteId === null) {
-    const userId = authStore.user?.id
-    if (!userId) return
-    const now = new Date().toISOString()
-    await notesStore.addNote({ ...payload, userId, createdAt: now, updatedAt: now, starred: false })
+    const userId = authStore.user?.id;
+    if (!userId) return;
+
+    const now = new Date().toISOString();
+
+    await notesStore.addNote({
+      ...payload,
+      userId,
+      createdAt: now,
+      updatedAt: now,
+      starred: false,
+    });
   } else {
-    await notesStore.updateNote(noteEditor.editingNoteId, payload)
+    await notesStore.updateNote(noteEditor.editingNoteId, payload);
   }
 
-  noteEditor.closeModal()
-}
+  noteEditor.closeModal();
+};
 </script>
 
 <style scoped>
@@ -89,5 +126,4 @@ const handleSave = async (payload: { title: string; content: string }) => {
   padding: 16px;
   box-sizing: border-box;
 }
-
 </style>
