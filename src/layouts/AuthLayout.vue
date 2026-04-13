@@ -172,26 +172,6 @@ const currentContent = computed(() => {
    color: #111827;
 }
 
-:global(body.body--dark) .overlay {
-  background: rgba(0, 0, 0, 0.45);
-}
-
-:global(body.body--dark) .auth-left-content {
-  color: white;
-}
-
-:global(body.body--dark) .auth-title {
-  color: white;
-}
-
-:global(body.body--dark) .auth-subtitle {
-  color: rgba(255, 255, 255, 0.9);
-}
-
-:global(body.body--dark) .feature-item {
-  color: white;
-}
-
 .auth-right {
   position: relative;
   display: flex;

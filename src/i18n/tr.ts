@@ -81,5 +81,33 @@ export default {
     sortNewest: 'En Yeni',
     sortOldest: 'En Eski',
     sortUpdated: 'Son Güncellenen'
-  }
+  },
+  tasks: {
+    empty: 'Detayları görmek için bir görev seçin',
+  },
+  taskList: {
+    header: 'Görevlerim',
+    sort: 'Sırala',
+    empty: 'Henüz görev yok. İlk görevini oluştur!',
+    sortNewest: 'En Yeni',
+    sortOldest: 'En Eski',
+    sortDueDate: 'Bitiş Tarihi',
+    sortPriority: 'Öncelik',
+  },
+  taskEditor: {
+    newTask: 'Yeni Görev',
+    taskDetail: 'Görev Detayı',
+    title: 'Başlık',
+    description: 'Açıklama',
+    dueDate: 'Bitiş Tarihi',
+    priority: 'Öncelik',
+    low: 'Düşük',
+    medium: 'Orta',
+    high: 'Yüksek',
+    add: 'Görev Ekle',
+    cancel: 'İptal',
+    deleteTitle: 'Görevi Sil',
+    deleteMessage: 'Bu görevi silmek istediğine emin misin?',
+    delete: 'Sil',
+  },
 };
