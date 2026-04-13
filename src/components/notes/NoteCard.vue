@@ -13,7 +13,7 @@
       <div class="row items-center">
         <q-btn
           :icon="note.starred ? 'star' : 'star_border'"
-          :color="note.starred ? 'pink' : 'grey-5'"
+          :color="note.starred ? 'primary' : 'grey-5'"
           flat round dense
           class="star-btn"
           @click.stop="emit('toggle-star', note.id)"

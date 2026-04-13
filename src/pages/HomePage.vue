@@ -104,6 +104,7 @@ watch(
 <style scoped>
 .notes-layout {
   height: calc(100vh - 82px);
+  max-height: 500px;
   min-height: 0;
   overflow: hidden;
   display: flex;

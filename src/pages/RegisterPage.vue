@@ -1,72 +1,62 @@
 <template>
-  <AuthLayout
-    title="Start building your personal note and task space."
-    subtitle="Create an account to save ideas, plan your day, and manage everything from one clean workspace."
-    :features="[
-      'Save your notes securely',
-      'Organize your daily task flow',
-      'Access your content anytime',
-    ]"
-  >
-    <q-card-section class="q-pb-none">
-      <div class="text-h5 text-weight-bold">Create account</div>
-      <div class="text-grey-7 q-mt-sm">
-        Register to start managing your notes and tasks.
-      </div>
-    </q-card-section>
+  <q-card-section class="q-pb-none">
+    <div class="text-h5 text-weight-bold">Create account</div>
+    <div class="text-grey-7 q-mt-sm">
+      Register to start managing your notes and tasks.
+    </div>
+  </q-card-section>
 
-    <q-card-section class="column q-gutter-md">
-      <q-input
-        v-model="name"
-        label="Name"
-        outlined
-        rounded
-        :error="!!nameError"
-        :error-message="nameError"
-        @keyup.enter="handleRegister"
-      />
+  <q-card-section class="column q-gutter-md">
+    <q-input
+      v-model="name"
+      label="Name"
+      outlined
+      rounded
+      :error="!!nameError"
+      :error-message="nameError"
+      @keyup.enter="handleRegister"
+    />
 
-      <q-input
-        v-model="email"
-        label="Email"
-        outlined
-        rounded
-        :error="!!emailError"
-        :error-message="emailError"
-        @keyup.enter="handleRegister"
-      />
+    <q-input
+      v-model="email"
+      label="Email"
+      outlined
+      rounded
+      :error="!!emailError"
+      :error-message="emailError"
+      @keyup.enter="handleRegister"
+    />
 
-      <q-input
-        v-model="password"
-        label="Password"
-        type="password"
-        outlined
-        rounded
-        :error="!!passwordError"
-        :error-message="passwordError"
-        @keyup.enter="handleRegister"
-      />
-    </q-card-section>
+    <q-input
+      v-model="password"
+      label="Password"
+      type="password"
+      outlined
+      rounded
+      :error="!!passwordError"
+      :error-message="passwordError"
+      @keyup.enter="handleRegister"
+    />
+  </q-card-section>
 
-    <q-card-actions vertical class="q-px-md q-pb-md">
-      <q-btn
-        label="Register"
-        color="primary"
-        unelevated
-        rounded
-        class="full-width auth-btn"
-        :loading="loading"
-        @click="handleRegister"
-      />
+  <q-card-actions vertical class="q-px-md q-pb-md">
+    <q-btn
+      label="Register"
+      color="primary"
+      unelevated
+      rounded
+      class="full-width auth-btn"
+      :loading="loading"
+      @click="handleRegister"
+    />
 
-      <q-btn
-        flat
-        label="Already have an account? Login"
-        class="q-mt-sm"
-        @click="$router.push('/login')"
-      />
-    </q-card-actions>
-  </AuthLayout>
+    <q-btn
+      flat
+      label="Already have an account? Login"
+      class="q-mt-sm"
+      @click="$router.push('/login')"
+    />
+  </q-card-actions>
 </template>
 
 <script setup lang="ts">
@@ -76,7 +66,6 @@ import { useRouter } from 'vue-router'
 import { registerSchema } from '@/validation/auth'
 import { Notify } from 'quasar'
 import bcrypt from 'bcryptjs'
-import AuthLayout from '@/components/auth/AuthLayout.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()

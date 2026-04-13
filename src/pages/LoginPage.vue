@@ -1,61 +1,51 @@
 <template>
-  <AuthLayout
-    title="Capture your notes, tasks, and ideas in one place."
-    subtitle="Organize your daily workflow, keep track of important tasks, and never lose your thoughts again."
-    :features="[
-      'Create and manage personal notes',
-      'Track daily tasks',
-      'Keep everything simple and accessible',
-    ]"
-  >
-    <q-card-section class="q-pb-none">
-      <div class="text-h5 text-weight-bold">Welcome back</div>
-      <div class="text-grey-7 q-mt-sm">
-        Login to continue managing your notes and tasks.
-      </div>
-    </q-card-section>
+  <q-card-section class="q-pb-none">
+    <div class="text-h5 text-weight-bold">Welcome back</div>
+    <div class="text-grey-7 q-mt-sm">
+      Login to continue managing your notes and tasks.
+    </div>
+  </q-card-section>
 
-    <q-card-section class="column q-gutter-md">
-      <q-input
-        v-model="email"
-        label="Email"
-        outlined
-        rounded
-        :error="!!emailError"
-        :error-message="emailError"
-        @keyup.enter="handleLogin"
-      />
+  <q-card-section class="column q-gutter-md">
+    <q-input
+      v-model="email"
+      label="Email"
+      outlined
+      rounded
+      :error="!!emailError"
+      :error-message="emailError"
+      @keyup.enter="handleLogin"
+    />
 
-      <q-input
-        v-model="password"
-        label="Password"
-        type="password"
-        outlined
-        rounded
-        :error="!!passwordError"
-        :error-message="passwordError"
-        @keyup.enter="handleLogin"
-      />
-    </q-card-section>
+    <q-input
+      v-model="password"
+      label="Password"
+      type="password"
+      outlined
+      rounded
+      :error="!!passwordError"
+      :error-message="passwordError"
+      @keyup.enter="handleLogin"
+    />
+  </q-card-section>
 
-    <q-card-actions vertical class="q-px-md q-pb-md">
-      <q-btn
-        label="Login"
-        color="primary"
-        unelevated
-        rounded
-        class="full-width auth-btn"
-        @click="handleLogin"
-      />
+  <q-card-actions vertical class="q-px-md q-pb-md">
+    <q-btn
+      label="Login"
+      color="primary"
+      unelevated
+      rounded
+      class="full-width auth-btn"
+      @click="handleLogin"
+    />
 
-      <q-btn
-        flat
-        label="Don't have an account? Register"
-        class="q-mt-sm"
-        @click="$router.push('/register')"
-      />
-    </q-card-actions>
-  </AuthLayout>
+    <q-btn
+      flat
+      label="Don't have an account? Register"
+      class="q-mt-sm"
+      @click="$router.push('/register')"
+    />
+  </q-card-actions>
 </template>
 
 <script setup lang="ts">
@@ -64,7 +54,6 @@ import { useAuthStore } from '@/stores/auth'
 import { useRouter } from 'vue-router'
 import { loginSchema } from '@/validation/auth'
 import { Notify } from 'quasar'
-import AuthLayout from '@/components/auth/AuthLayout.vue'
 
 const authStore = useAuthStore()
 const router = useRouter()
