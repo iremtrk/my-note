@@ -96,7 +96,7 @@ import { useAuthStore } from '@/stores/auth'
 import { useNotesStore } from '@/stores/notes'
 import { useI18n } from 'vue-i18n'
 
-const { t } = useI18n()
+const { t,locale } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -105,6 +105,7 @@ const notesStore = useNotesStore()
 const handleLogout = () => {
   authStore.logout()
   notesStore.searchQuery = ''
+  locale.value = 'en' 
   router.push('/login')
 }
 </script>

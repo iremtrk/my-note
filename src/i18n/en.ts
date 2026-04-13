@@ -44,11 +44,11 @@ export default {
   },
   sidebar: {
     searchNotes: "Search Notes..",
-    newNote: "Yeni Not",
-    home: "Anasayfa",
-    notes: "Notlar",
-    tasks: "Görevler",
-    welcome: "Hoşgeldin",
+    newNote: "New Note",
+    home: "Home",
+    notes: "Notes",
+    tasks: "Tasks",
+    welcome: "Welcome",
   },
     home:{
     noNote:"No notes yet",
