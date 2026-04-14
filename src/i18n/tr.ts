@@ -45,6 +45,7 @@ export default {
   sidebar: {
     searchNotes: "Not ara..",
     newNote: "Yeni Not",
+    newTask:"Yeni Görev",
     home: "Anasayfa",
     notes: "Notlar",
     tasks: "Görevler",
@@ -80,7 +81,8 @@ export default {
     empty: 'Henüz not yok.',
     sortNewest: 'En Yeni',
     sortOldest: 'En Eski',
-    sortUpdated: 'Son Güncellenen'
+    sortUpdated: 'Son Güncellenen',
+    search: 'Not ara..'
   },
   tasks: {
     empty: 'Detayları görmek için bir görev seçin',
@@ -93,6 +95,7 @@ export default {
     sortOldest: 'En Eski',
     sortDueDate: 'Bitiş Tarihi',
     sortPriority: 'Öncelik',
+    search: 'Görev ara..'
   },
   taskEditor: {
     newTask: 'Yeni Görev',

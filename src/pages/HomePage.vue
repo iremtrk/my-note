@@ -1,7 +1,9 @@
 <template>
-  <div class="notes-layout q-pa-md" :class="{ 'detail-open': noteEditor.showSideEditor }">
+  <div
+    class="notes-layout q-pa-md"
+    :class="{ 'detail-open': noteEditor.showSideEditor }"
+  >
     <div class="notes-panel">
-
       <div v-if="!notesStore.hasFetched" class="loading-state">
         <q-spinner color="primary" size="50px" />
       </div>
@@ -12,12 +14,16 @@
         <div class="text-grey q-mt-sm empty-text">
           {{ t("home.firstNote") }}
         </div>
-        <AddNoteButton
+        <!-- <AddNoteButton
           class="q-mt-lg"
           color="primary"
           icon="add"
           :label="t('home.firstNoteBtn')"
         />
+        <AddTaskButton 
+        class="q-mt-lg" 
+        color="primary" 
+        icon="add" /> -->
       </div>
 
       <template v-else>
@@ -42,7 +48,10 @@
                     <q-icon :name="opt.icon" size="18px" />
                   </q-item-section>
                   <q-item-section>{{ opt.label }}</q-item-section>
-                  <q-item-section side v-if="notesStore.sortOrder === opt.value">
+                  <q-item-section
+                    side
+                    v-if="notesStore.sortOrder === opt.value"
+                  >
                     <q-icon name="check" size="16px" color="primary" />
                   </q-item-section>
                 </q-item>
@@ -59,7 +68,12 @@
               :note="note"
               @select="handleSelect"
               @delete="handleDelete"
-              @toggle-star="(id) => notesStore.toggleStar(typeof id === 'string' ? parseInt(id) : id)"
+              @toggle-star="
+                (id) =>
+                  notesStore.toggleStar(
+                    typeof id === 'string' ? parseInt(id) : id,
+                  )
+              "
             />
           </div>
 
@@ -78,6 +92,7 @@
       </template>
     </div>
   </div>
+  <div></div>
 </template>
 
 <script setup lang="ts">
@@ -90,6 +105,7 @@ import type { SortOrder } from "@/stores/notes";
 import { I18n, useI18n } from "vue-i18n";
 
 import { useLoadingStore } from "@/stores/loading";
+import AddTaskButton from "@/components/tasks/AddTaskButton.vue";
 
 const loading = useLoadingStore();
 
@@ -112,20 +128,20 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
   { label: t("home.sortUpdated"), value: "updated", icon: "update" },
 ];
 
-watch(
-  () => notesStore.searchQuery,
-  () => {
-    if (
-      notesStore.selectedNote &&
-      !notesStore.filteredNotes.some(
-        (note) => note.id === notesStore.selectedNote?.id,
-      )
-    ) {
-      notesStore.clearSelectedNote();
-      noteEditor.closeSideEditor();
-    }
-  },
-);
+// watch(
+//   () => notesStore.searchQuery,
+//   () => {
+//     if (
+//       notesStore.selectedNote &&
+//       !notesStore.filteredNotes.some(
+//         (note) => note.id === notesStore.selectedNote?.id,
+//       )
+//     ) {
+//       notesStore.clearSelectedNote();
+//       noteEditor.closeSideEditor();
+//     }
+//   },
+// );
 </script>
 
 <style scoped>
@@ -152,7 +168,7 @@ watch(
   grid-template-columns: 1fr;
   gap: 16px;
   max-height: 500px;
-  position:relative
+  position: relative;
 }
 
 .content-area:has(.detail-panel) {

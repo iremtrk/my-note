@@ -6,7 +6,7 @@
           v-model="notesStore.searchQuery"
           outlined
           dense
-          placeholder="Not ara"
+          :placeholder="t('noteList.search')"
           class="full-width"
         >
           <template #prepend>

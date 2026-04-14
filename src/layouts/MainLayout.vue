@@ -53,6 +53,17 @@
       @save="handleSave"
       @cancel="noteEditor.closeModal()"
     />
+
+    <TaskEditor
+      v-model="taskEditor.showAddModal"
+      variant="modal"
+      :initial-title="taskEditor.title"
+      :initial-content="taskEditor.content"
+      :initial-due-date="taskEditor.dueDate"
+      :initial-priority="taskEditor.priority"
+      @save="handleAddTask"
+      @cancel="taskEditor.closeAddModal()"
+    />
   </q-layout>
 </template>
 
@@ -65,9 +76,14 @@ import { useNoteEditorStore } from "@/stores/note-editor";
 import { useNotesStore } from "@/stores/notes";
 import { useAuthStore } from "@/stores/auth";
 import { useI18n } from "vue-i18n";
-import { useLoadingStore } from '@/stores/loading'
+import { useLoadingStore } from "@/stores/loading";
 
-const loading = useLoadingStore()
+import TaskEditor from "@/components/tasks/TaskEditor.vue";
+import { useTaskEditorStore } from "@/stores/task-editor";
+import { useTasksStore } from "@/stores/tasks";
+
+
+const loading = useLoadingStore();
 
 const $q = useQuasar();
 const { t, locale } = useI18n();
@@ -82,11 +98,13 @@ const toggleDark = () => {
   localStorage.setItem("dark", String($q.dark.isActive));
 };
 
-const drawer = ref(true); 
+const drawer = ref(true);
 
 const noteEditor = useNoteEditorStore();
 const notesStore = useNotesStore();
 const authStore = useAuthStore();
+const taskEditor = useTaskEditorStore()
+const tasksStore =useTasksStore()
 
 const handleSave = async (payload: { title: string; content: string }) => {
   if (noteEditor.editingNoteId === null) {
@@ -108,6 +126,26 @@ const handleSave = async (payload: { title: string; content: string }) => {
 
   noteEditor.closeModal();
 };
+
+  const handleAddTask = async (payload: {
+    title: string
+    content: string
+    dueDate: string | null
+    priority: 'low' | 'medium' | 'high' 
+  }) => {
+    const userId = authStore.user?.id
+    if (!userId) return
+
+    await tasksStore.addTask({
+      ...payload,
+      userId,
+      createdAt: new Date().toISOString(),
+      starred: false,
+      completed: false,
+    })
+
+    taskEditor.closeAddModal()
+  }
 </script>
 
 <style scoped>

@@ -209,8 +209,8 @@ onBeforeUnmount(() => {
 }
 
 .modal-editor-card {
-  min-width: 700px;
-  max-width: 900px;
+  min-width: 480px;
+  max-width: 560px;
   width: 100%;
   height: 85vh;
 }

@@ -6,9 +6,8 @@
           v-model="tasksStore.searchQuery"
           outlined
           dense
-          placeholder="Task ara"
-          class="full-width"
-        >
+          :placeholder="t('taskList.search')"
+          class="full-width">
           <template #prepend>
             <q-icon name="search" />
           </template>
@@ -118,12 +117,11 @@ const sortOptions = computed<
   padding: 0;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 }
 .task-scroll {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
 }
-
-
 </style>

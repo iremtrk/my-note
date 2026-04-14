@@ -45,6 +45,7 @@ export default {
   sidebar: {
     searchNotes: "Search Notes..",
     newNote: "New Note",
+    newTask:"New Task",
     home: "Home",
     notes: "Notes",
     tasks: "Tasks",
@@ -81,6 +82,7 @@ export default {
     sortNewest: "Newest",
     sortOldest: "Oldest",
     sortUpdated: "Last Updated",
+    search: 'Search Note..'
   },
   tasks: {
     empty: 'Select a task to view details',
@@ -93,6 +95,7 @@ export default {
     sortOldest: 'Oldest',
     sortDueDate: 'Due Date',
     sortPriority: 'Priority',
+    search: 'Search Task..'
   },
   taskEditor: {
     newTask: 'New Task',

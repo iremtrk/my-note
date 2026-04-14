@@ -16,7 +16,6 @@
         <q-input
           v-model="localTitle"
           :label="t('taskEditor.title')"
-          outlined
           dense
           maxlength="80"
           counter
@@ -60,7 +59,6 @@
       </q-card-section>
 
       <q-card-actions align="right" class="q-pa-md">
-        <q-btn flat :label="t('taskEditor.cancel')" @click="handleCancel" />
         <q-btn
           color="primary"
           :label="t('taskEditor.add')"
@@ -92,7 +90,7 @@
 
     <q-card-section class="side-body">
       <div class="top-fields q-gutter-md">
-        <div class="row items-center q-gutter-sm">
+        <div class="row items-center">
           <q-checkbox
             :model-value="isCompleted"
             color="primary"
@@ -114,7 +112,6 @@
         <q-input
           v-model="localDueDate"
           :label="t('taskEditor.dueDate')"
-          outlined
           dense
           type="date"
         />
@@ -295,6 +292,7 @@ onBeforeUnmount(() => {
   min-width: 480px;
   max-width: 560px;
   width: 100%;
+
 }
 
 .editor-card {

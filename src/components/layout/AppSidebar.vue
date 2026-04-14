@@ -1,7 +1,7 @@
 <template>
   <div class="sidebar-container">
     <q-list bordered padding>
-      <q-item>
+      <!-- <q-item>
         <q-input
           v-model="notesStore.searchQuery"
           outlined
@@ -13,15 +13,26 @@
             <q-icon name="search" />
           </template>
         </q-input>
-      </q-item>
+      </q-item> -->
 
-      <q-item>
-        <AddNoteButton
-          :label="t('sidebar.newNote')"
-          icon="add"
-          color="primary"
-          button-class="full-width"
-        />
+     <q-item class="buttons-row">
+
+        <div class="btn-wrapper">
+          <AddNoteButton
+            :label="t('sidebar.newNote')"
+            color="primary"
+          
+          />
+        </div>
+
+        <div class="btn-wrapper">
+          <AddTaskButton
+            :label="t('sidebar.newTask')"
+            color="primary"
+            
+
+          />
+        </div>
       </q-item>
 
       <q-item
@@ -95,12 +106,15 @@ import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useNotesStore } from '@/stores/notes'
 import { useI18n } from 'vue-i18n'
+import AddTaskButton from '../tasks/AddTaskButton.vue'
+import { useTasksStore } from '@/stores/tasks'
 
 const { t,locale } = useI18n()
 
 const router = useRouter()
 const authStore = useAuthStore()
 const notesStore = useNotesStore()
+const tasksStore =useTasksStore()
 
 const handleLogout = () => {
   authStore.logout()
@@ -119,6 +133,15 @@ const handleLogout = () => {
 
 .q-item {
   color: grey;
+}
+
+.buttons-row {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-wrapper {
+  flex: 1;
 }
 
 .logout-section {
