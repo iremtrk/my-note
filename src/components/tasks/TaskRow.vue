@@ -20,28 +20,18 @@
     <div class="task-row__body">
       <div class="task-row__title-row">
         <span class="task-row__title">{{ task.title }}</span>
-        <q-badge
-          :color="priorityColor"
-          class="task-row__priority"
-          :label="task.priority"
-          rounded
-        />
+        <span
+          class="task-row__priority-icon"
+          :class="`priority--${task.priority}`"
+        >
+          {{ priorityIcon }}
+        </span>
       </div>
 
       <div v-if="task.content" class="task-row__preview">
         {{ task.content }}
       </div>
 
-      <div class="task-row__meta">
-        <span
-          v-if="task.dueDate"
-          class="task-row__due"
-          :class="{ 'task-row__due--overdue': isOverdue }"
-        >
-          <q-icon name="event" size="12px" />
-          {{ formatNoteDate(task.dueDate) }}
-        </span>
-      </div>
     </div>
 
     <div class="task-row__actions">
@@ -74,15 +64,11 @@ defineEmits<{
   (e: "toggle-complete", id: number): void;
 }>();
 
-const priorityColor = computed(() => {
-  const map = { high: "negative", medium: "warning", low: "positive" };
-  return map[props.task.priority];
-});
+const priorityIcon = computed(() => {
+  const map = { low: '!', medium: '!!', high: '!!!' }
+  return map[props.task.priority]
+})
 
-const isOverdue = computed(() => {
-  if (!props.task.dueDate || props.task.completed) return false;
-  return new Date(props.task.dueDate) < new Date();
-});
 </script>
 
 <style scoped>
@@ -101,8 +87,8 @@ const isOverdue = computed(() => {
   background: rgba(0, 0, 0, 0.04);
 }
 .task-row--active {
-  background: rgba(25, 118, 210, 0.08) !important;
-  border-color: rgba(25, 118, 210, 0.25);
+  background: rgba(140, 140, 141, 0.08) !important;
+  color: var(--q-primary);
 }
 .task-row--completed .task-row__title {
   text-decoration: line-through;
@@ -131,11 +117,16 @@ const isOverdue = computed(() => {
   flex: 1;
   min-width: 0;
 }
-.task-row__priority {
+.task-row__priority-icon {
   flex-shrink: 0;
-  font-size: 10px;
-  text-transform: capitalize;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: -1px;
 }
+.priority--low { color: #22c55e; }
+.priority--medium { color: #f97316; }
+.priority--high { color: #ef4444; }
+
 .task-row__preview {
   font-size: 12px;
   color: #6b7280;
@@ -159,9 +150,7 @@ const isOverdue = computed(() => {
   align-items: center;
   gap: 3px;
 }
-.task-row__due--overdue {
-  color: #ef4444;
-}
+
 .task-row__actions {
   flex-shrink: 0;
 }

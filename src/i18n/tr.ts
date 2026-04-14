@@ -69,7 +69,7 @@ export default {
     cancel: "İptal",
   },
    editor:{
-    editNote:"Notu Düzenle",
+    editNote:"Not Detayı",
     newNote:"Not Ekle",
     title:"Başlık",
     add:"Ekle"

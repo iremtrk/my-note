@@ -1,5 +1,4 @@
 <template>
-  <!-- ADD MODAL -->
   <q-dialog
     v-if="variant === 'modal'"
     :model-value="modelValue"
@@ -73,7 +72,6 @@
     </q-card>
   </q-dialog>
 
-  <!-- SIDE DETAIL EDITOR -->
   <q-card v-else bordered class="editor-card side-editor-card">
     <q-card-section class="row items-center justify-between editor-header">
       <div class="text-h6">{{ t("taskEditor.taskDetail") }}</div>

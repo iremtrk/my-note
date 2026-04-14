@@ -69,7 +69,7 @@ export default {
     cancel: "Cancel",
   },
   editor: {
-    editNote:"Edit Note",
+    editNote:"Note Detail",
     newNote: "New Note",
     title: "Title",
     add: "Add",
