@@ -1,33 +1,10 @@
 <template>
-  <div
-    class="notes-layout q-pa-md"
-    :class="{ 'detail-open': noteEditor.showSideEditor }"
-  >
-    <div class="notes-panel">
-      <div v-if="!notesStore.hasFetched" class="loading-state">
-        <q-spinner color="primary" size="50px" />
-      </div>
+  <div class="home-page q-pa-md">
+    <div class="home-sections">
+      <section class="section-card notes-section">
+        <div class="section-header row items-center justify-between">
+          <div class="text-h6">{{ t("sidebar.notes") }}</div>
 
-      <div v-else-if="notesStore.notes.length === 0" class="empty-state">
-        <q-icon name="sticky_note_2" size="64px" color="primary" />
-        <div class="text-h6 q-mt-md">{{ t("home.noNote") }}</div>
-        <div class="text-grey q-mt-sm empty-text">
-          {{ t("home.firstNote") }}
-        </div>
-        <!-- <AddNoteButton
-          class="q-mt-lg"
-          color="primary"
-          icon="add"
-          :label="t('home.firstNoteBtn')"
-        />
-        <AddTaskButton 
-        class="q-mt-lg" 
-        color="primary" 
-        icon="add" /> -->
-      </div>
-
-      <template v-else>
-        <div class="row items-center justify-end q-mb-md">
           <q-btn icon="sort" flat round dense color="grey-7">
             <q-menu anchor="bottom right" self="top right">
               <q-list style="min-width: 200px">
@@ -60,7 +37,23 @@
           </q-btn>
         </div>
 
-        <div class="content-area">
+        <div v-if="!notesStore.hasFetched" class="panel-loading">
+          <q-spinner color="primary" size="44px" />
+        </div>
+
+        <div v-else-if="notesStore.notes.length === 0" class="panel-empty">
+          <q-btn
+            icon="task"
+            color="primary"
+            @click="noteEditor.openNewNoteModal()"
+          />
+          <div class="text-h6 q-mt-sm">{{ t("home.noNote") }}</div>
+          <div class="text-grey q-mt-sm empty-text">
+            {{ t("home.firstNote") }}
+          </div>
+        </div>
+
+        <div v-else class="section-content notes-content">
           <div class="notes-scroll">
             <NoteCard
               v-for="note in notesStore.filteredNotes"
@@ -89,25 +82,73 @@
             />
           </div>
         </div>
-      </template>
+      </section>
+
+      <section class="section-card tasks-section">
+        <div class="section-header row items-center justify-between">
+          <div class="text-h6">{{ t("sidebar.tasks") }}</div>
+        </div>
+
+        <div v-if="!tasksStore.hasFetched" class="panel-loading">
+          <q-spinner color="primary" size="44px" />
+        </div>
+
+        <div v-else-if="tasksStore.tasks.length === 0" class="panel-empty">
+          <q-btn
+            icon="task"
+            color="primary"
+            @click="taskEditor.openAddModal()"
+          />
+          <div class="text-h6 q-mt-sm">{{ t("home.noTask") }}</div>
+          <div class="text-grey q-mt-sm empty-text">
+            {{ t("home.firstTask") }}
+          </div>
+        </div>
+
+        <div v-else class="section-content tasks-content">
+          <HomeTaskList
+            class="task-list-panel"
+            :tasks="tasksStore.filteredTasks"
+            :selected-task-id="tasksStore.selectedTask?.id ?? null"
+            :has-fetched="tasksStore.hasFetched"
+            @select-task="handleSelectTask"
+            @toggle-star="tasksStore.toggleStar"
+            @toggle-complete="tasksStore.toggleComplete"
+          />
+
+          <div v-if="taskEditor.showSideEditor" class="detail-panel">
+            <TaskEditor
+              variant="side"
+              :initial-title="taskEditor.title"
+              :initial-content="taskEditor.content"
+              :initial-due-date="taskEditor.dueDate"
+              :initial-priority="taskEditor.priority"
+              :is-completed="tasksStore.selectedTask?.completed ?? false"
+              @save="handleUpdateTask"
+              @cancel="taskEditor.closeSideEditor()"
+              @delete="handleDeleteTask()"
+              @toggle-complete="
+                tasksStore.selectedTask &&
+                tasksStore.toggleComplete(tasksStore.selectedTask.id)
+              "
+            />
+          </div>
+        </div>
+      </section>
     </div>
   </div>
-  <div></div>
 </template>
 
 <script setup lang="ts">
-import { watch } from "vue";
+import { onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 import NoteCard from "@/components/notes/NoteCard.vue";
 import NoteEditor from "@/components/notes/NoteEditor.vue";
-import AddNoteButton from "@/components/notes/AddNoteButton.vue";
+import HomeTaskList from "@/components/tasks/HomeTaskList.vue";
+import TaskEditor from "@/components/tasks/TaskEditor.vue";
 import { useNoteActions } from "@/composables/useNoteActions";
+import { useTaskActions } from "@/composables/useTaskActions";
 import type { SortOrder } from "@/stores/notes";
-import { I18n, useI18n } from "vue-i18n";
-
-import { useLoadingStore } from "@/stores/loading";
-import AddTaskButton from "@/components/tasks/AddTaskButton.vue";
-
-const loading = useLoadingStore();
 
 const { t } = useI18n();
 
@@ -117,66 +158,96 @@ const {
   handleSelect,
   handleSave,
   handleDelete,
-  setupLifecycle,
+  setupLifecycle: setupNoteLifecycle,
 } = useNoteActions();
 
-setupLifecycle();
+const {
+  taskEditor,
+  tasksStore,
+  handleSelectTask,
+  handleUpdateTask,
+  handleDeleteTask,
+  setupLifecycle: setupTaskLifecycle,
+} = useTaskActions();
+
+setupNoteLifecycle();
+setupTaskLifecycle();
+
+onMounted(() => {
+  noteEditor.closeAll();
+  taskEditor.closeAll();
+});
 
 const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
   { label: t("home.sortNewest"), value: "newest", icon: "arrow_downward" },
   { label: t("home.sortOldest"), value: "oldest", icon: "arrow_upward" },
   { label: t("home.sortUpdated"), value: "updated", icon: "update" },
 ];
-
-// watch(
-//   () => notesStore.searchQuery,
-//   () => {
-//     if (
-//       notesStore.selectedNote &&
-//       !notesStore.filteredNotes.some(
-//         (note) => note.id === notesStore.selectedNote?.id,
-//       )
-//     ) {
-//       notesStore.clearSelectedNote();
-//       noteEditor.closeSideEditor();
-//     }
-//   },
-// );
 </script>
 
 <style scoped>
-.notes-layout {
-  height: calc(100vh - 82px);
-  max-height: 500px;
+.home-page {
+  min-height: calc(100vh - 82px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.home-sections {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
   min-height: 0;
+}
+
+.section-card {
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 18px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
 }
 
-.notes-panel {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
+.notes-section {
+  min-height: 420px;
 }
 
-.content-area {
+.tasks-section {
+  min-height: 420px;
+}
+
+.section-header {
+  flex-shrink: 0;
+  margin-bottom: 12px;
+}
+
+.section-content {
   flex: 1;
   min-height: 0;
   display: grid;
-  grid-template-columns: 1fr;
   gap: 16px;
-  max-height: 500px;
-  position: relative;
+  align-items: stretch;
 }
 
-.content-area:has(.detail-panel) {
-  grid-template-columns: 1.2fr 0.8fr;
+.notes-content {
+  grid-template-columns: 1fr;
+}
+
+.notes-content:has(.detail-panel) {
+  grid-template-columns: minmax(320px, 2fr) minmax(420px, 0.95fr);
+}
+
+.tasks-content {
+  grid-template-columns: 1fr;
+}
+
+.tasks-content:has(.detail-panel) {
+  grid-template-columns: minmax(320px, 1fr) minmax(460px, 1fr);
 }
 
 .notes-scroll {
-  min-height: 0;
+  min-height: 320px;
+  max-height: 520px;
   overflow-y: auto;
   overflow-x: hidden;
   display: grid;
@@ -184,24 +255,30 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
   gap: 16px;
   align-content: start;
   justify-content: start;
+  padding-right: 4px;
 }
 
-.detail-panel {
-  min-height: 0;
+.task-list-panel {
+  min-height: 320px;
+  max-height: 520px;
   overflow: hidden;
 }
 
-.empty-state {
+.detail-panel {
+  min-height: 520px;
+  max-height: 520px;
+  overflow: hidden;
+}
+
+.panel-loading,
+.panel-empty {
   flex: 1;
-  border: 2px dashed #d6d6d6;
-  border-radius: 20px;
-  background: #fafafa;
+  min-height: 220px;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 32px;
+  flex-direction: column;
 }
 
 .empty-text {
@@ -209,25 +286,38 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
   line-height: 1.6;
 }
 
-@media (max-width: 767px) {
-  .notes-layout {
-    overflow-y: auto;
-  }
-
-  .content-area,
-  .content-area:has(.detail-panel) {
+@media (max-width: 1100px) {
+  .notes-content:has(.detail-panel),
+  .tasks-content:has(.detail-panel) {
     grid-template-columns: 1fr;
   }
 
   .detail-panel {
-    height: 600px;
+    min-height: 560px;
+  }
+
+  .notes-scroll,
+  .task-list-panel {
+    max-height: 360px;
   }
 }
 
-.loading-state {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+@media (max-width: 900px) {
+  .home-page {
+    min-height: auto;
+  }
+
+  .section-card {
+    min-height: auto;
+  }
+
+  .notes-section,
+  .tasks-section {
+    min-height: 380px;
+  }
+
+  .detail-panel {
+    min-height: 500px;
+  }
 }
 </style>

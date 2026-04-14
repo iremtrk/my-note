@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import axios from "axios";
 import type { Task } from "@/types/tasks";
+import { useLoadingStore } from "./loading";
 
 export type TaskSortOrder = "newest" | "oldest" | "dueDate" | "priority";
 
@@ -10,22 +11,31 @@ export const useTasksStore = defineStore("tasks", () => {
   const selectedTask = ref<Task | null>(null);
   const searchQuery = ref("");
   const sortOrder = ref<TaskSortOrder>("newest");
+  const hasFetched = ref(false);
 
+  const loading = useLoadingStore();
   const API_URL = "http://localhost:3001/tasks";
 
   const fetchTasks = async (userId?: string | number) => {
     if (!userId) {
       tasks.value = [];
+      hasFetched.value = true;
       return;
     }
 
-    const response = await axios.get(`${API_URL}?userId=${userId}`);
-    tasks.value = response.data;
+    await loading.wrap("tasks", async () => {
+      const response = await axios.get(`${API_URL}?userId=${userId}`);
+      tasks.value = response.data;
+    });
 
     if (selectedTask.value) {
-      const updated = tasks.value.find((t) => t.id === selectedTask.value?.id);
-      selectedTask.value = updated || null;
+      const updatedTask = tasks.value.find(
+        (task) => task.id === selectedTask.value?.id,
+      );
+      selectedTask.value = updatedTask || null;
     }
+
+    hasFetched.value = true;
   };
 
   const selectTask = (task: Task) => {
@@ -33,32 +43,36 @@ export const useTasksStore = defineStore("tasks", () => {
   };
 
   const addTask = async (payload: Omit<Task, "id">) => {
-    const response = await axios.post(API_URL, payload);
-    tasks.value.push(response.data);
-    selectedTask.value = response.data;
+    await loading.wrap("tasks:add", async () => {
+      const response = await axios.post(API_URL, payload);
+      tasks.value.push(response.data);
+      selectedTask.value = response.data;
+    });
   };
 
   const updateTask = async (
     id: number,
     payload: Partial<Omit<Task, "id" | "userId" | "createdAt">>,
   ) => {
-    const current = tasks.value.find((t) => t.id === id);
-    if (!current) return;
+    const currentTask = tasks.value.find((task) => task.id === id);
+    if (!currentTask) return;
 
     const response = await axios.patch(`${API_URL}/${id}`, {
-      ...current,
+      ...currentTask,
       ...payload,
     });
 
-    const index = tasks.value.findIndex((t) => t.id === id);
+    const index = tasks.value.findIndex((task) => task.id === id);
     if (index !== -1) tasks.value[index] = response.data;
 
-    if (selectedTask.value?.id === id) selectedTask.value = response.data;
+    if (selectedTask.value?.id === id) {
+      selectedTask.value = response.data;
+    }
   };
 
   const deleteTask = async (id: number) => {
     await axios.delete(`${API_URL}/${id}`);
-    tasks.value = tasks.value.filter((t) => t.id !== id);
+    tasks.value = tasks.value.filter((task) => task.id !== id);
 
     if (selectedTask.value?.id === id) {
       selectedTask.value = null;
@@ -66,14 +80,14 @@ export const useTasksStore = defineStore("tasks", () => {
   };
 
   const toggleStar = async (id: number) => {
-    const task = tasks.value.find((t) => t.id === id);
+    const task = tasks.value.find((item) => item.id === id);
     if (!task) return;
 
     await updateTask(id, { starred: !task.starred });
   };
 
   const toggleComplete = async (id: number) => {
-    const task = tasks.value.find((t) => t.id === id);
+    const task = tasks.value.find((item) => item.id === id);
     if (!task) return;
 
     await updateTask(id, { completed: !task.completed });
@@ -82,6 +96,7 @@ export const useTasksStore = defineStore("tasks", () => {
   const clearTasks = () => {
     tasks.value = [];
     selectedTask.value = null;
+    hasFetched.value = false;
   };
 
   const clearSelectedTask = () => {
@@ -113,14 +128,12 @@ export const useTasksStore = defineStore("tasks", () => {
 
       const dateA = new Date(a.createdAt).getTime();
       const dateB = new Date(b.createdAt).getTime();
-
       return sortOrder.value === "newest" ? dateB - dateA : dateA - dateB;
     });
   });
 
   const filteredTasks = computed(() => {
     const query = searchQuery.value.trim().toLowerCase();
-
     if (!query) return sortedTasks.value;
 
     return sortedTasks.value.filter((task) => {
@@ -143,6 +156,7 @@ export const useTasksStore = defineStore("tasks", () => {
     selectedTask,
     searchQuery,
     sortOrder,
+    hasFetched,
     sortedTasks,
     filteredTasks,
     fetchTasks,

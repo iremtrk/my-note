@@ -78,7 +78,7 @@ const getColor = (id: string | number) => {
 
 .my-card {
   width: 100%;
-  max-width: 250px;
+  /* max-width: 250px; */
   cursor: pointer;
   border-radius: 20px;
 }
@@ -86,6 +86,14 @@ const getColor = (id: string | number) => {
 .card-preview {
   height: 60px;
   padding-bottom: 4px;
+}
+
+.note-title {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .note-content {
@@ -98,13 +106,6 @@ const getColor = (id: string | number) => {
   overflow-wrap: anywhere;
 }
 
-.note-title {
-  flex: 1;
-  min-width: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
 .card-footer {
   padding-top: 4px;

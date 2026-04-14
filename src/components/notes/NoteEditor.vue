@@ -6,7 +6,7 @@
   >
     <q-card class="editor-card modal-editor-card">
       <q-card-section class="row items-center justify-between editor-header">
-        <div class="text-h6">{{t('editor.newNote')}}</div>
+        <div class="text-h6">{{ t("editor.newNote") }}</div>
 
         <div class="row items-center q-gutter-sm">
           <q-btn icon="close" flat round @click="handleCancel" />
@@ -18,7 +18,7 @@
           v-model="localTitle"
           class="note-title-input"
           :label="t('editor.title')"
-          style="font-size: x-large";
+          style="font-size: x-large"
           maxlength="80"
           counter
           autogrow
@@ -29,6 +29,7 @@
             v-model="localContent"
             :toolbar="editorToolbar"
             class="editor-content"
+            min-height="100%"
           />
         </div>
       </q-card-section>
@@ -46,7 +47,7 @@
 
   <q-card v-else bordered class="editor-card side-editor-card">
     <q-card-section class="row items-center justify-between editor-header">
-      <div class="text-h6">{{ t('editor.editNote') }}</div>
+      <div class="text-h6">{{ t("editor.editNote") }}</div>
 
       <div class="row items-center q-gutter-sm">
         <q-btn
@@ -62,13 +63,13 @@
     </q-card-section>
 
     <q-card-section class="editor-body">
-      <q-input 
-      v-model="localTitle" 
-      class="note-title-input"
-      style="font-size: x-large;" 
-      maxlength="80" 
-      counter 
-      autogrow  
+      <q-input
+        v-model="localTitle"
+        class="note-title-input"
+        style="font-size:18px"
+        maxlength="80"
+        counter
+        autogrow
       />
 
       <div class="editor-wrapper">
@@ -76,6 +77,7 @@
           v-model="localContent"
           :toolbar="editorToolbar"
           class="editor-content"
+          
         />
       </div>
     </q-card-section>
@@ -89,15 +91,16 @@
       />
     </q-card-actions>
   </q-card>
+
   <ConfirmDeleteDialog v-model="showDeleteConfirm" @confirm="confirmDelete" />
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from "vue";
 import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
-import { I18n, useI18n } from "vue-i18n";
+import { useI18n } from "vue-i18n";
 
-const {t} =useI18n()
+const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{
@@ -209,14 +212,17 @@ onBeforeUnmount(() => {
 }
 
 .modal-editor-card {
-  min-width: 480px;
-  max-width: 560px;
-  width: 100%;
+  min-width: 520px;
+  max-width: 760px;
+  width: 92vw;
   height: 85vh;
+  max-height: 85vh;
 }
 
 .side-editor-card {
   height: 100%;
+  min-height: 0;
+  
 }
 
 .editor-header {
@@ -247,6 +253,7 @@ onBeforeUnmount(() => {
 .editor-content {
   flex: 1;
   min-height: 0;
+  height: 100%;
 }
 
 :deep(.q-editor) {
@@ -268,6 +275,7 @@ onBeforeUnmount(() => {
   overflow-x: hidden;
   overflow-wrap: anywhere;
   word-break: break-word;
+  padding: 12px;
 }
 
 :deep(.q-editor__content p),
@@ -278,8 +286,14 @@ onBeforeUnmount(() => {
 }
 
 :deep(.note-title-input textarea) {
-  line-height: 1;
-  padding-top: 6px;
-  padding-bottom: 6px;
+  line-height: 1.2;
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+:deep(.note-title-input .q-field__native),
+:deep(.note-title-input textarea) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 </style>

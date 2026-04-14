@@ -1,36 +1,22 @@
 <template>
   <div class="sidebar-container">
     <q-list bordered padding>
-      <!-- <q-item>
-        <q-input
-          v-model="notesStore.searchQuery"
-          outlined
-          dense
-          :placeholder="t('sidebar.searchNotes')"
-          class="full-width"
-        >
-          <template #prepend>
-            <q-icon name="search" />
-          </template>
-        </q-input>
-      </q-item> -->
 
      <q-item class="buttons-row">
 
         <div class="btn-wrapper">
-          <AddNoteButton
+          <q-btn
             :label="t('sidebar.newNote')"
             color="primary"
-          
+            @click="noteEditor.openNewNoteModal()"
           />
         </div>
 
         <div class="btn-wrapper">
-          <AddTaskButton
+         <q-btn
             :label="t('sidebar.newTask')"
             color="primary"
-            
-
+            @click="taskEditor.openAddModal()"
           />
         </div>
       </q-item>
@@ -101,13 +87,13 @@
 </template>
 
 <script setup lang="ts">
-import AddNoteButton from '@/components/notes/AddNoteButton.vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useNotesStore } from '@/stores/notes'
 import { useI18n } from 'vue-i18n'
-import AddTaskButton from '../tasks/AddTaskButton.vue'
 import { useTasksStore } from '@/stores/tasks'
+import { useNoteEditorStore } from "@/stores/note-editor";
+import { useTaskEditorStore } from '@/stores/task-editor'
 
 const { t,locale } = useI18n()
 
@@ -115,6 +101,9 @@ const router = useRouter()
 const authStore = useAuthStore()
 const notesStore = useNotesStore()
 const tasksStore =useTasksStore()
+
+const noteEditor = useNoteEditorStore();
+const taskEditor = useTaskEditorStore()
 
 const handleLogout = () => {
   authStore.logout()

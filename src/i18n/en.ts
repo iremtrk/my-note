@@ -55,6 +55,9 @@ export default {
     noNote:"No notes yet",
     firstNote:"Create your first note",
     firstNoteBtn:"First Note",
+    noTask:"No tasks yet",
+    firstTask:"Create your first task",
+    firstTaskBtn:"First Task",
     sort:"Sort By",
     sortNewest: 'Newest',
     sortOldest: 'Oldest',
@@ -85,12 +88,12 @@ export default {
     search: 'Search Note..'
   },
   tasks: {
-    empty: 'Select a task to view details',
+    empty: 'Select a task',
   },
   taskList: {
     header: 'My tasks',
     sort: 'Sort By',
-    empty: 'No tasks yet. Create your first task!',
+    empty: 'No tasks yet.',
     sortNewest: 'Newest',
     sortOldest: 'Oldest',
     sortDueDate: 'Due Date',
