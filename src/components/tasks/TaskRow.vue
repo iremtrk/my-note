@@ -77,11 +77,7 @@ const priorityIcon = computed(() => {
   align-items: flex-start;
   gap: 10px;
   padding: 12px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s;
   border: 1px solid transparent;
-  margin-bottom: 4px;
 }
 .task-row:hover {
   background: rgba(0, 0, 0, 0.04);
@@ -132,8 +128,8 @@ const priorityIcon = computed(() => {
   color: #6b7280;
   margin-top: 3px;
   display: -webkit-box;
-  -webkit-line-clamp: 1;
-  line-clamp: 1;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
@@ -143,13 +139,7 @@ const priorityIcon = computed(() => {
   gap: 8px;
   margin-top: 4px;
 }
-.task-row__due {
-  font-size: 11px;
-  color: #9ca3af;
-  display: flex;
-  align-items: center;
-  gap: 3px;
-}
+
 
 .task-row__actions {
   flex-shrink: 0;

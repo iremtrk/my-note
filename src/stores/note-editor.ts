@@ -5,7 +5,7 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
   const showModal = ref(false)
   const showSideEditor = ref(false)
 
-  const editingNoteId = ref<string | null>(null)
+  const editingNoteId = ref<number | null>(null)
   const title = ref('')
   const content = ref('')
 
@@ -19,7 +19,7 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
   }
 
   const openEditNoteModal = (payload: {
-    id: string
+    id: number
     title: string
     content: string
   }) => {
@@ -32,7 +32,7 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
   }
 
   const openEditNoteSide = (payload: {
-    id: string
+    id: number
     title: string
     content: string
   }) => {

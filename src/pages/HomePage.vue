@@ -1,22 +1,34 @@
 <template>
-  <div
-    class="notes-layout q-pa-md"
-    :class="{ 'detail-open': noteEditor.showSideEditor }"
-  >
+  <div class="notes-layout q-pa-md" :class="{ 'detail-open': noteEditor.showSideEditor }">
     <div class="notes-panel">
-      <div v-if="notesStore.notes.length === 0" class="empty-state">
+
+      <div v-if="!notesStore.hasFetched" class="loading-state">
+        <q-spinner color="primary" size="50px" />
+      </div>
+
+      <div v-else-if="notesStore.notes.length === 0" class="empty-state">
         <q-icon name="sticky_note_2" size="64px" color="primary" />
-        <div class="text-h6 q-mt-md">{{ t('home.noNote') }}</div>
-        <div class="text-grey q-mt-sm empty-text">{{t('home.firstNote')}}</div>
-        <AddNoteButton class="q-mt-lg" color="primary" icon="add" :label="t('home.firstNoteBtn')" />
+        <div class="text-h6 q-mt-md">{{ t("home.noNote") }}</div>
+        <div class="text-grey q-mt-sm empty-text">
+          {{ t("home.firstNote") }}
+        </div>
+        <AddNoteButton
+          class="q-mt-lg"
+          color="primary"
+          icon="add"
+          :label="t('home.firstNoteBtn')"
+        />
       </div>
 
       <template v-else>
         <div class="row items-center justify-end q-mb-md">
-          <q-btn icon="sort" flat round dense color="grey-7" no-caps>
+          <q-btn icon="sort" flat round dense color="grey-7">
             <q-menu anchor="bottom right" self="top right">
               <q-list style="min-width: 200px">
-                <q-item-label header class="text-caption text-grey-6">{{ t('home.sort') }}</q-item-label>
+                <q-item-label header class="text-caption text-grey-6">
+                  {{ t("home.sort") }}
+                </q-item-label>
+
                 <q-item
                   v-for="opt in sortOptions"
                   :key="opt.value"
@@ -47,7 +59,7 @@
               :note="note"
               @select="handleSelect"
               @delete="handleDelete"
-              @toggle-star="notesStore.toggleStar"
+              @toggle-star="(id) => notesStore.toggleStar(typeof id === 'string' ? parseInt(id) : id)"
             />
           </div>
 
@@ -69,39 +81,51 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
-import NoteCard from '@/components/notes/NoteCard.vue'
-import NoteEditor from '@/components/notes/NoteEditor.vue'
-import AddNoteButton from '@/components/notes/AddNoteButton.vue'
-import { useNoteActions } from '@/composables/useNoteActions'
-import type { SortOrder } from '@/stores/notes'
-import { I18n, useI18n } from 'vue-i18n'
+import { watch } from "vue";
+import NoteCard from "@/components/notes/NoteCard.vue";
+import NoteEditor from "@/components/notes/NoteEditor.vue";
+import AddNoteButton from "@/components/notes/AddNoteButton.vue";
+import { useNoteActions } from "@/composables/useNoteActions";
+import type { SortOrder } from "@/stores/notes";
+import { I18n, useI18n } from "vue-i18n";
 
-const {t}=useI18n()
+import { useLoadingStore } from "@/stores/loading";
 
-const { noteEditor, notesStore, handleSelect, handleSave, handleDelete, setupLifecycle } =
-  useNoteActions()
+const loading = useLoadingStore();
 
-setupLifecycle()
+const { t } = useI18n();
+
+const {
+  noteEditor,
+  notesStore,
+  handleSelect,
+  handleSave,
+  handleDelete,
+  setupLifecycle,
+} = useNoteActions();
+
+setupLifecycle();
 
 const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
-  { label: t('home.sortNewest'), value: 'newest', icon: 'arrow_downward' },
-  { label: t('home.sortOldest'), value: 'oldest', icon: 'arrow_upward' },
-  { label: t('home.sortUpdated'), value: 'updated', icon: 'update' },
-]
+  { label: t("home.sortNewest"), value: "newest", icon: "arrow_downward" },
+  { label: t("home.sortOldest"), value: "oldest", icon: "arrow_upward" },
+  { label: t("home.sortUpdated"), value: "updated", icon: "update" },
+];
 
 watch(
   () => notesStore.searchQuery,
   () => {
     if (
       notesStore.selectedNote &&
-      !notesStore.filteredNotes.some((note) => note.id === notesStore.selectedNote?.id)
+      !notesStore.filteredNotes.some(
+        (note) => note.id === notesStore.selectedNote?.id,
+      )
     ) {
-      notesStore.clearSelectedNote()
-      noteEditor.closeSideEditor()
+      notesStore.clearSelectedNote();
+      noteEditor.closeSideEditor();
     }
-  }
-)
+  },
+);
 </script>
 
 <style scoped>
@@ -128,6 +152,7 @@ watch(
   grid-template-columns: 1fr;
   gap: 16px;
   max-height: 500px;
+  position:relative
 }
 
 .content-area:has(.detail-panel) {
@@ -181,5 +206,12 @@ watch(
   .detail-panel {
     height: 600px;
   }
+}
+
+.loading-state {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 </style>

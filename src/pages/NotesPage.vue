@@ -4,9 +4,13 @@
       <NotesList
         :notes="notesStore.filteredNotes"
         :selected-note-id="notesStore.selectedNote?.id ?? null"
+        :has-fetched="notesStore.hasFetched"
         @select-note="handleSelect"
         @delete-note="handleDelete"
-        @toggle-star="notesStore.toggleStar"
+        @toggle-star="
+          (id) =>
+            notesStore.toggleStar(typeof id === 'string' ? parseInt(id) : id)
+        "
       />
     </div>
 
@@ -25,7 +29,7 @@
 
       <q-card v-else bordered class="full-height detail-card">
         <q-card-section class="text-grey">
-          {{t('notes.empty')}}
+          {{ t("notes.empty") }}
         </q-card-section>
       </q-card>
     </div>
@@ -33,35 +37,24 @@
 </template>
 
 <script setup lang="ts">
-import { watch } from 'vue'
-import NoteEditor from '@/components/notes/NoteEditor.vue'
-import NotesList from '@/components/notes/NotesList.vue'
-import { useNoteActions } from '@/composables/useNoteActions'
-import { I18n, useI18n } from "vue-i18n";
+import NoteEditor from "@/components/notes/NoteEditor.vue";
+import NotesList from "@/components/notes/NotesList.vue";
+import { useNoteActions } from "@/composables/useNoteActions";
+import { useI18n } from "vue-i18n";
 
-const {t} =useI18n()
+const { t } = useI18n();
 
+const {
+  noteEditor,
+  notesStore,
+  handleSelect,
+  handleSave,
+  handleDelete,
+  setupLifecycle,
+} = useNoteActions();
 
-const { noteEditor, notesStore, handleSelect, handleSave, handleDelete, setupLifecycle } =
-  useNoteActions()
+setupLifecycle();
 
-setupLifecycle()
-
-watch(
-  () => notesStore.filteredNotes,
-  (newFilteredNotes) => {
-    if (!notesStore.selectedNote) return
-
-    const stillVisible = newFilteredNotes.some(
-      (note) => note.id === notesStore.selectedNote?.id
-    )
-
-    if (!stillVisible) {
-      notesStore.clearSelectedNote()
-      noteEditor.closeSideEditor()
-    }
-  }
-)
 </script>
 
 <style scoped>
@@ -73,5 +66,4 @@ watch(
   display: flex;
   flex-direction: column;
 }
-
 </style>

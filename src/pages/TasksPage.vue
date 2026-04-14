@@ -2,7 +2,7 @@
   <div class="row q-col-gutter-md tasks-page">
     <div class="col-4 full-height">
       <TaskList
-        :tasks="tasksStore.sortedTasks"
+        :tasks="tasksStore.filteredTasks"
         :selected-task-id="tasksStore.selectedTask?.id ?? null"
         @select-task="handleSelectTask"
         @toggle-star="tasksStore.toggleStar"

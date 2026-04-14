@@ -21,7 +21,7 @@
             </q-item>
           </q-list>
         </q-btn-dropdown>
-        
+
         <q-btn
           flat
           round
@@ -31,7 +31,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="drawer" show-if-above bordered :breakpoint="768">
+    <q-drawer v-model="drawer" bordered show-if-above :breakpoint="768">
       <AppSidebar />
     </q-drawer>
 
@@ -65,6 +65,9 @@ import { useNoteEditorStore } from "@/stores/note-editor";
 import { useNotesStore } from "@/stores/notes";
 import { useAuthStore } from "@/stores/auth";
 import { useI18n } from "vue-i18n";
+import { useLoadingStore } from '@/stores/loading'
+
+const loading = useLoadingStore()
 
 const $q = useQuasar();
 const { t, locale } = useI18n();
@@ -79,7 +82,7 @@ const toggleDark = () => {
   localStorage.setItem("dark", String($q.dark.isActive));
 };
 
-const drawer = ref(true);
+const drawer = ref(true); 
 
 const noteEditor = useNoteEditorStore();
 const notesStore = useNotesStore();

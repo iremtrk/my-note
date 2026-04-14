@@ -1,9 +1,18 @@
 <template>
   <q-card bordered class="full-height tasks-card">
     <q-card-section class="row items-center justify-between">
-      <div class="text-h6">{{ t("taskList.header") }}</div>
-
       <div class="row items-center q-gutter-xs">
+        <q-input
+          v-model="tasksStore.searchQuery"
+          outlined
+          dense
+          placeholder="Task ara"
+          class="full-width"
+        >
+          <template #prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
         <q-btn icon="sort" flat round dense color="grey-7">
           <q-menu anchor="bottom right" self="top right">
             <q-list style="min-width: 180px">
@@ -106,7 +115,7 @@ const sortOptions = computed<
 .list-section {
   flex: 1;
   min-height: 0;
-  padding: 8px 12px;
+  padding: 0;
   display: flex;
   flex-direction: column;
 }
@@ -115,4 +124,6 @@ const sortOptions = computed<
   min-height: 0;
   overflow-y: auto;
 }
+
+
 </style>

@@ -28,8 +28,8 @@
           outlined
           dense
           type="textarea"
-          rows="3"
-          autogrow
+          class="editor-content"
+          
         />
         <q-input
           v-model="localDueDate"
@@ -90,60 +90,64 @@
 
     <q-separator />
 
-    <q-card-section class="q-gutter-md side-body">
-      <div class="row items-center q-gutter-sm">
-        <q-checkbox
-          :model-value="isCompleted"
-          color="primary"
-          @update:model-value="emit('toggle-complete')"
-        />
-        <q-input
-          v-model="localTitle"
-          borderless
-          dense
-          class="flex-1 side-title-input"
-          :input-style="{
-            fontSize: '18px',
-            fontWeight: '600',
-            textDecoration: isCompleted ? 'line-through' : 'none',
-          }"
-        />
-      </div>
-
-      <q-input
-        v-model="localContent"
-        :label="t('taskEditor.description')"
-        outlined
-        dense
-        type="textarea"
-        rows="4"
-        autogrow
-      />
-      <q-input
-        v-model="localDueDate"
-        :label="t('taskEditor.dueDate')"
-        outlined
-        dense
-        type="date"
-      />
-      <div>
-        <div class="text-caption text-grey-7 q-mb-xs">
-          {{ t("taskEditor.priority") }}
-        </div>
-        <div class="row q-gutter-sm">
-          <q-btn
-            v-for="opt in priorityOptions"
-            :key="opt.value"
-            :label="opt.label"
-            :color="localPriority === opt.value ? opt.color : 'grey-3'"
-            :text-color="localPriority === opt.value ? 'white' : 'grey-8'"
-            rounded
-            unelevated
+    <q-card-section class="side-body">
+      <div class="top-fields q-gutter-md">
+        <div class="row items-center q-gutter-sm">
+          <q-checkbox
+            :model-value="isCompleted"
+            color="primary"
+            @update:model-value="emit('toggle-complete')"
+          />
+          <q-input
+            v-model="localTitle"
+            borderless
             dense
-            size="sm"
-            @click="localPriority = opt.value"
+            class="flex-1 side-title-input"
+            :input-style="{
+              fontSize: '18px',
+              fontWeight: '600',
+              textDecoration: isCompleted ? 'line-through' : 'none',
+            }"
           />
         </div>
+
+        <q-input
+          v-model="localDueDate"
+          :label="t('taskEditor.dueDate')"
+          outlined
+          dense
+          type="date"
+        />
+
+        <div>
+          <div class="text-caption text-grey-7 q-mb-xs">
+            {{ t('taskEditor.priority') }}
+          </div>
+          <div class="row q-gutter-sm">
+            <q-btn
+              v-for="opt in priorityOptions"
+              :key="opt.value"
+              :label="opt.label"
+              :color="localPriority === opt.value ? opt.color : 'grey-3'"
+              :text-color="localPriority === opt.value ? 'white' : 'grey-8'"
+              rounded
+              unelevated
+              dense
+              size="sm"
+              @click="localPriority = opt.value"
+            />
+          </div>
+        </div>
+      </div>
+
+      <div class="content-area">
+        <q-input
+          v-model="localContent"
+          outlined
+          dense
+          type="textarea"
+          class="editor-content"
+        />
       </div>
     </q-card-section>
 
@@ -231,6 +235,7 @@ watch(
     localContent.value = props.initialContent;
     localDueDate.value = props.initialDueDate;
     localPriority.value = props.initialPriority;
+
     setTimeout(() => {
       isHydrating.value = false;
     }, 0);
@@ -241,10 +246,13 @@ watch(
 watch([localTitle, localContent, localDueDate, localPriority], () => {
   if (props.variant !== "side") return;
   if (isHydrating.value) return;
+
   if (debounceTimer) clearTimeout(debounceTimer);
+
   debounceTimer = setTimeout(() => {
     const title = localTitle.value.trim();
     if (!title) return;
+
     emit("save", {
       title,
       content: localContent.value.trim(),
@@ -257,6 +265,7 @@ watch([localTitle, localContent, localDueDate, localPriority], () => {
 const handleSave = () => {
   const title = localTitle.value.trim();
   if (!title) return;
+
   emit("save", {
     title,
     content: localContent.value.trim(),
@@ -287,24 +296,68 @@ onBeforeUnmount(() => {
   max-width: 560px;
   width: 100%;
 }
+
 .editor-card {
   width: 100%;
   height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
 }
+
 .side-editor-card {
   height: 100%;
+  min-height: 0;
 }
+
 .editor-header {
   flex-shrink: 0;
 }
+
 .side-body {
   flex: 1;
-  overflow-y: auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  overflow: hidden;
 }
+
+.top-fields {
+  flex-shrink: 0;
+}
+
 .side-title-input {
   flex: 1;
 }
 
+.content-area {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+}
+
+.editor-content {
+  flex: 1;
+  min-height: 0;
+}
+
+:deep(.editor-content .q-field__control) {
+  height: 100%;
+  align-items: stretch;
+}
+
+:deep(.editor-content .q-field__native),
+:deep(.editor-content textarea) {
+  height: 100% !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  resize: none !important;
+}
+
+:deep(.editor-content textarea) {
+  overflow-x: hidden;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
 </style>
