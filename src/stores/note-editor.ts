@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+import type {Note} from '@/types/notes'
 
 export const useNoteEditorStore = defineStore('noteEditor', () => {
   const showModal = ref(false)
@@ -12,41 +13,30 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
   const openNewNoteModal = () => {
     showSideEditor.value = false
     showModal.value = true
-
     editingNoteId.value = null
     title.value = ''
     content.value = ''
   }
 
-  const openEditNoteModal = (payload: {
-    id: number
-    title: string
-    content: string
-  }) => {
+  const openEditNoteModal = (note:Note) => {
     showSideEditor.value = false
     showModal.value = true
 
-    editingNoteId.value = payload.id
-    title.value = payload.title
-    content.value = payload.content
+    editingNoteId.value = note.id
+    title.value = note.title
+    content.value = note.content
   }
 
-  const openEditNoteSide = (payload: {
-    id: number
-    title: string
-    content: string
-  }) => {
+  const openEditNoteSide = (note:Note) => {
     showModal.value = false
     showSideEditor.value = true
-
-    editingNoteId.value = payload.id
-    title.value = payload.title
-    content.value = payload.content
+    editingNoteId.value = note.id
+    title.value = note.title
+    content.value = note.content
   }
 
   const closeModal = () => {
     showModal.value = false
-
     editingNoteId.value = null
     title.value = ''
     content.value = ''
@@ -54,7 +44,6 @@ export const useNoteEditorStore = defineStore('noteEditor', () => {
 
   const closeSideEditor = () => {
     showSideEditor.value = false
-
     editingNoteId.value = null
     title.value = ''
     content.value = ''
