@@ -20,6 +20,7 @@
           variant="side"
           :initial-title="noteEditor.title"
           :initial-content="noteEditor.content"
+          :initial-pdfs="noteEditor.pdfs"
           :is-editing="noteEditor.editingNoteId !== null"
           @save="handleSave"
           @cancel="noteEditor.closeSideEditor()"
@@ -54,7 +55,6 @@ const {
 } = useNoteActions();
 
 setupLifecycle();
-
 </script>
 
 <style scoped>

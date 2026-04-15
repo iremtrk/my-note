@@ -32,6 +32,15 @@
             min-height="100%"
           />
         </div>
+
+       <div class="pdf-attachment-wrapper">
+  <PdfAttachment
+    :pdfs="localPdfs"
+    @attach="handlePdfAttach"
+    @remove="handlePdfRemove"
+    @preview="handlePdfPreview"
+  />
+</div>
       </q-card-section>
 
       <q-card-actions align="right" class="editor-actions">
@@ -66,7 +75,7 @@
       <q-input
         v-model="localTitle"
         class="note-title-input"
-        style="font-size:18px"
+        style="font-size: 18px"
         maxlength="80"
         counter
         autogrow
@@ -77,9 +86,15 @@
           v-model="localContent"
           :toolbar="editorToolbar"
           class="editor-content"
-          
         />
       </div>
+
+      <PdfAttachment
+        :pdfs="localPdfs"
+        @attach="handlePdfAttach"
+        @remove="handlePdfRemove"
+        @preview="handlePdfPreview"
+      />
     </q-card-section>
 
     <q-card-actions align="right" class="editor-actions">
@@ -93,38 +108,81 @@
   </q-card>
 
   <ConfirmDeleteDialog v-model="showDeleteConfirm" @confirm="confirmDelete" />
+
+ <q-dialog v-model="showPdfPreview" maximized>
+  <q-card class="pdf-preview-dialog">
+    <q-card-section class="row items-center justify-between preview-header">
+      <div class="text-h6 ellipsis">
+        {{ selectedPreviewPdf?.name }}
+      </div>
+      <q-btn
+        icon="close"
+        flat
+        round
+        @click="showPdfPreview = false"
+      />
+    </q-card-section>
+
+    <q-separator />
+
+    <div class="pdf-dialog-body">
+      <PdfViewer
+        v-if="selectedPreviewPdf"
+        :pdf-data="selectedPreviewPdf.content"
+        :file-name="selectedPreviewPdf.name"
+        :visible="showPdfPreview"
+      />
+    </div>
+  </q-card>
+</q-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from "vue";
 import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
+import PdfAttachment from "src/components/notes/PdfAttachment.vue";
+import PdfViewer from "@/components/pdf/PdfViewer.vue";
 import { useI18n } from "vue-i18n";
+import type { NotePdf } from "@/types/notes";
 
 const { t } = useI18n();
+
+const showPdfPreview = ref(false);
 
 const props = withDefaults(
   defineProps<{
     modelValue?: boolean;
     initialTitle: string;
     initialContent: string;
+    initialPdfs?: NotePdf[];
     isEditing: boolean;
     variant?: "modal" | "side";
   }>(),
   {
     modelValue: false,
     variant: "modal",
+    initialPdfs: () => [],
   },
 );
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  (e: "save", payload: { title: string; content: string }): void;
+  (
+    e: "save",
+    payload: {
+      title: string;
+      content: string;
+      pdfs?: NotePdf[];
+    },
+  ): void;
   (e: "cancel"): void;
   (e: "delete"): void;
 }>();
 
 const localTitle = ref("");
 const localContent = ref("");
+const localPdfs = ref<NotePdf[]>([]);
+const selectedPreviewPdf = ref<NotePdf | null>(null);
 const isHydrating = ref(false);
 const showDeleteConfirm = ref(false);
 
@@ -140,20 +198,28 @@ const editorToolbar = [
 ];
 
 watch(
-  () => [props.initialTitle, props.initialContent, props.modelValue],
+  () => [
+    props.initialTitle,
+    props.initialContent,
+    props.initialPdfs,
+    props.modelValue,
+  ],
   () => {
     isHydrating.value = true;
     localTitle.value = props.initialTitle;
     localContent.value = props.initialContent;
+    localPdfs.value = props.initialPdfs ?? [];
+    selectedPreviewPdf.value = null;
+    showPdfPreview.value = false;
 
     setTimeout(() => {
       isHydrating.value = false;
     }, 0);
   },
-  { immediate: true },
+  { immediate: true }
 );
 
-watch([localTitle, localContent], () => {
+watch([localTitle, localContent, localPdfs], () => {
   if (!props.isEditing) return;
   if (isHydrating.value) return;
 
@@ -165,19 +231,53 @@ watch([localTitle, localContent], () => {
     const title = localTitle.value.trim();
     const content = localContent.value.trim();
 
-    if (!title && !content) return;
+    if (!title && !content && localPdfs.value.length === 0) return;
 
-    emit("save", { title, content });
+    emit("save", {
+      title,
+      content,
+      pdfs: localPdfs.value,
+    });
   }, 700);
 });
+
+const handlePdfAttach = (data: NotePdf[]) => {
+  localPdfs.value = data;
+
+  if (!selectedPreviewPdf.value && data.length > 0) {
+    selectedPreviewPdf.value = data[0];
+  }
+};
+
+const handlePdfRemove = (id: string) => {
+  localPdfs.value = localPdfs.value.filter((pdf) => pdf.id !== id);
+
+  if (selectedPreviewPdf.value?.id === id) {
+    selectedPreviewPdf.value = localPdfs.value[0] ?? null;
+  }
+};
+
+const handleRemoveAllPdfs = () => {
+  localPdfs.value = [];
+  selectedPreviewPdf.value = null;
+};
+
+const handlePdfPreview = (pdf: NotePdf) => {
+  selectedPreviewPdf.value = pdf;
+  showPdfPreview.value = true;
+};
 
 const handleSave = () => {
   const title = localTitle.value.trim();
   const content = localContent.value.trim();
 
-  if (!title && !content) return;
+  if (!title && !content && localPdfs.value.length === 0) return;
 
-  emit("save", { title, content });
+  emit("save", {
+    title,
+    content,
+    pdfs: localPdfs.value,
+  });
 };
 
 const handleCancel = () => {
@@ -222,7 +322,6 @@ onBeforeUnmount(() => {
 .side-editor-card {
   height: 100%;
   min-height: 0;
-  
 }
 
 .editor-header {
@@ -254,6 +353,26 @@ onBeforeUnmount(() => {
   flex: 1;
   min-height: 0;
   height: 100%;
+}
+
+.pdf-preview-dialog {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.preview-header {
+  flex-shrink: 0;
+}
+
+.pdf-dialog-body {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 :deep(.q-editor) {

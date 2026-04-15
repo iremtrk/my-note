@@ -41,7 +41,7 @@
         flat
         round
         dense
-        size="sm"
+        size="12px"
         @click.stop="$emit('toggle-star', task.id)"
       />
     </div>
@@ -115,7 +115,7 @@ const priorityIcon = computed(() => {
 }
 .task-row__priority-icon {
   flex-shrink: 0;
-  font-size: 11px;
+  font-size: 20px;
   font-weight: 700;
   letter-spacing: -1px;
 }

@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import axios from "axios";
-import type { Note } from "@/types/notes";
+import type { Note, NotePdf } from "@/types/notes";
 import { stripHtml } from "@/utils/html";
 import { useLoadingStore } from "./loading";
 
@@ -15,7 +15,6 @@ export const useNotesStore = defineStore("notes", () => {
   const hasFetched = ref(false);
 
   const loading = useLoadingStore();
-
   const API_URL = "http://localhost:3001/notes";
 
   const fetchNotes = async (userId?: string | number) => {
@@ -54,7 +53,7 @@ export const useNotesStore = defineStore("notes", () => {
 
   const updateNote = async (
     id: number,
-    payload: { title: string; content: string },
+    payload: { title: string; content: string; pdfs?: NotePdf[] },
   ) => {
     const currentNote = notes.value.find((note) => note.id === id);
     if (!currentNote) return;
@@ -70,13 +69,18 @@ export const useNotesStore = defineStore("notes", () => {
     const index = notes.value.findIndex((note) => note.id === id);
     if (index !== -1) notes.value[index] = response.data;
 
-    if (selectedNote.value?.id === id) selectedNote.value = response.data;
+    if (selectedNote.value?.id === id) {
+      selectedNote.value = response.data;
+    }
   };
 
   const deleteNote = async (id: number) => {
     await axios.delete(`${API_URL}/${id}`);
     notes.value = notes.value.filter((note) => note.id !== id);
-    if (selectedNote.value?.id === id) selectedNote.value = null;
+
+    if (selectedNote.value?.id === id) {
+      selectedNote.value = null;
+    }
   };
 
   const toggleStar = async (id: number) => {
@@ -90,7 +94,9 @@ export const useNotesStore = defineStore("notes", () => {
     const index = notes.value.findIndex((n) => n.id === id);
     if (index !== -1) notes.value[index] = response.data;
 
-    if (selectedNote.value?.id === id) selectedNote.value = response.data;
+    if (selectedNote.value?.id === id) {
+      selectedNote.value = response.data;
+    }
   };
 
   const clearNotes = () => {
@@ -127,7 +133,13 @@ export const useNotesStore = defineStore("notes", () => {
     return sortedNotes.value.filter((note) => {
       const title = note.title.toLowerCase();
       const content = stripHtml(note.content).toLowerCase();
-      return title.includes(query) || content.includes(query);
+      const pdfNames = (note.pdfs ?? []).map((pdf) => pdf.name.toLowerCase());
+
+      return (
+        title.includes(query) ||
+        content.includes(query) ||
+        pdfNames.some((name) => name.includes(query))
+      );
     });
   });
 
