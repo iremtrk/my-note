@@ -55,14 +55,13 @@
 
     <q-separator />
 
-    <q-card-section v-if="!hasFetched" class="loading-section">
+    <q-card-section v-if="!hasFetched">
       <q-spinner color="primary" size="50px" />
     </q-card-section>
 
     <q-card-section
       v-else-if="notes.length === 0"
-      class="text-grey empty-section"
-    >
+      class="text-grey">
       {{ t("noteList.empty") }}
     </q-card-section>
 
@@ -73,7 +72,7 @@
           :key="note.id"
           clickable
           :active="selectedNoteId === note.id"
-          active-class="bg-grey-3 text-primary"
+          active-class="bg-grey-4"
           class="note-item"
           @click="$emit('select-note', note)"
         >
@@ -181,14 +180,6 @@ const confirmDelete = () => {
   height: 100%;
 }
 
-.loading-section,
-.empty-section {
-  flex: 1;
-  min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .list-section {
   flex: 1;
@@ -238,5 +229,6 @@ const confirmDelete = () => {
   color: #9ca3af;
   text-align: right;
 }
+
 
 </style>

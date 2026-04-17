@@ -5,8 +5,7 @@
       'task-row--active': isActive,
       'task-row--completed': task.completed,
     }"
-    @click="$emit('select', task)"
-  >
+    @click="$emit('select', task)">
     <div class="task-row__left">
       <q-checkbox
         :model-value="task.completed"
@@ -22,8 +21,7 @@
         <span class="task-row__title">{{ task.title }}</span>
         <span
           class="task-row__priority-icon"
-          :class="`priority--${task.priority}`"
-        >
+          :class="`priority--${task.priority}`">
           {{ priorityIcon }}
         </span>
       </div>
@@ -31,27 +29,41 @@
       <div v-if="task.content" class="task-row__preview">
         {{ task.content }}
       </div>
-
     </div>
 
     <div class="task-row__actions">
       <q-btn
         :icon="task.starred ? 'star' : 'star_border'"
-        :color="task.starred ? 'amber' : 'grey-4'"
+        :color="task.starred ? 'primary' : 'grey-4'"
         flat
         round
         dense
-        size="12px"
+        size="sm"
         @click.stop="$emit('toggle-star', task.id)"
       />
+
+      <q-btn 
+        icon="close"
+        flat round dense
+        size="sm"
+        class="task-delete-btn"
+        @click.stop="showDeleteConfirm =true"
+      />
     </div>
+
+    <ConfirmDeleteTask
+      v-model="showDeleteConfirm"
+      @confirm="$emit('delete', task.id)"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed,ref } from "vue";
 import type { Task } from "@/types/tasks";
-import { formatNoteDate } from "@/utils/date";
+import ConfirmDeleteTask from "@/components/tasks/ConfirmDeleteTask.vue";
+
+const showDeleteConfirm = ref(false)
 
 const props = defineProps<{
   task: Task;
@@ -60,15 +72,15 @@ const props = defineProps<{
 
 defineEmits<{
   (e: "select", task: Task): void;
+  (e: "delete", id: number): void;
   (e: "toggle-star", id: number): void;
   (e: "toggle-complete", id: number): void;
 }>();
 
 const priorityIcon = computed(() => {
-  const map = { low: '!', medium: '!!', high: '!!!' }
-  return map[props.task.priority]
-})
-
+  const map = { low: "!", medium: "!!", high: "!!!" };
+  return map[props.task.priority];
+});
 </script>
 
 <style scoped>
@@ -119,9 +131,15 @@ const priorityIcon = computed(() => {
   font-weight: 700;
   letter-spacing: -1px;
 }
-.priority--low { color: #22c55e; }
-.priority--medium { color: #f97316; }
-.priority--high { color: #ef4444; }
+.priority--low {
+  color: #22c55e;
+}
+.priority--medium {
+  color: #f97316;
+}
+.priority--high {
+  color: #ef4444;
+}
 
 .task-row__preview {
   font-size: 12px;
@@ -132,6 +150,7 @@ const priorityIcon = computed(() => {
   line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  text-overflow: ellipsis;
 }
 .task-row__meta {
   display: flex;
@@ -139,7 +158,6 @@ const priorityIcon = computed(() => {
   gap: 8px;
   margin-top: 4px;
 }
-
 
 .task-row__actions {
   flex-shrink: 0;

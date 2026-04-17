@@ -9,7 +9,9 @@
         @select="$emit('select-task', $event)"
         @toggle-star="$emit('toggle-star', $event)"
         @toggle-complete="$emit('toggle-complete', $event)"
+        @delete="$emit('delete-task', $event)"
       />
+
     </div>
   </div>
 </template>
@@ -21,6 +23,7 @@ import TaskRow from "./TaskRow.vue";
 
 useI18n({ useScope: "global" });
 
+
 defineProps<{
   tasks: Task[];
   selectedTaskId: number | null;
@@ -31,6 +34,7 @@ defineEmits<{
   (e: "select-task", task: Task): void;
   (e: "toggle-star", id: number): void;
   (e: "toggle-complete", id: number): void;
+  (e: "delete-task", id: number): void;
 }>();
 </script>
 

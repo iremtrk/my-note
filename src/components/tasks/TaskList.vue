@@ -7,7 +7,8 @@
           outlined
           dense
           :placeholder="t('taskList.search')"
-          class="full-width">
+          class="full-width"
+        >
           <template #prepend>
             <q-icon name="search" />
           </template>
@@ -51,7 +52,11 @@
 
     <q-separator />
 
-    <q-card-section v-if="tasks.length === 0" class="text-grey">
+    <q-card-section v-if="!hasFetched">
+      <q-spinner color="primary" size="50px" />
+    </q-card-section>
+
+    <q-card-section v-else-if="tasks.length === 0" class="text-grey">
       {{ t("taskList.empty") }}
     </q-card-section>
 
@@ -65,6 +70,7 @@
           @select="$emit('select-task', $event)"
           @toggle-star="$emit('toggle-star', $event)"
           @toggle-complete="$emit('toggle-complete', $event)"
+          @delete="$emit('delete-task', $event)"
         />
       </div>
     </q-card-section>
@@ -84,6 +90,7 @@ const { t } = useI18n({ useScope: "global" });
 defineProps<{
   tasks: Task[];
   selectedTaskId: number | null;
+  hasFetched: boolean;
 }>();
 
 defineEmits<{
@@ -91,6 +98,7 @@ defineEmits<{
   (e: "toggle-star", id: number): void;
   (e: "toggle-complete", id: number): void;
   (e: "add-task"): void;
+  (e: "delete-task", id: number): void;
 }>();
 
 const tasksStore = useTasksStore();

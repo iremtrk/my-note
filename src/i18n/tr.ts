@@ -40,7 +40,7 @@ export default {
     failedCaption: 'Bir şeyler yanlış gitti. Lütfen tekrar dene.'
   },
   main: {
-    header: "Notlarım",
+    header: "Uygulamam",
   },
   sidebar: {
     searchNotes: "Not ara..",

@@ -40,7 +40,7 @@ export default {
     failedCaption: 'Something went wrong. Please try again.'
   },
   main: {
-    header: "My Note",
+    header: "My App",
   },
   sidebar: {
     searchNotes: "Search Notes..",

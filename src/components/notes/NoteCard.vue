@@ -1,6 +1,9 @@
 <template>
   <q-card
-    :style="{ background: getColor(note.id), color:$q.dark.isActive ? '#f5f5f5' : '#222'}"
+    :style="{
+      background: getColor(note.id),
+      color: $q.dark.isActive ? '#f5f5f5' : '#222',
+    }"
     class="my-card"
     clickable
     @click="emit('select', note)"
@@ -14,13 +17,19 @@
         <q-btn
           :icon="note.starred ? 'star' : 'star_border'"
           :color="note.starred ? 'primary' : 'grey-5'"
-          flat round dense
+          flat
+          round
+          dense
+          size="sm"
           class="star-btn"
           @click.stop="emit('toggle-star', note.id)"
         />
         <q-btn
           icon="close"
-          flat round dense
+          flat
+          round
+          dense
+          size="sm"
           class="card-delete-btn"
           @click.stop="showDeleteConfirm = true"
         />
@@ -43,39 +52,38 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import ConfirmDeleteDialog from '@/components/notes/ConfirmDeleteDialog.vue'
-import type { Note } from '@/types/notes'
-import { stripHtml } from '@/utils/html'
-import { formatNoteDate } from '@/utils/date'
-import { useQuasar } from 'quasar'
+import { ref, computed } from "vue";
+import ConfirmDeleteDialog from "@/components/notes/ConfirmDeleteDialog.vue";
+import type { Note } from "@/types/notes";
+import { stripHtml } from "@/utils/html";
+import { formatNoteDate } from "@/utils/date";
+import { useQuasar } from "quasar";
 
-const $q = useQuasar()
+const $q = useQuasar();
 
-const showDeleteConfirm = ref(false)
+const showDeleteConfirm = ref(false);
 
 const emit = defineEmits<{
-  (e: 'select', note: Note): void
-  (e: 'delete', id: string | number): void
-  (e: 'toggle-star', id: string | number): void
-}>()
+  (e: "select", note: Note): void;
+  (e: "delete", id: string | number): void;
+  (e: "toggle-star", id: string | number): void;
+}>();
 
-const props = defineProps<{ note: Note }>()
+const props = defineProps<{ note: Note }>();
 
-const previewText = computed(() => stripHtml(props.note.content))
-const formattedDate = computed(() => formatNoteDate(props.note.createdAt))
+const previewText = computed(() => stripHtml(props.note.content));
+const formattedDate = computed(() => formatNoteDate(props.note.createdAt));
 
-const lightColors = ['#fef3c7', '#dbeafe', '#dcfce7', '#fce7f3', '#ede9fe']
-const darkColors = ['#3a2f12', '#1e3a5f', '#1f4d3a', '#4a2238', '#352a56']
+const lightColors = ["#fef3c7", "#dbeafe", "#dcfce7", "#fce7f3", "#ede9fe"];
+const darkColors = ["#3a2f12", "#1e3a5f", "#1f4d3a", "#4a2238", "#352a56"];
 
 const getColor = (id: string | number) => {
-  const palette = $q.dark.isActive ? darkColors : lightColors
-  return palette[Number(id) % palette.length]
-}
+  const palette = $q.dark.isActive ? darkColors : lightColors;
+  return palette[Number(id) % palette.length];
+};
 </script>
 
 <style scoped>
-
 .my-card {
   width: 100%;
   /* max-width: 250px; */
@@ -106,7 +114,6 @@ const getColor = (id: string | number) => {
   overflow-wrap: anywhere;
 }
 
-
 .card-footer {
   padding-top: 4px;
   display: flex;
@@ -118,6 +125,11 @@ const getColor = (id: string | number) => {
   color: #9ca3af;
 }
 
-.star-btn { flex-shrink: 0; }
-.card-delete-btn { flex-shrink: 0; margin-left: 2px; }
+.star-btn {
+  flex-shrink: 0;
+}
+.card-delete-btn {
+  flex-shrink: 0;
+  margin-left: 2px;
+}
 </style>

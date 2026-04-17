@@ -4,10 +4,12 @@
       <TaskList
         :tasks="tasksStore.filteredTasks"
         :selected-task-id="tasksStore.selectedTask?.id ?? null"
+        :has-fetched="tasksStore.hasFetched"
         @select-task="handleSelectTask"
         @toggle-star="tasksStore.toggleStar"
         @toggle-complete="tasksStore.toggleComplete"
         @add-task="taskEditor.openAddModal()"
+        @delete-task="handleDeleteTask"
       />
     </div>
 

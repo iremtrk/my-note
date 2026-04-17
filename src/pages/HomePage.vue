@@ -115,6 +115,7 @@
             @select-task="handleSelectTask"
             @toggle-star="tasksStore.toggleStar"
             @toggle-complete="tasksStore.toggleComplete"
+            @delete-task ="handleDeleteTask"
           />
 
           <div v-if="taskEditor.showSideEditor" class="detail-panel">
@@ -235,7 +236,7 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
 }
 
 .notes-content:has(.detail-panel) {
-  grid-template-columns: minmax(320px, 2fr) minmax(420px, 0.95fr);
+  grid-template-columns: minmax(320px, 1fr) minmax(460px, 1fr);
 }
 
 .tasks-content {
@@ -252,10 +253,9 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
   overflow-y: auto;
   overflow-x: hidden;
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
   align-content: start;
-  justify-content: start;
   padding-right: 4px;
 }
 

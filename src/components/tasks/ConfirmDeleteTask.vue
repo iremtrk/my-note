@@ -6,24 +6,24 @@
   >
     <q-card class="delete-dialog">
       <q-card-section class="dialog-header no-wrap">
-        <div class="text-h6 dialog-title">{{ t('confirm.deleteTitle') }}</div>
+        <div class="text-h6 dialog-title">{{ t('taskEditor.deleteTitle') }}</div>
       </q-card-section>
 
       <q-card-section class="dialog-message">
-        {{ t('confirm.deleteMessage') }}
+        {{ t('taskEditor.deleteMessage') }}
       </q-card-section>
 
       <q-card-actions align="right" class="dialog-actions">
         <q-btn
           flat
-          :label="t('confirm.cancel')"
+          :label="t('taskEditor.cancel')"
           class="cancel-btn"
           @click="emit('update:modelValue', false)"
         />
         <q-btn
           unelevated
           color="negative"
-          :label="t('confirm.delete')"
+          :label="t('taskEditor.delete')"
           class="delete-btn"
           @click="handleConfirm"
         />

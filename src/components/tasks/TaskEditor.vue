@@ -158,7 +158,7 @@
       </div>
     </q-card-section>
 
-    <q-dialog v-model="showDeleteConfirm">
+    <!-- <q-dialog v-model="showDeleteConfirm">
       <q-card>
         <q-card-section>
           <div class="text-h6">{{ t("taskEditor.deleteTitle") }}</div>
@@ -174,14 +174,20 @@
           />
         </q-card-actions>
       </q-card>
-    </q-dialog>
+    </q-dialog> -->
+
+    <ConfirmDeleteTask v-model="showDeleteConfirm" @confirm="confirmDelete"/>
   </q-card>
+
+
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import type { Task } from "@/types/tasks";
+
+import ConfirmDeleteTask from "./ConfirmDeleteTask.vue";
 
 const { t } = useI18n({ useScope: "global" });
 
