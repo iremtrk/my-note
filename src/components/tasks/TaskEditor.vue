@@ -157,25 +157,6 @@
         />
       </div>
     </q-card-section>
-
-    <!-- <q-dialog v-model="showDeleteConfirm">
-      <q-card>
-        <q-card-section>
-          <div class="text-h6">{{ t("taskEditor.deleteTitle") }}</div>
-        </q-card-section>
-        <q-card-section>{{ t("taskEditor.deleteMessage") }}</q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat :label="t('taskEditor.cancel')" v-close-popup />
-          <q-btn
-            flat
-            color="negative"
-            :label="t('taskEditor.delete')"
-            @click="confirmDelete"
-          />
-        </q-card-actions>
-      </q-card>
-    </q-dialog> -->
-
     <ConfirmDeleteTask v-model="showDeleteConfirm" @confirm="confirmDelete"/>
   </q-card>
 
@@ -189,7 +170,7 @@ import type { Task } from "@/types/tasks";
 
 import ConfirmDeleteTask from "./ConfirmDeleteTask.vue";
 
-const { t } = useI18n({ useScope: "global" });
+const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{

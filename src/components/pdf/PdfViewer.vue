@@ -110,7 +110,7 @@ const loadPdf = async () => {
     totalPages.value = pdfDoc.value.numPages;
     pageNum.value = 1;
 
-    await nextTick();
+    await nextTick(); //reaktif state değişikliklerinden sonra DOM güncellenmesini beklemek için
     await new Promise((resolve) => requestAnimationFrame(() => resolve(true)));
     await renderPage();
   } catch (error) {

@@ -1,14 +1,15 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useAuthStore } from "../stores/auth";
 
-import AuthLayout from "src/layouts/AuthLayout.vue";
-import MainLayout from "src/layouts/MainLayout.vue";
+import AuthLayout from "@/layouts/AuthLayout.vue";
+import MainLayout from "@/layouts/MainLayout.vue";
 
-import LoginPage from "src/pages/LoginPage.vue";
-import RegisterPage from "src/pages/RegisterPage.vue";
-import HomePage from "src/pages/HomePage.vue";
-import NotesPage from "src/pages/NotesPage.vue";
-import TasksPage from "src/pages/TasksPage.vue"
+import LoginPage from "@/pages/LoginPage.vue";
+import RegisterPage from "@/pages/RegisterPage.vue";
+import HomePage from "@/pages/HomePage.vue";
+import NotesPage from "@/pages/NotesPage.vue";
+import TasksPage from "@/pages/TasksPage.vue";
+import CalendarPage from "@/pages/CalendarPage.vue";
 
 const routes = [
   {
@@ -30,7 +31,6 @@ const routes = [
         name: "login",
         component: LoginPage,
       },
-
     ],
   },
   {
@@ -57,6 +57,11 @@ const routes = [
         name: "tasks",
         component: TasksPage,
       },
+      {
+        path: "calendar",
+        name: "calendar",
+        component: CalendarPage,
+      },
     ],
   },
 ];
@@ -79,7 +84,7 @@ router.beforeEach((to) => {
     return "/login";
   }
 
-  if ((to.path === "/login") && isAuthenticated) {
+  if (to.path === "/login" && isAuthenticated) {
     return "/app/home";
   }
 

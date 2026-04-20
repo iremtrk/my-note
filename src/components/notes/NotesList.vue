@@ -74,8 +74,7 @@
           :active="selectedNoteId === note.id"
           active-class="bg-grey-4"
           class="note-item"
-          @click="$emit('select-note', note)"
-        >
+          @click="$emit('select-note', note)">
           <q-item-section>
             <div class="row items-start justify-between no-wrap">
               <q-item-label class="text-weight-medium note-title">

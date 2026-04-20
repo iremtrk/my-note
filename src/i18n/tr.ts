@@ -49,6 +49,7 @@ export default {
     home: "Anasayfa",
     notes: "Notlar",
     tasks: "Görevler",
+    calendar: "Takvim",
     welcome: "Hoşgeldin",
   },
   home:{
@@ -113,4 +114,10 @@ export default {
     deleteMessage: 'Bu görevi silmek istediğine emin misin?',
     delete: 'Sil',
   },
+  pdf:{
+    deleteTitle:"PDF'i sil",
+    deleteMessage:"Bu Pdf'i silmek istediğine emin misin?",
+    cancel:"İptal",
+    delete:"Sİl"
+  }
 };

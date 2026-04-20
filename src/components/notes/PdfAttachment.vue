@@ -38,16 +38,26 @@
           dense
           color="negative"
           icon="close"
-          @click="emit('remove', pdf.id)"
+          @click="askRemove(pdf)"
         />
       </div>
     </div>
+
+    <ConfirmDeletePdf
+      v-model="showDeleteConfirm"
+      :file-name="pdfToDelete?.name ?? ''"
+      @confirm="confirmRemove">
+    </ConfirmDeletePdf>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import type { NotePdf } from "@/types/notes";
+import ConfirmDeletePdf from "@/components/notes/ConfirmDeletePdf.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 const props = withDefaults(
   defineProps<{
@@ -65,9 +75,23 @@ const emit = defineEmits<{
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
+const showDeleteConfirm = ref(false);
+const pdfToDelete = ref<NotePdf | null>(null);
 
 const openFilePicker = () => {
   fileInput.value?.click();
+};
+
+const askRemove = (pdf: NotePdf) => {
+  pdfToDelete.value = pdf;
+  showDeleteConfirm.value = true;
+};
+
+const confirmRemove = () => {
+  if (!pdfToDelete.value) return;
+
+  emit("remove", pdfToDelete.value.id);
+  pdfToDelete.value = null;
 };
 
 const handleFileChange = (event: Event) => {
@@ -120,7 +144,6 @@ const handleFileChange = (event: Event) => {
     reader.readAsDataURL(file);
   });
 };
-
 </script>
 
 <style scoped>

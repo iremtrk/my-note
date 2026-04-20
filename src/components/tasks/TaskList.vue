@@ -7,8 +7,7 @@
           outlined
           dense
           :placeholder="t('taskList.search')"
-          class="full-width"
-        >
+          class="full-width">
           <template #prepend>
             <q-icon name="search" />
           </template>
@@ -26,8 +25,7 @@
                 v-close-popup
                 :active="tasksStore.sortOrder === opt.value"
                 active-class="text-primary"
-                @click="tasksStore.sortOrder = opt.value"
-              >
+                @click="tasksStore.sortOrder = opt.value">
                 <q-item-section avatar>
                   <q-icon :name="opt.icon" size="18px" />
                 </q-item-section>

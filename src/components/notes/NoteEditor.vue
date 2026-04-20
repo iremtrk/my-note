@@ -7,21 +7,20 @@
     <q-card class="editor-card modal-editor-card">
       <q-card-section class="row items-center justify-between editor-header">
         <div class="text-h6">{{ t("editor.newNote") }}</div>
-
-        <div class="row items-center q-gutter-sm">
           <q-btn icon="close" flat round @click="handleCancel" />
-        </div>
       </q-card-section>
+
+      <q-separator />
 
       <q-card-section class="editor-body">
         <q-input
           v-model="localTitle"
           class="note-title-input"
           :label="t('editor.title')"
-          style="font-size: x-large"
           maxlength="80"
           counter
           autogrow
+          autofocus
         />
 
         <div class="editor-wrapper">
@@ -48,6 +47,7 @@
           v-if="!isEditing"
           color="primary"
           :label="t('editor.add')"
+          :disable="!localContent.trim() && !localTitle.trim()"
           @click="handleSave"
         />
       </q-card-actions>
@@ -58,7 +58,7 @@
     <q-card-section class="row items-center justify-between editor-header">
       <div class="text-h6">{{ t("editor.editNote") }}</div>
 
-      <div class="row items-center q-gutter-sm">
+      <div class="row items-center q-gutter-xs">
         <q-btn
           v-if="isEditing"
           icon="delete"
@@ -70,6 +70,7 @@
         <q-btn icon="close" flat round @click="handleCancel" />
       </div>
     </q-card-section>
+     <q-separator/>
 
     <q-card-section class="editor-body">
       <q-input
@@ -139,8 +140,8 @@
 
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from "vue";
-import ConfirmDeleteDialog from "src/components/notes/ConfirmDeleteDialog.vue";
-import PdfAttachment from "src/components/notes/PdfAttachment.vue";
+import ConfirmDeleteDialog from "@/components/notes/ConfirmDeleteDialog.vue";
+import PdfAttachment from "@/components/notes/PdfAttachment.vue";
 import PdfViewer from "@/components/pdf/PdfViewer.vue";
 import { useI18n } from "vue-i18n";
 import type { NotePdf } from "@/types/notes";
