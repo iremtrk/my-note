@@ -206,8 +206,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;
-  (
-    e: "save",
+  (e: "save",
     payload: {
       title: string;
       content: string;

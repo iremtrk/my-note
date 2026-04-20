@@ -76,14 +76,10 @@ import { useNoteEditorStore } from "@/stores/note-editor";
 import { useNotesStore } from "@/stores/notes";
 import { useAuthStore } from "@/stores/auth";
 import { useI18n } from "vue-i18n";
-import { useLoadingStore } from "@/stores/loading";
-
 import TaskEditor from "@/components/tasks/TaskEditor.vue";
 import { useTaskEditorStore } from "@/stores/task-editor";
 import { useTasksStore } from "@/stores/tasks";
 
-
-const loading = useLoadingStore();
 
 const $q = useQuasar();
 const { t, locale } = useI18n();

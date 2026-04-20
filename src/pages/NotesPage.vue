@@ -7,10 +7,7 @@
         :has-fetched="notesStore.hasFetched"
         @select-note="handleSelect"
         @delete-note="handleDelete"
-        @toggle-star="
-          (id) =>
-            notesStore.toggleStar(typeof id === 'string' ? parseInt(id) : id)
-        "
+        @toggle-star="(id) => notesStore.toggleStar(typeof id === 'string' ? parseInt(id) : id)"
       />
     </div>
 

@@ -61,12 +61,7 @@
               :note="note"
               @select="handleSelect"
               @delete="handleDelete"
-              @toggle-star="
-                (id) =>
-                  notesStore.toggleStar(
-                    typeof id === 'string' ? parseInt(id) : id,
-                  )
-              "
+              @toggle-star="(id) => notesStore.toggleStar(typeof id === 'string' ? parseInt(id) : id,)"
             />
           </div>
 
@@ -115,7 +110,7 @@
             @select-task="handleSelectTask"
             @toggle-star="tasksStore.toggleStar"
             @toggle-complete="tasksStore.toggleComplete"
-            @delete-task ="handleDeleteTask"
+            @delete-task="handleDeleteTask"
           />
 
           <div v-if="taskEditor.showSideEditor" class="detail-panel">
@@ -129,10 +124,7 @@
               @save="handleUpdateTask"
               @cancel="taskEditor.closeSideEditor()"
               @delete="handleDeleteTask()"
-              @toggle-complete="
-                tasksStore.selectedTask &&
-                tasksStore.toggleComplete(tasksStore.selectedTask.id)
-              "
+              @toggle-complete="tasksStore.selectedTask && tasksStore.toggleComplete(tasksStore.selectedTask.id)"
             />
           </div>
         </div>
