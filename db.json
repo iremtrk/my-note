@@ -343,5 +343,48 @@
       "id": 19
     }
   ],
-  "events": []
+  "events": [
+    {
+      "userId": "wWedmDf",
+      "title": "dfsd",
+      "description": "sfsdf",
+      "date": "2026-04-14",
+      "type": "event",
+      "createdAt": "2026-04-20T13:54:37.267Z",
+      "notified": false,
+      "id": 3
+    },
+    {
+      "userId": "wWedmDf",
+      "title": "deneme",
+      "description": "deneme",
+      "date": "2026-04-21",
+      "time": "06:47",
+      "type": "event",
+      "createdAt": "2026-04-21T06:06:44.320Z",
+      "notified": false,
+      "id": 4
+    },
+    {
+      "userId": "wWedmDf",
+      "title": "a",
+      "description": "a",
+      "date": "2026-04-21",
+      "type": "event",
+      "createdAt": "2026-04-21T06:12:57.895Z",
+      "notified": false,
+      "id": 5,
+      "time": "06:14"
+    },
+    {
+      "userId": "wWedmDf",
+      "title": "dfd",
+      "description": "dfdf",
+      "date": "2026-04-09",
+      "type": "event",
+      "createdAt": "2026-04-21T07:24:18.882Z",
+      "notified": false,
+      "id": 6
+    }
+  ]
 }
