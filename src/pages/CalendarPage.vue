@@ -14,13 +14,14 @@
           :event-dates="eventsStore.eventDates"
           @update:selectionMode="selectionMode = $event"
           @pick-day="handleSingleDatePick"
+          @double-pick="handleDoubleClick"
           @pick-ranges="handleMultipleRangesPick"
         />
       </template>
 
       <template #after>
         <EventsListPanel
-          :selection-mode="selectionMode"
+          :selection-mode="activeView"
           :selected-date="eventsStore.selectedDate"
           :selected-ranges="eventsStore.selectedRanges"
           :has-fetched="eventsStore.hasFetched"
@@ -66,6 +67,7 @@ const splitterModel = ref(40);
 const showDialog = ref(false);
 const editingEventId = ref<number | null>(null);
 const selectionMode = ref<"day" | "ranges">("day");
+const activeView = ref<"day" | "ranges">("day");
 const rangeModel = ref<DateRange[]>([]);
 
 let notifyInterval: ReturnType<typeof setInterval> | null = null;
@@ -120,26 +122,33 @@ const openEditDialog = (event: CalendarEvent) => {
   showDialog.value = true;
 };
 
-const handleSingleDatePick = (date: string) => {
-  openAddDialogForDate(date);
+const handleSingleDatePick = (date: string | null) => {
+  if (date) {
+    eventsStore.setSelectedDate(date);
+    activeView.value = "day";
+  }
+};
+
+const handleDoubleClick = () => {
+  if (eventsStore.selectedDate) {
+    openAddDialogForDate(eventsStore.selectedDate);
+  }
 };
 
 const handleMultipleRangesPick = (value: DateRange[] | null) => {
   rangeModel.value = value ?? [];
   eventsStore.setSelectedRanges(value ?? []);
+  if (value && value.length > 0) {
+    activeView.value = "ranges";
+  } else {
+    activeView.value = "day";
+  }
 };
 
 const handleSubmit = async () => {
   if (!authStore.user?.id) return;
 
-  if (!form.value.title.trim() || !form.value.date) {
-    $q.notify({
-      type: "negative",
-      message: "Title ve date zorunlu.",
-      position: "bottom-right",
-    });
-    return;
-  }
+
 
   if (editingEventId.value === null) {
     await eventsStore.addEvent({
@@ -223,12 +232,7 @@ watch(
   { deep: true }
 );
 
-watch(selectionMode, (value) => {
-  if (value === "day") {
-    rangeModel.value = [];
-    eventsStore.setSelectedRanges([]);
-  }
-});
+// selectionMode watcher removed; range data now persists.
 
 onMounted(async () => {
   if (!authStore.user?.id) return;

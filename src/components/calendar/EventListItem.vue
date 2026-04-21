@@ -1,10 +1,11 @@
 <template>
-  <q-item clickable @click="emit('select', event)">
+  <q-item clickable @click="emit('edit', event)">
     <q-item-section avatar>
       <q-icon
         :name="event.type === 'birthday' ? 'cake' : 'event'"
         color="primary"
       />
+      
     </q-item-section>
 
     <q-item-section>
@@ -22,16 +23,7 @@
         flat
         round
         dense
-        icon="edit"
-        color="grey-7"
-        @click.stop="emit('edit', event)"
-      />
-      <q-btn
-        flat
-        round
-        dense
-        icon="delete"
-        color="negative"
+        icon="close"
         @click.stop="emit('delete', event.id)"
       />
     </q-item-section>

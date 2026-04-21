@@ -1,24 +1,7 @@
 <template>
   <div class="right-panel q-pa-md">
     <div class="row items-center justify-between q-mb-md">
-      <div>
         <div class="text-h6">Events</div>
-
-        <div class="text-caption text-grey-6">
-          <template v-if="selectionMode === 'day'">
-            {{ selectedDate || "Tarih seçilmedi" }}
-          </template>
-
-          <template v-else>
-            {{
-              selectedRanges.length > 0
-                ? `${selectedRanges.length} aralık seçildi`
-                : "Aralık seçilmedi"
-            }}
-          </template>
-        </div>
-      </div>
-
       <q-btn
         color="primary"
         icon="add"

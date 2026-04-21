@@ -4,10 +4,11 @@
     @update:model-value="emit('update:modelValue', $event)"
   >
     <q-card class="event-dialog">
-      <q-card-section>
+      <q-card-section class="row items-center justify-between">
         <div class="text-h6">
           {{ editingEventId === null ? "Add Event" : "Edit Event" }}
         </div>
+        <q-btn flat round icon="close" @click="emit('update:modelValue', false)" />
       </q-card-section>
 
       <q-card-section class="q-gutter-md">
@@ -27,12 +28,7 @@
           @update:model-value="updateField('description', String($event ?? ''))"
         />
 
-        <q-input
-          :model-value="form.date"
-          label="Date"
-          outlined
-          readonly
-        />
+        <q-input :model-value="form.date" label="Date" outlined readonly />
 
         <q-input
           :model-value="form.time"
@@ -55,13 +51,9 @@
 
       <q-card-actions align="right">
         <q-btn
-          flat
-          label="Cancel"
-          @click="emit('update:modelValue', false)"
-        />
-        <q-btn
           color="primary"
           :label="editingEventId === null ? 'Save' : 'Update'"
+          :disable="!form.title.trim()"
           @click="emit('submit')"
         />
       </q-card-actions>
@@ -91,7 +83,10 @@ const emit = defineEmits<{
   (e: "submit"): void;
 }>();
 
-const updateField = <K extends keyof EventForm>(field: K, value: EventForm[K]) => {
+const updateField = <K extends keyof EventForm>(
+  field: K,
+  value: EventForm[K],
+) => {
   emit("update:form", {
     ...props.form,
     [field]: value,
