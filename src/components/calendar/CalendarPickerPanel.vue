@@ -14,7 +14,7 @@
       color="primary"
       today-btn
       :events="eventDates"
-      event-color="primary"
+      event-color="purple"
       class="calendar-widget"
       @update:model-value="emit('pick-day', $event)"
       @dblclick="emit('double-pick')"
@@ -71,10 +71,6 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-.left-panel {
-  height: 100%;
-  overflow-y: auto;
-}
 
 .calendar-widget {
   width: 100%;

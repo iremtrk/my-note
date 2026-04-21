@@ -1,24 +1,24 @@
 <template>
-  <div class="right-panel q-pa-md">
-    <div class="row items-center justify-between q-mb-md">
-        <div class="text-h6">Events</div>
-      <q-btn
-        color="primary"
-        icon="add"
-        label="Add Event"
-        @click="emit('add-event')"
-      />
+  <div class="right-panel q-pa-md event-list">
+    <div class="row items-center justify-between q-mb-md event-scroll">
+      <div class="text-h6">Events</div>
     </div>
 
-    <div
+    <div 
       v-if="
         hasFetched &&
         selectionMode === 'day' &&
         eventsOfSelectedDate.length === 0
       "
-      class="empty-state"
-    >
-      Bu tarih için event bulunmuyor.
+      class="empty-state">
+      <q-btn
+        flat
+        round
+        color="primary"
+        icon="add"
+        @click="emit('add-event')"
+      />
+      There is no event for this date
     </div>
 
     <div
@@ -29,8 +29,10 @@
       "
       class="empty-state"
     >
-      Seçilen aralıklar için event bulunmuyor.
+      There are no events between the selected dates
+      
     </div>
+    
 
     <q-list
       v-else-if="selectionMode === 'day'"
@@ -49,11 +51,7 @@
     </q-list>
 
     <div v-else class="range-groups">
-      <div
-        v-for="(items, date) in groupedEvents"
-        :key="date"
-        class="q-mb-md"
-      >
+      <div v-for="(items, date) in groupedEvents" :key="date" class="q-mb-md">
         <div class="text-subtitle2 q-mb-sm">{{ date }}</div>
 
         <q-list bordered separator class="event-list">

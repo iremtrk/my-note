@@ -38,26 +38,41 @@
           dense
           color="negative"
           icon="close"
-          @click="askRemove(pdf)"
+          @click="openDeleteConfirm(pdf.id)"
         />
       </div>
     </div>
-
-    <ConfirmDeletePdf
+    <ConfirmDelete
       v-model="showDeleteConfirm"
-      :file-name="pdfToDelete?.name ?? ''"
-      @confirm="confirmRemove">
-    </ConfirmDeletePdf>
+      :title="t('pdf.deleteTitle')"
+      :message="t('pdf.deleteMessage')"
+      @confirm="confirmDelete"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import type { NotePdf } from "@/types/notes";
-import ConfirmDeletePdf from "@/components/notes/ConfirmDeletePdf.vue";
+import ConfirmDelete from "@/common/ConfirmDelete.vue";
 import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
+
+const showDeleteConfirm=ref(false)
+const deletingPdfId=ref<string|null>(null)
+
+const openDeleteConfirm=(id:string)=>{
+  deletingPdfId.value=id
+  showDeleteConfirm.value=true
+}
+
+const confirmDelete = () =>{
+  if (!deletingPdfId.value) return
+  emit("remove",deletingPdfId.value)
+    showDeleteConfirm.value = false;
+  deletingPdfId.value = null;
+}
 
 const props = withDefaults(
   defineProps<{
@@ -65,7 +80,7 @@ const props = withDefaults(
   }>(),
   {
     pdfs: () => [],
-  }
+  },
 );
 
 const emit = defineEmits<{
@@ -75,23 +90,10 @@ const emit = defineEmits<{
 }>();
 
 const fileInput = ref<HTMLInputElement | null>(null);
-const showDeleteConfirm = ref(false);
-const pdfToDelete = ref<NotePdf | null>(null);
+
 
 const openFilePicker = () => {
   fileInput.value?.click();
-};
-
-const askRemove = (pdf: NotePdf) => {
-  pdfToDelete.value = pdf;
-  showDeleteConfirm.value = true;
-};
-
-const confirmRemove = () => {
-  if (!pdfToDelete.value) return;
-
-  emit("remove", pdfToDelete.value.id);
-  pdfToDelete.value = null;
 };
 
 const handleFileChange = (event: Event) => {

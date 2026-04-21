@@ -157,7 +157,11 @@
         />
       </div>
     </q-card-section>
-    <ConfirmDeleteTask v-model="showDeleteConfirm" @confirm="confirmDelete"/>
+    <ConfirmDelete 
+    v-model="showDeleteConfirm" 
+    :title="t('taskEditor.deleteTitle')"
+    :message="t('taskEditor.deleteMessage')"
+    @confirm="confirmDelete"/>
   </q-card>
 
 
@@ -168,7 +172,7 @@ import { ref, watch, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import type { Task } from "@/types/tasks";
 
-import ConfirmDeleteTask from "./ConfirmDeleteTask.vue";
+import ConfirmDelete from "@/common/ConfirmDelete.vue";
 
 const { t } = useI18n();
 

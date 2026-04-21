@@ -46,13 +46,14 @@
         icon="close"
         flat round dense
         size="sm"
-        class="task-delete-btn"
         @click.stop="showDeleteConfirm =true"
       />
     </div>
 
-    <ConfirmDeleteTask
+    <ConfirmDelete
       v-model="showDeleteConfirm"
+      :title="t('taskEditor.deleteTitle')"
+      :message="t('taskEditor.deleteMessage')"
       @confirm="$emit('delete', task.id)"
     />
   </div>
@@ -61,7 +62,10 @@
 <script setup lang="ts">
 import { computed,ref } from "vue";
 import type { Task } from "@/types/tasks";
-import ConfirmDeleteTask from "@/components/tasks/ConfirmDeleteTask.vue";
+import ConfirmDelete from "@/common/ConfirmDelete.vue";
+import { useI18n } from "vue-i18n";
+
+const {t}= useI18n()
 
 const showDeleteConfirm = ref(false)
 

@@ -97,8 +97,6 @@
                   round
                   dense
                   size="sm"
-                  color="grey-7"
-                  class="delete-btn"
                   @click.stop="openDeleteConfirm(note.id)"
                 />
               </div>
@@ -114,15 +112,21 @@
           </q-item-section>
         </q-item>
       </q-list>
+      <ConfirmDelete
+        v-model="showDeleteConfirm"
+        :title="t('noteList.deleteTitle')"
+        :message="t('noteList.deleteMessage')"
+        @confirm="confirmDelete"
+      />
     </q-card-section>
   </q-card>
 
-  <ConfirmDeleteDialog v-model="showDeleteConfirm" @confirm="confirmDelete" />
+
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import ConfirmDeleteDialog from "@/components/notes/ConfirmDeleteDialog.vue";
+import ConfirmDelete from "@/common/ConfirmDelete.vue";
 import type { Note } from "@/types/notes";
 import { stripHtml } from "@/utils/html";
 import { formatNoteDate } from "@/utils/date";
@@ -131,7 +135,21 @@ import { useNotesStore } from "@/stores/notes";
 import type { SortOrder } from "@/stores/notes";
 import { useI18n } from "vue-i18n";
 
-const { t } = useI18n({ useScope: "global" });
+const { t } = useI18n();
+
+const showDeleteConfirm = ref(false);
+const deletingNoteId=ref<number|null>(null);
+
+const openDeleteConfirm= (id:number) =>{
+  deletingNoteId.value = id;
+  showDeleteConfirm.value = true;
+}
+const confirmDelete = () => {
+  if (!deletingNoteId.value) return;
+  emit("delete-note", deletingNoteId.value);
+  showDeleteConfirm.value = false;
+  deletingNoteId.value = null;
+};
 
 const props = defineProps<{
   notes: Note[];
@@ -141,8 +159,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   (e: "select-note", note: Note): void;
-  (e: "delete-note", id: string | number): void;
-  (e: "toggle-star", id: string | number): void;
+  (e: "delete-note", id: number): void;
+  (e: "toggle-star", id: number): void;
 }>();
 
 const noteEditor = useNoteEditorStore();
@@ -156,20 +174,6 @@ const sortOptions = computed<
   { label: t("noteList.sortUpdated"), value: "updated", icon: "update" },
 ]);
 
-const showDeleteConfirm = ref(false);
-const deletingNoteId = ref<string | number | null>(null);
-
-const openDeleteConfirm = (id: string | number) => {
-  deletingNoteId.value = id;
-  showDeleteConfirm.value = true;
-};
-
-const confirmDelete = () => {
-  if (!deletingNoteId.value) return;
-  emit("delete-note", deletingNoteId.value);
-  deletingNoteId.value = null;
-  showDeleteConfirm.value = false;
-};
 </script>
 
 <style scoped>
@@ -206,11 +210,6 @@ const confirmDelete = () => {
   text-overflow: ellipsis;
 }
 
-.delete-btn {
-  flex-shrink: 0;
-  margin-left: 2px;
-  margin-top: -2px;
-}
 
 .note-preview {
   display: -webkit-box;

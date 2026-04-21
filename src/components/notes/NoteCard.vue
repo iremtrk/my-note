@@ -30,7 +30,6 @@
           round
           dense
           size="sm"
-          class="card-delete-btn"
           @click.stop="showDeleteConfirm = true"
         />
       </div>
@@ -45,19 +44,24 @@
     </q-card-section>
   </q-card>
 
-  <ConfirmDeleteDialog
+  <ConfirmDelete
     v-model="showDeleteConfirm"
+    :title="t('noteList.deleteTitle')"
+    :message="t('noteList.deleteMessage')"
     @confirm="emit('delete', note.id)"
   />
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
-import ConfirmDeleteDialog from "@/components/notes/ConfirmDeleteDialog.vue";
+import ConfirmDelete from "@/common/ConfirmDelete.vue";
 import type { Note } from "@/types/notes";
 import { stripHtml } from "@/utils/html";
 import { formatNoteDate } from "@/utils/date";
 import { useQuasar } from "quasar";
+import { useI18n } from "vue-i18n";
+
+const {t}=useI18n()
 
 const $q = useQuasar();
 
@@ -128,8 +132,5 @@ const getColor = (id: string | number) => {
 .star-btn {
   flex-shrink: 0;
 }
-.card-delete-btn {
-  flex-shrink: 0;
-  margin-left: 2px;
-}
+
 </style>

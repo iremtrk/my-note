@@ -7,7 +7,7 @@
     <q-card class="editor-card modal-editor-card">
       <q-card-section class="row items-center justify-between editor-header">
         <div class="text-h6">{{ t("editor.newNote") }}</div>
-          <q-btn icon="close" flat round @click="handleCancel" />
+        <q-btn icon="close" flat round @click="handleCancel" />
       </q-card-section>
 
       <q-separator />
@@ -32,14 +32,14 @@
           />
         </div>
 
-       <div class="pdf-attachment-wrapper">
-  <PdfAttachment
-    :pdfs="localPdfs"
-    @attach="handlePdfAttach"
-    @remove="handlePdfRemove"
-    @preview="handlePdfPreview"
-  />
-</div>
+        <div class="pdf-attachment-wrapper">
+          <PdfAttachment
+            :pdfs="localPdfs"
+            @attach="handlePdfAttach"
+            @remove="handlePdfRemove"
+            @preview="handlePdfPreview"
+          />
+        </div>
       </q-card-section>
 
       <q-card-actions align="right" class="editor-actions">
@@ -70,7 +70,7 @@
         <q-btn icon="close" flat round @click="handleCancel" />
       </div>
     </q-card-section>
-     <q-separator/>
+    <q-separator />
 
     <q-card-section class="editor-body">
       <q-input
@@ -108,39 +108,39 @@
     </q-card-actions>
   </q-card>
 
-  <ConfirmDeleteDialog v-model="showDeleteConfirm" @confirm="confirmDelete" />
+  <ConfirmDelete
+    v-model="showDeleteConfirm"
+    :title="t('noteList.deleteTitle')"
+    :message="t('noteList.deleteMessage')"
+    @confirm="confirmDelete"
+  />
 
- <q-dialog v-model="showPdfPreview" maximized>
-  <q-card class="pdf-preview-dialog">
-    <q-card-section class="row items-center justify-between preview-header">
-      <div class="text-h6 ellipsis">
-        {{ selectedPreviewPdf?.name }}
+  <q-dialog v-model="showPdfPreview" maximized>
+    <q-card class="pdf-preview-dialog">
+      <q-card-section class="row items-center justify-between preview-header">
+        <div class="text-h6 ellipsis">
+          {{ selectedPreviewPdf?.name }}
+        </div>
+        <q-btn icon="close" flat round @click="showPdfPreview = false" />
+      </q-card-section>
+
+      <q-separator />
+
+      <div class="pdf-dialog-body">
+        <PdfViewer
+          v-if="selectedPreviewPdf"
+          :pdf-data="selectedPreviewPdf.content"
+          :file-name="selectedPreviewPdf.name"
+          :visible="showPdfPreview"
+        />
       </div>
-      <q-btn
-        icon="close"
-        flat
-        round
-        @click="showPdfPreview = false"
-      />
-    </q-card-section>
-
-    <q-separator />
-
-    <div class="pdf-dialog-body">
-      <PdfViewer
-        v-if="selectedPreviewPdf"
-        :pdf-data="selectedPreviewPdf.content"
-        :file-name="selectedPreviewPdf.name"
-        :visible="showPdfPreview"
-      />
-    </div>
-  </q-card>
-</q-dialog>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup lang="ts">
 import { ref, watch, onBeforeUnmount } from "vue";
-import ConfirmDeleteDialog from "@/components/notes/ConfirmDeleteDialog.vue";
+import ConfirmDelete from "@/common/ConfirmDelete.vue";
 import PdfAttachment from "@/components/notes/PdfAttachment.vue";
 import PdfViewer from "@/components/pdf/PdfViewer.vue";
 import { useI18n } from "vue-i18n";
@@ -217,7 +217,7 @@ watch(
       isHydrating.value = false;
     }, 0);
   },
-  { immediate: true }
+  { immediate: true },
 );
 
 watch([localTitle, localContent, localPdfs], () => {

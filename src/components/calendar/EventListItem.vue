@@ -1,37 +1,50 @@
 <template>
-  <q-item clickable @click="emit('edit', event)">
-    <q-item-section avatar>
-      <q-icon
-        :name="event.type === 'birthday' ? 'cake' : 'event'"
-        color="primary"
-      />
+  <div>
+    <q-item clickable @click="emit('edit', event)">
+      <q-item-section avatar>
+        <q-icon
+          :name="event.type === 'birthday' ? 'cake' : 'event'"
+          color="primary"
+        />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>{{ event.title }}</q-item-label>
+        <q-item-label caption>
+          {{ event.time }}
+        </q-item-label>
+        <q-item-label caption v-if="event.description">
+          {{ event.description }}
+        </q-item-label>
+      </q-item-section>
+      <q-item-section side class="row items-center no-wrap">
+        <q-btn
+          flat
+          round
+          dense
+          size="sm"
+          icon="close"
+          @click.stop="showDeleteConfirm = true"
+        />
+      </q-item-section>
       
-    </q-item-section>
+    </q-item>
 
-    <q-item-section>
-      <q-item-label>{{ event.title }}</q-item-label>
-      <q-item-label caption>
-        {{ event.time || "Saat belirtilmedi" }}
-      </q-item-label>
-      <q-item-label caption v-if="event.description">
-        {{ event.description }}
-      </q-item-label>
-    </q-item-section>
+     <ConfirmDelete
+      v-model="showDeleteConfirm"
+      title="aaaaaaaaaaaaaa"
+      message="bbbbbbbbbbbbbbbbbbbbbbb"
+      @confirm="$emit('delete', event.id)"
+    />
 
-    <q-item-section side class="row items-center no-wrap">
-      <q-btn
-        flat
-        round
-        dense
-        icon="close"
-        @click.stop="emit('delete', event.id)"
-      />
-    </q-item-section>
-  </q-item>
+  </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
 import type { CalendarEvent } from "@/types/events";
+import ConfirmDelete from "@/common/ConfirmDelete.vue";
+
+const showDeleteConfirm = ref(false);
 
 defineProps<{
   event: CalendarEvent;

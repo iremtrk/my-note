@@ -66,14 +66,13 @@ export default {
     sortOldest: "Oldest",
     sortUpdated: "Last Updated",
   },
+
+  confirm: {
+    cancel: "Cancel",
+    delete: "Delete",
+  },
   notes: {
     empty: "Select a note",
-  },
-  confirm: {
-    deleteTitle: "Delete Note",
-    deleteMessage: "Are you sure you want to delete this note?",
-    delete: "Delete",
-    cancel: "Cancel",
   },
   editor: {
     editNote: "Note Detail",
@@ -89,6 +88,8 @@ export default {
     sortOldest: "Oldest",
     sortUpdated: "Last Updated",
     search: "Search Note..",
+    deleteTitle: "Delete Note",
+    deleteMessage: "Are you sure you want to delete this note?",
   },
   tasks: {
     empty: "Select a task",
@@ -114,15 +115,12 @@ export default {
     medium: "Medium",
     high: "High",
     add: "Add Task",
-    cancel: "Cancel",
     deleteTitle: "Delete Task",
     deleteMessage: "Are you sure you want to delete this task?",
-    delete: "Delete",
   },
-    pdf:{
-    deleteTitle:"Delete PDF",
-    deleteMessage:"Are you sure you want to delete this PDF?",
-    cancel:"Cancel",
-    delete:"Delete"
-  }
+  pdf: {
+    deleteTitle: "Delete PDF",
+    deleteMessage: "Are you sure you want to delete this PDF?",
+
+  },
 };

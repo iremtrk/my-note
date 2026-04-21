@@ -1,12 +1,7 @@
 <template>
   <q-page class="calendar-page q-pa-md">
-    <q-splitter
-      v-model="splitterModel"
-      unit="%"
-      style="height: calc(100vh - 90px)"
-      class="calendar-splitter"
-    >
-      <template #before>
+    <div class="row q-col-gutter-lg" style="min-height: calc(100vh - 90px)">
+      <div class="col-12 col-md-5 col-lg-4">
         <CalendarPickerPanel
           :selection-mode="selectionMode"
           :selected-date="eventsStore.selectedDate"
@@ -17,9 +12,9 @@
           @double-pick="handleDoubleClick"
           @pick-ranges="handleMultipleRangesPick"
         />
-      </template>
+      </div>
 
-      <template #after>
+      <div class="col-12 col-md-7 col-lg-8">
         <EventsListPanel
           :selection-mode="activeView"
           :selected-date="eventsStore.selectedDate"
@@ -33,8 +28,8 @@
           @delete-event="handleDelete"
           @add-event="openAddDialog"
         />
-      </template>
-    </q-splitter>
+      </div>
+    </div>
 
     <EventFormDialog
       v-model="showDialog"
@@ -62,8 +57,6 @@ import EventFormDialog from "@/components/calendar/EventFormDialog.vue";
 const $q = useQuasar();
 const authStore = useAuthStore();
 const eventsStore = useEventsStore();
-
-const splitterModel = ref(40);
 const showDialog = ref(false);
 const editingEventId = ref<number | null>(null);
 const selectionMode = ref<"day" | "ranges">("day");
@@ -148,8 +141,6 @@ const handleMultipleRangesPick = (value: DateRange[] | null) => {
 const handleSubmit = async () => {
   if (!authStore.user?.id) return;
 
-
-
   if (editingEventId.value === null) {
     await eventsStore.addEvent({
       userId: authStore.user.id,
@@ -161,12 +152,6 @@ const handleSubmit = async () => {
       createdAt: new Date().toISOString(),
       notified: false,
     });
-
-    $q.notify({
-      type: "positive",
-      message: "Event eklendi.",
-      position: "bottom-right",
-    });
   } else {
     await eventsStore.updateEvent(editingEventId.value, {
       title: form.value.title.trim(),
@@ -176,26 +161,13 @@ const handleSubmit = async () => {
       type: form.value.type,
       notified: false,
     });
-
-    $q.notify({
-      type: "positive",
-      message: "Event güncellendi.",
-      position: "bottom-right",
-    });
   }
-
   showDialog.value = false;
   resetForm();
 };
 
 const handleDelete = async (id: number) => {
   await eventsStore.deleteEvent(id);
-
-  $q.notify({
-    type: "positive",
-    message: "Event silindi.",
-    position: "bottom-right",
-  });
 };
 
 const checkUpcomingEvents = async () => {
@@ -213,7 +185,7 @@ const checkUpcomingEvents = async () => {
         type: "info",
         message: `${event.title} yaklaşıyor (${event.time})`,
         position: "bottom-right",
-        timeout: 5000,
+        timeout: 10000,
       });
 
       await eventsStore.updateEvent(event.id, {
@@ -229,10 +201,9 @@ watch(
     if (selectionMode.value !== "ranges") return;
     eventsStore.setSelectedRanges(value ?? []);
   },
-  { deep: true }
+  { deep: true },
 );
 
-// selectionMode watcher removed; range data now persists.
 
 onMounted(async () => {
   if (!authStore.user?.id) return;
@@ -244,7 +215,7 @@ onMounted(async () => {
 
   notifyInterval = setInterval(() => {
     checkUpcomingEvents();
-  }, 60000);
+  }, 5000);
 
   checkUpcomingEvents();
 });
@@ -259,9 +230,5 @@ onBeforeUnmount(() => {
 <style scoped>
 .calendar-page {
   height: 100%;
-}
-
-.calendar-splitter {
-  background: transparent;
 }
 </style>

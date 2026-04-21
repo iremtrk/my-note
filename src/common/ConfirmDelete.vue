@@ -6,26 +6,24 @@
   >
     <q-card class="delete-dialog">
       <q-card-section class="dialog-header no-wrap">
-        <div>
-          <div class="text-h6 dialog-title">{{ t('pdf.deleteTitle') }}</div>
-        </div>
+        <div class="text-h6 dialog-title">{{ props.title }}</div>
       </q-card-section>
 
       <q-card-section class="dialog-message">
-        {{ t('pdf.deleteMessage') }}
+        {{ props.message }}
       </q-card-section>
 
       <q-card-actions align="right" class="dialog-actions">
         <q-btn
           flat
-          :label="t('pdf.cancel')"
+          :label="t('confirm.cancel')"
           class="cancel-btn"
           @click="emit('update:modelValue', false)"
         />
         <q-btn
           unelevated
           color="negative"
-          :label="t('pdf.delete')"
+          :label="t('confirm.delete')"
           class="delete-btn"
           @click="handleConfirm"
         />
@@ -35,13 +33,12 @@
 </template>
 
 <script setup lang="ts">
-
-import { useI18n } from "vue-i18n";
-
-const { t } = useI18n();
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps<{
   modelValue: boolean
+  title?:string
+  message?:string
 
 }>()
 
@@ -49,6 +46,9 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void
   (e: 'confirm'): void
 }>()
+
+const { t } = useI18n()
+
 
 const handleConfirm = () => {
   emit('confirm')
@@ -66,6 +66,17 @@ const handleConfirm = () => {
 
 .dialog-header {
   padding: 20px 20px 8px;
+}
+
+.dialog-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: rgba(244, 67, 54, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
 }
 
 .dialog-title {
