@@ -28,6 +28,7 @@ export function useNoteActions() {
         content: payload.content,
         pdfs: payload.pdfs ?? [],
         userId,
+        sharedWith:[],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         starred: false,

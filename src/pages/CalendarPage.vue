@@ -23,6 +23,7 @@
           :events-of-selected-date="eventsStore.eventsOfSelectedDate"
           :events-of-selected-ranges="eventsStore.eventsOfSelectedRanges"
           :grouped-events="eventsStore.groupedEventsOfSelectedRanges"
+          :all-events="eventsStore.events"
           @select-event="eventsStore.selectEvent"
           @edit-event="openEditDialog"
           @delete-event="handleDelete"
@@ -60,14 +61,18 @@ const authStore = useAuthStore();
 const eventsStore = useEventsStore();
 const showDialog = ref(false);
 const editingEventId = ref<number | null>(null);
-const selectionMode = ref<"day" | "ranges">("day");
-const activeView = ref<"day" | "ranges">("day");
+const selectionMode = ref<"day" | "ranges" | "all">("day");
+const activeView = ref<"day" | "ranges" | "all">("day");
 const rangeModel = ref<DateRange[]>([]);
 
 let notifyInterval: ReturnType<typeof setInterval> | null = null;
 
 const handleFetchAllEvents = async () => {
-  await eventsStore.fetchEvents();
+  const userId = authStore.user?.id;
+  if (!userId) return;
+
+  await eventsStore.fetchEvents(userId);
+  activeView.value = "all";
 };
 
 

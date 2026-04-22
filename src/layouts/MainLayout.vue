@@ -107,13 +107,12 @@ const handleSave = async (payload: { title: string; content: string }) => {
     const userId = authStore.user?.id;
     if (!userId) return;
 
-    const now = new Date().toISOString();
-
     await notesStore.addNote({
       ...payload,
       userId,
-      createdAt: now,
-      updatedAt: now,
+      sharedWith:[],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
       starred: false,
     });
   } else {

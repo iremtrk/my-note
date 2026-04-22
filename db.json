@@ -215,6 +215,27 @@
       "createdAt": "2026-04-22T10:27:34.513Z",
       "notified": false,
       "id": 2
+    },
+    {
+      "userId": "wWedmDf",
+      "title": "bayram",
+      "description": "ulusal egemenlik ve çocuk bayramı",
+      "date": "2026-04-23",
+      "time": "14:00",
+      "type": "event",
+      "createdAt": "2026-04-22T10:51:03.350Z",
+      "notified": false,
+      "id": 3
+    },
+    {
+      "userId": "wWedmDf",
+      "title": "ne var ki burda",
+      "description": "",
+      "date": "2027-04-14",
+      "type": "event",
+      "createdAt": "2026-04-22T11:00:53.825Z",
+      "notified": false,
+      "id": 4
     }
   ]
 }

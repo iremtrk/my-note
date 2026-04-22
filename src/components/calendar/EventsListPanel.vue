@@ -1,7 +1,16 @@
 <template>
   <div class="right-panel q-pa-md event-list">
-    <div class="row items-center justify-between q-mb-md event-scroll">
+    <div class="row items-center justify-between q-mb-md">
       <div class="text-h6">{{ t("eventList.title") }}</div>
+
+      <q-btn
+        flat
+        color="primary"
+        icon="list"
+        :label="t('eventList.allEvents')"
+        :no-caps="true"
+        @click="emit('fetch-all-events')"
+      />
     </div>
 
     <div
@@ -27,6 +36,15 @@
       {{ t("eventList.rangeEmpty") }}
     </div>
 
+    <div
+      v-else-if="
+        hasFetched && selectionMode === 'all' && allEvents.length === 0
+      "
+      class="empty-state"
+    >
+      {{ t("eventList.allEmpty") }}
+    </div>
+
     <q-list
       v-else-if="selectionMode === 'day'"
       bordered
@@ -35,6 +53,22 @@
     >
       <EventListItem
         v-for="event in eventsOfSelectedDate"
+        :key="event.id"
+        :event="event"
+        @select="emit('select-event', $event)"
+        @edit="emit('edit-event', $event)"
+        @delete="emit('delete-event', $event)"
+      />
+    </q-list>
+
+    <q-list
+      v-else-if="selectionMode === 'all'"
+      bordered
+      separator
+      class="event-list"
+    >
+      <EventListItem
+        v-for="event in allEvents"
         :key="event.id"
         :event="event"
         @select="emit('select-event', $event)"
@@ -78,6 +112,7 @@ defineProps<{
   eventsOfSelectedDate: CalendarEvent[];
   eventsOfSelectedRanges: CalendarEvent[];
   groupedEvents: Record<string, CalendarEvent[]>;
+  allEvents: CalendarEvent[];
 }>();
 
 const emit = defineEmits<{

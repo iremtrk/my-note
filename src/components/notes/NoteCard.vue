@@ -61,7 +61,7 @@ import { formatNoteDate } from "@/utils/date";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
 
-const {t}=useI18n()
+const { t } = useI18n();
 
 const $q = useQuasar();
 
@@ -132,5 +132,4 @@ const getColor = (id: string | number) => {
 .star-btn {
   flex-shrink: 0;
 }
-
 </style>

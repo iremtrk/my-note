@@ -45,7 +45,7 @@ import { useI18n } from "vue-i18n";
 const {t}=useI18n()
 
 const props = defineProps<{
-  selectionMode: "day" | "ranges";
+  selectionMode: "day" | "ranges" | "all";
   selectedDate: string;
   rangeModel: DateRange[];
   eventDates: string[];
