@@ -1,24 +1,19 @@
 <template>
   <div class="right-panel q-pa-md event-list">
     <div class="row items-center justify-between q-mb-md event-scroll">
-      <div class="text-h6">Events</div>
+      <div class="text-h6">{{ t("eventList.title") }}</div>
     </div>
 
-    <div 
+    <div
       v-if="
         hasFetched &&
         selectionMode === 'day' &&
         eventsOfSelectedDate.length === 0
       "
-      class="empty-state">
-      <q-btn
-        flat
-        round
-        color="primary"
-        icon="add"
-        @click="emit('add-event')"
-      />
-      There is no event for this date
+      class="empty-state"
+    >
+      <q-btn flat round color="primary" icon="add" @click="emit('add-event')" />
+      {{ t("eventList.dayEmpty") }}
     </div>
 
     <div
@@ -29,10 +24,8 @@
       "
       class="empty-state"
     >
-      There are no events between the selected dates
-      
+      {{ t("eventList.rangeEmpty") }}
     </div>
-    
 
     <q-list
       v-else-if="selectionMode === 'day'"
@@ -73,9 +66,12 @@
 import type { CalendarEvent } from "@/types/events";
 import type { DateRange } from "@/stores/events";
 import EventListItem from "./EventListItem.vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
 
 defineProps<{
-  selectionMode: "day" | "ranges";
+  selectionMode: "day" | "ranges" | "all";
   selectedDate: string;
   selectedRanges: DateRange[];
   hasFetched: boolean;
@@ -89,6 +85,7 @@ const emit = defineEmits<{
   (e: "edit-event", event: CalendarEvent): void;
   (e: "delete-event", id: number): void;
   (e: "add-event"): void;
+  (e: "fetch-all-events"): void;
 }>();
 </script>
 

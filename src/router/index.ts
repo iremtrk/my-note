@@ -10,6 +10,7 @@ import HomePage from "@/pages/HomePage.vue";
 import NotesPage from "@/pages/NotesPage.vue";
 import TasksPage from "@/pages/TasksPage.vue";
 import CalendarPage from "@/pages/CalendarPage.vue";
+import SharedPage from "@/pages/SharedPage.vue";
 
 const routes = [
   {
@@ -62,6 +63,12 @@ const routes = [
         name: "calendar",
         component: CalendarPage,
       },
+      {
+        path:"shared",
+        name:"shared",
+        component:SharedPage
+      },
+
     ],
   },
 ];

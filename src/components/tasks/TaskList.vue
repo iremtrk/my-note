@@ -1,17 +1,20 @@
 <template>
   <q-card bordered class="full-height tasks-card">
-    <q-card-section class="row items-center justify-between">
-      <div class="row items-center q-gutter-xs">
+    <q-card-section class="task-header">
+      <div class="search-area">
         <q-input
           v-model="tasksStore.searchQuery"
           outlined
           dense
           :placeholder="t('taskList.search')"
-          class="full-width">
+        >
           <template #prepend>
             <q-icon name="search" />
           </template>
         </q-input>
+      </div>
+
+      <div class="actions-area">
         <q-btn icon="sort" flat round dense color="grey-7">
           <q-menu anchor="bottom right" self="top right">
             <q-list style="min-width: 180px">
@@ -25,7 +28,8 @@
                 v-close-popup
                 :active="tasksStore.sortOrder === opt.value"
                 active-class="text-primary"
-                @click="tasksStore.sortOrder = opt.value">
+                @click="tasksStore.sortOrder = opt.value"
+              >
                 <q-item-section avatar>
                   <q-icon :name="opt.icon" size="18px" />
                 </q-item-section>
@@ -117,6 +121,25 @@ const sortOptions = computed<
   flex-direction: column;
   height: 100%;
 }
+
+.task-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.search-area :deep(.q-field) {
+  width: 100%;
+}
+
+.actions-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
 .list-section {
   flex: 1;
   min-height: 0;
@@ -125,6 +148,7 @@ const sortOptions = computed<
   flex-direction: column;
   cursor: pointer;
 }
+
 .task-scroll {
   flex: 1;
   min-height: 0;

@@ -65,6 +65,17 @@
         </q-item-section>
         <q-item-section>{{ t("sidebar.calendar") }}</q-item-section>
       </q-item>
+
+      <q-item
+        clickable
+        to="/app/shared"
+        tag="router-link"
+        active-class="text-primary">
+        <q-item-section avatar>
+          <q-icon name="event"/>
+        </q-item-section>
+        <q-item-section>{{ t("sidebar.shared") }}</q-item-section>
+      </q-item>
     </q-list>
 
     <div class="logout-section">
@@ -105,15 +116,12 @@ const { t, locale } = useI18n();
 
 const router = useRouter();
 const authStore = useAuthStore();
-const notesStore = useNotesStore();
-const tasksStore = useTasksStore();
 
 const noteEditor = useNoteEditorStore();
 const taskEditor = useTaskEditorStore();
 
 const handleLogout = () => {
   authStore.logout();
-  notesStore.searchQuery = "";
   locale.value = "en";
   router.push("/login");
 };

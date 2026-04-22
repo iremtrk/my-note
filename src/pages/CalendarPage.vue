@@ -27,6 +27,7 @@
           @edit-event="openEditDialog"
           @delete-event="handleDelete"
           @add-event="openAddDialog"
+          @fetch-all-events="handleFetchAllEvents"
         />
       </div>
     </div>
@@ -64,6 +65,11 @@ const activeView = ref<"day" | "ranges">("day");
 const rangeModel = ref<DateRange[]>([]);
 
 let notifyInterval: ReturnType<typeof setInterval> | null = null;
+
+const handleFetchAllEvents = async () => {
+  await eventsStore.fetchEvents();
+};
+
 
 const form = ref({
   title: "",
@@ -203,7 +209,6 @@ watch(
   },
   { deep: true },
 );
-
 
 onMounted(async () => {
   if (!authStore.user?.id) return;

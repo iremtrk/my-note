@@ -123,4 +123,31 @@ export default {
     deleteMessage: "Are you sure you want to delete this PDF?",
 
   },
+  calendarPicker:{
+    title:"Calendar",
+    badge:"Press Shift to select a date range"
+  },
+  eventFormDialog:{
+    add:"Add Event",
+    edit:"Edit Event",
+    title:"Title",
+    description:"Description",
+    date:"Date",
+    time:"Time",
+    type:"Type",
+    save:"Save",
+    update:"Update",
+    event:"Event",
+    birthday:"Birthday"
+  },
+  eventConfirm:{
+    title:"Delete Event",
+    message:"Are you sure you want to delete this event?"
+  },
+  eventList:{
+    title:"Events",
+    dayEmpty:"There is no event for this date",
+    rangeEmpty:"There are no events between the selected dates",
+    allEvents:"All Events",
+  }
 };

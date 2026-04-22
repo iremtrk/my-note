@@ -26,6 +26,7 @@ export const useEventsStore = defineStore("events", () => {
       return;
     }
 
+
     await loading.wrap("events", async () => {
       const response = await axios.get(`${API_URL}?userId=${userId}`);
       events.value = response.data;
@@ -40,6 +41,8 @@ export const useEventsStore = defineStore("events", () => {
 
     hasFetched.value = true;
   };
+
+  
 
   const selectEvent = (event: CalendarEvent) => {
     selectedEvent.value = event;

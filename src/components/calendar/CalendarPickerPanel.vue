@@ -1,9 +1,9 @@
 <template>
   <div class="left-panel q-pa-md">
     <div class="row items-center justify-between q-mb-md">
-      <div class="text-h6">Calendar</div>
+      <div class="text-h6">{{ t('calendarPicker.title') }}</div>
       <q-badge class="q-mt-sm">
-        Press Shift to select a date range
+        {{t('calendarPicker.badge')}}
     </q-badge>
     </div>
 
@@ -40,6 +40,9 @@
 <script setup lang="ts">
 import { onMounted, onBeforeUnmount } from "vue";
 import type { DateRange } from "@/stores/events";
+import { useI18n } from "vue-i18n";
+
+const {t}=useI18n()
 
 const props = defineProps<{
   selectionMode: "day" | "ranges";

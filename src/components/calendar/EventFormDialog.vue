@@ -6,33 +6,47 @@
     <q-card class="event-dialog">
       <q-card-section class="row items-center justify-between">
         <div class="text-h6">
-          {{ editingEventId === null ? "Add Event" : "Edit Event" }}
+          {{
+            editingEventId === null
+              ? t("eventFormDialog.add")
+              : t("eventFormDialog.edit")
+          }}
         </div>
-        <q-btn flat round icon="close" @click="emit('update:modelValue', false)" />
+        <q-btn
+          flat
+          round
+          icon="close"
+          @click="emit('update:modelValue', false)"
+        />
       </q-card-section>
 
       <q-card-section class="q-gutter-md">
         <q-input
           :model-value="form.title"
-          label="Title"
+          :label="t('eventFormDialog.title')"
           outlined
           @update:model-value="updateField('title', String($event ?? ''))"
         />
 
         <q-input
           :model-value="form.description"
-          label="Description"
+          :label="t('eventFormDialog.description')"
           type="textarea"
           autogrow
           outlined
           @update:model-value="updateField('description', String($event ?? ''))"
         />
 
-        <q-input :model-value="form.date" label="Date" outlined readonly />
+        <q-input
+          :model-value="form.date"
+          :label="t('eventFormDialog.date')"
+          outlined
+          readonly
+        />
 
         <q-input
           :model-value="form.time"
-          label="Time"
+          :label="t('eventFormDialog.time')"
           type="time"
           outlined
           @update:model-value="updateField('time', String($event ?? ''))"
@@ -41,7 +55,7 @@
         <q-select
           :model-value="form.type"
           :options="typeOptions"
-          label="Type"
+          :label="t('eventFormDialog.type')"
           outlined
           emit-value
           map-options
@@ -52,7 +66,11 @@
       <q-card-actions align="right">
         <q-btn
           color="primary"
-          :label="editingEventId === null ? 'Save' : 'Update'"
+          :label="
+            editingEventId === null
+              ? t('eventFormDialog.save')
+              : t('eventFormDialog.update')
+          "
           :disable="!form.title.trim()"
           @click="emit('submit')"
         />
@@ -62,6 +80,11 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
+import { useI18n } from "vue-i18n";
+
+const { t } = useI18n();
+
 type EventForm = {
   title: string;
   description: string;
@@ -74,8 +97,13 @@ const props = defineProps<{
   modelValue: boolean;
   editingEventId: number | null;
   form: EventForm;
-  typeOptions: { label: string; value: "event" | "birthday" }[];
+  
 }>();
+
+const typeOptions = computed(() => [
+  { label: t("eventFormDialog.event"), value: "event" as const },
+  { label: t("eventFormDialog.birthday"), value: "birthday" as const },
+]);
 
 const emit = defineEmits<{
   (e: "update:modelValue", value: boolean): void;

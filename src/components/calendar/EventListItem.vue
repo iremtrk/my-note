@@ -31,8 +31,8 @@
 
      <ConfirmDelete
       v-model="showDeleteConfirm"
-      title="aaaaaaaaaaaaaa"
-      message="bbbbbbbbbbbbbbbbbbbbbbb"
+      :title="t('eventConfirm.title')"
+      :message="t('eventConfirm.message')"
       @confirm="$emit('delete', event.id)"
     />
 
@@ -43,6 +43,9 @@
 import { ref } from "vue";
 import type { CalendarEvent } from "@/types/events";
 import ConfirmDelete from "@/common/ConfirmDelete.vue";
+import { useI18n } from "vue-i18n";
+
+const {t}=useI18n()
 
 const showDeleteConfirm = ref(false);
 

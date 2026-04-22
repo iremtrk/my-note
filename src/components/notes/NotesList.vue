@@ -1,55 +1,54 @@
 <template>
   <q-card bordered class="full-height notes-card">
-    <q-card-section class="row items-center justify-between">
-      <div class="row items-center q-gutter-xs">
+    <q-card-section class="notes-header">
+      <div class="search-area">
         <q-input
           v-model="notesStore.searchQuery"
           outlined
           dense
           :placeholder="t('noteList.search')"
-          class="full-width"
         >
           <template #prepend>
             <q-icon name="search" />
           </template>
         </q-input>
+      </div>
 
-          <div>
-            <q-btn icon="sort" flat round dense color="grey-7">
-              <q-menu anchor="bottom right" self="top right">
-                <q-list style="min-width: 180px">
-                  <q-item-label header class="text-caption text-grey-6">
-                    {{ t("noteList.sort") }}
-                  </q-item-label>
-                  <q-item
-                    v-for="opt in sortOptions"
-                    :key="opt.value"
-                    clickable
-                    v-close-popup
-                    :active="notesStore.sortOrder === opt.value"
-                    active-class="text-primary"
-                    @click="notesStore.sortOrder = opt.value"
-                  >
-                    <q-item-section avatar>
-                      <q-icon :name="opt.icon" size="18px" />
-                    </q-item-section>
-                    <q-item-section>{{ opt.label }}</q-item-section>
-                    <q-item-section side v-if="notesStore.sortOrder === opt.value">
-                      <q-icon name="check" size="16px" color="primary" />
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-btn>
+      <div class="actions-area">
+        <q-btn icon="sort" flat round dense color="grey-7">
+          <q-menu anchor="bottom right" self="top right">
+            <q-list style="min-width: 180px">
+              <q-item-label header class="text-caption text-grey-6">
+                {{ t("noteList.sort") }}
+              </q-item-label>
+              <q-item
+                v-for="opt in sortOptions"
+                :key="opt.value"
+                clickable
+                v-close-popup
+                :active="notesStore.sortOrder === opt.value"
+                active-class="text-primary"
+                @click="notesStore.sortOrder = opt.value"
+              >
+                <q-item-section avatar>
+                  <q-icon :name="opt.icon" size="18px" />
+                </q-item-section>
+                <q-item-section>{{ opt.label }}</q-item-section>
+                <q-item-section side v-if="notesStore.sortOrder === opt.value">
+                  <q-icon name="check" size="16px" color="primary" />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
 
-             <q-btn
-              icon="add"
-              round
-              flat
-              color="primary"
-              @click="noteEditor.openNewNoteModal()"
-            />
-          </div>
+        <q-btn
+          icon="add"
+          round
+          flat
+          color="primary"
+          @click="noteEditor.openNewNoteModal()"
+        />
       </div>
     </q-card-section>
 
@@ -60,8 +59,7 @@
     </q-card-section>
 
     <q-card-section
-      v-else-if="notes.length === 0"
-      class="text-grey">
+      v-else-if="notes.length === 0" class="text-grey">
       {{ t("noteList.empty") }}
     </q-card-section>
 
@@ -74,7 +72,8 @@
           :active="selectedNoteId === note.id"
           active-class="bg-grey-4"
           class="note-item"
-          @click="$emit('select-note', note)">
+          @click="$emit('select-note', note)"
+        >
           <q-item-section>
             <div class="row items-start justify-between no-wrap">
               <q-item-label class="text-weight-medium note-title">
@@ -112,6 +111,7 @@
           </q-item-section>
         </q-item>
       </q-list>
+
       <ConfirmDelete
         v-model="showDeleteConfirm"
         :title="t('noteList.deleteTitle')"
@@ -120,8 +120,6 @@
       />
     </q-card-section>
   </q-card>
-
-
 </template>
 
 <script setup lang="ts">
@@ -138,12 +136,13 @@ import { useI18n } from "vue-i18n";
 const { t } = useI18n();
 
 const showDeleteConfirm = ref(false);
-const deletingNoteId=ref<number|null>(null);
+const deletingNoteId = ref<number | null>(null);
 
-const openDeleteConfirm= (id:number) =>{
+const openDeleteConfirm = (id: number) => {
   deletingNoteId.value = id;
   showDeleteConfirm.value = true;
-}
+};
+
 const confirmDelete = () => {
   if (!deletingNoteId.value) return;
   emit("delete-note", deletingNoteId.value);
@@ -151,7 +150,7 @@ const confirmDelete = () => {
   deletingNoteId.value = null;
 };
 
-const props = defineProps<{
+defineProps<{
   notes: Note[];
   selectedNoteId: string | number | null;
   hasFetched: boolean;
@@ -173,7 +172,6 @@ const sortOptions = computed<
   { label: t("noteList.sortOldest"), value: "oldest", icon: "arrow_upward" },
   { label: t("noteList.sortUpdated"), value: "updated", icon: "update" },
 ]);
-
 </script>
 
 <style scoped>
@@ -183,6 +181,23 @@ const sortOptions = computed<
   height: 100%;
 }
 
+.notes-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.search-area :deep(.q-field) {
+  width: 100%;
+}
+
+.actions-area {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
 
 .list-section {
   flex: 1;
@@ -210,7 +225,6 @@ const sortOptions = computed<
   text-overflow: ellipsis;
 }
 
-
 .note-preview {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -227,6 +241,4 @@ const sortOptions = computed<
   color: #9ca3af;
   text-align: right;
 }
-
-
 </style>

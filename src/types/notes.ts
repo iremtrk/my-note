@@ -4,6 +4,12 @@ export interface NotePdf {
   content: string
 }
 
+export interface SharedUser{
+  userId:string
+  email:string
+  permission:"read"|"edit"
+}
+
 export interface Note {
   userId: string
   id: number
@@ -13,4 +19,5 @@ export interface Note {
   updatedAt: string
   starred: boolean
   pdfs?:NotePdf[]
+  sharedWith:SharedUser[]
 }
