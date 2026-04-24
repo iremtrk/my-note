@@ -125,7 +125,8 @@ export default {
   },
   calendarPicker:{
     title:"Calendar",
-    badge:"Press Shift to select a date range"
+    badgeDay:"Click for day selection",
+    badgeRange:"Click for range selection"
   },
   eventFormDialog:{
     add:"Add Event",

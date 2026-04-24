@@ -1,10 +1,24 @@
 <template>
   <div class="left-panel q-pa-md">
     <div class="row items-center justify-between q-mb-md">
-      <div class="text-h6">{{ t('calendarPicker.title') }}</div>
-      <q-badge class="q-mt-sm">
-        {{t('calendarPicker.badge')}}
-    </q-badge>
+      <div class="text-h6">{{ t("calendarPicker.title") }}</div>
+      <q-btn
+        flat
+        :no-caps="true"
+        :ripple="false"
+        class="mode-toggle-btn"
+        @click="
+          emit(
+            'update:selectionMode',
+            props.selectionMode === 'day' ? 'ranges' : 'day',
+          )
+        "
+      >
+        <q-btn class="q-mt-sm" style="font-size: small;">
+          <span v-if="props.selectionMode==='day'"> {{ t('calendarPicker.badgeDay') }}</span>
+          <span v-else> {{ t('calendarPicker.badgeRange') }}</span>
+        </q-btn>
+      </q-btn>
     </div>
 
     <q-date
@@ -33,7 +47,6 @@
       class="calendar-widget"
       @update:model-value="emit('pick-ranges', $event)"
     />
-    
   </div>
 </template>
 
@@ -42,7 +55,7 @@ import { onMounted, onBeforeUnmount } from "vue";
 import type { DateRange } from "@/stores/events";
 import { useI18n } from "vue-i18n";
 
-const {t}=useI18n()
+const { t } = useI18n();
 
 const props = defineProps<{
   selectionMode: "day" | "ranges" | "all";
@@ -60,7 +73,10 @@ const emit = defineEmits<{
 
 const handleKeyDown = (e: KeyboardEvent) => {
   if (e.key === "Shift" && !e.repeat) {
-    emit("update:selectionMode", props.selectionMode === "day" ? "ranges" : "day");
+    emit(
+      "update:selectionMode",
+      props.selectionMode === "day" ? "ranges" : "day",
+    );
   }
 };
 
@@ -74,8 +90,11 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-
 .calendar-widget {
   width: 100%;
+}
+
+:deep(.mode-toggle-btn .q-focus-helper) {
+  display: none !important;
 }
 </style>

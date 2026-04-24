@@ -125,7 +125,7 @@ export default {
   },
   calendarPicker: {
     title: "Takvim",
-    badge: "Tarih aralığı seçmek için Shift tuşuna basınız",
+    badge: "Tarih aralığı seçmek için basınız",
   },
     eventFormDialog:{
     add:"Etkinlik Ekle",
