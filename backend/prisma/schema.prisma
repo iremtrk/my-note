@@ -1,0 +1,80 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String?
+  email     String   @unique
+  password  String
+
+  notes     Note[]
+  tasks     Task[]
+  events    Event[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Note {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  starred   Boolean  @default(false)
+  userId    Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  pdfs      NotePdf[]
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NotePdf {
+  id      Int    @id @default(autoincrement())
+  name    String
+  url     String
+
+  noteId  Int
+  note    Note   @relation(fields: [noteId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id        Int      @id @default(autoincrement())
+  title     String
+  description String?
+  completed Boolean  @default(false)
+  priority  String   // "low" | "medium" | "high"
+  dueDate   DateTime?
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Event {
+  id        Int      @id @default(autoincrement())
+  title     String
+  description String?
+  date      DateTime
+  time      String?
+  notified  Boolean  @default(false)
+
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

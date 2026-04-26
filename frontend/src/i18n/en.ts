@@ -1,0 +1,155 @@
+export default {
+  authLayout: {
+    loginTitle: "Capture your notes, tasks, and ideas in one place.",
+    loginSubtitle:
+      "Organize your daily workflow, keep track of important tasks, and never lose your thoughts again.",
+    loginFeature1: "Create and manage personal notes",
+    loginFeature2: "Track daily tasks",
+    loginFeature3: "Keep everything simple and accessible",
+
+    registerTitle: "Start building your personal note and task space.",
+    registerSubtitle:
+      "Create an account to save ideas, plan your day, and manage everything from one clean workspace.",
+    registerFeature1: "Save your notes securely",
+    registerFeature2: "Organize your daily task flow",
+    registerFeature3: "Access your content anytime",
+  },
+
+  login: {
+    title: "Welcome back",
+    subtitle: "Login to continue managing your notes and tasks.",
+    email: "Email",
+    password: "Password",
+    button: "Login",
+    goRegister: "Don't have an account? Register",
+    success: "Login successful",
+    failed: "Login failed. Please check your credentials.",
+  },
+
+  register: {
+    title: "Create account",
+    subtitle: "Register to start managing your notes and tasks.",
+    name: "Name",
+    email: "Email",
+    password: "Password",
+    button: "Register",
+    goLogin: "Already have an account? Login",
+    success: "Account created successfully",
+    successCaption: "You can now login with your credentials.",
+    emailTaken: "This email is already registered",
+    emailTakenCaption: "Please login or use another email.",
+    failed: "Registration failed",
+    failedCaption: "Something went wrong. Please try again.",
+  },
+  main: {
+    header: "My App",
+  },
+  sidebar: {
+    searchNotes: "Search Notes..",
+    newNote: "New Note",
+    newTask: "New Task",
+    home: "Home",
+    notes: "Notes",
+    tasks: "Tasks",
+    calendar: "Calendar",
+    shared:"Shared With Me",
+    welcome: "Welcome",
+  },
+  home: {
+    noNote: "No notes yet",
+    firstNote: "Create your first note",
+    firstNoteBtn: "First Note",
+    noTask: "No tasks yet",
+    firstTask: "Create your first task",
+    firstTaskBtn: "First Task",
+    sort: "Sort By",
+    sortNewest: "Newest",
+    sortOldest: "Oldest",
+    sortUpdated: "Last Updated",
+  },
+
+  confirm: {
+    cancel: "Cancel",
+    delete: "Delete",
+  },
+  notes: {
+    empty: "Select a note",
+  },
+  editor: {
+    editNote: "Note Detail",
+    newNote: "New Note",
+    title: "Title",
+    add: "Add",
+  },
+  noteList: {
+    header: "My notes",
+    sort: "Sort By",
+    empty: "No notes yet.",
+    sortNewest: "Newest",
+    sortOldest: "Oldest",
+    sortUpdated: "Last Updated",
+    search: "Search Note..",
+    deleteTitle: "Delete Note",
+    deleteMessage: "Are you sure you want to delete this note?",
+  },
+  tasks: {
+    empty: "Select a task",
+  },
+  taskList: {
+    header: "My tasks",
+    sort: "Sort By",
+    empty: "No tasks yet.",
+    sortNewest: "Newest",
+    sortOldest: "Oldest",
+    sortDueDate: "Due Date",
+    sortPriority: "Priority",
+    search: "Search Task..",
+  },
+  taskEditor: {
+    newTask: "New Task",
+    taskDetail: "Task Detail",
+    title: "Title",
+    description: "Description",
+    dueDate: "Due Date",
+    priority: "Priority",
+    low: "Low",
+    medium: "Medium",
+    high: "High",
+    add: "Add Task",
+    deleteTitle: "Delete Task",
+    deleteMessage: "Are you sure you want to delete this task?",
+  },
+  pdf: {
+    deleteTitle: "Delete PDF",
+    deleteMessage: "Are you sure you want to delete this PDF?",
+
+  },
+  calendarPicker:{
+    title:"Calendar",
+    badgeDay:"Click for day selection",
+    badgeRange:"Click for range selection"
+  },
+  eventFormDialog:{
+    add:"Add Event",
+    edit:"Edit Event",
+    title:"Title",
+    description:"Description",
+    date:"Date",
+    time:"Time",
+    type:"Type",
+    save:"Save",
+    update:"Update",
+    event:"Event",
+    birthday:"Birthday"
+  },
+  eventConfirm:{
+    title:"Delete Event",
+    message:"Are you sure you want to delete this event?"
+  },
+  eventList:{
+    title:"Events",
+    dayEmpty:"There is no event for this date",
+    rangeEmpty:"There are no events between the selected dates",
+    allEvents:"All Events",
+  }
+};

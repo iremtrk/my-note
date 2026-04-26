@@ -1,0 +1,153 @@
+export default {
+  authLayout: {
+    loginTitle: "Notlarını, görevlerini ve fikirlerini tek bir yerde topla.",
+    loginSubtitle:
+      "Günlük akışını düzenle, önemli görevleri takip et ve düşüncelerini kaybetme.",
+    loginFeature1: "Kişisel notlar oluştur ve yönet",
+    loginFeature2: "Günlük görevlerini takip et",
+    loginFeature3: "Her şeyi sade ve erişilebilir tut",
+
+    registerTitle: "Kendi not ve görev alanını oluşturmaya başla.",
+    registerSubtitle:
+      "Fikirlerini kaydetmek, gününü planlamak ve her şeyi tek yerden yönetmek için hesap oluştur.",
+    registerFeature1: "Notlarını güvenle sakla",
+    registerFeature2: "Günlük görev akışını düzenle",
+    registerFeature3: "İçeriklerine istediğin zaman eriş",
+  },
+
+  login: {
+    title: "Tekrar hoş geldin",
+    subtitle: "Notlarını ve görevlerini yönetmeye devam etmek için giriş yap.",
+    email: "E-posta",
+    password: "Şifre",
+    button: "Giriş Yap",
+    goRegister: "Hesabın yok mu? Kayıt ol",
+    success: "Giriş başarılı",
+    failed: "Giriş başarısız. Bilgilerini kontrol et.",
+  },
+
+  register: {
+    title: "Hesap oluştur",
+    subtitle: "Notlarını ve görevlerini yönetmeye başlamak için kayıt ol.",
+    name: "İsim",
+    email: "E-posta",
+    password: "Şifre",
+    button: "Kayıt Ol",
+    goLogin: "Zaten hesabın var mı? Giriş yap",
+    success: "Hesap başarıyla oluşturuldu",
+    successCaption: "Artık bilgilerinle giriş yapabilirsin.",
+    emailTaken: "Bu e-posta zaten kayıtlı",
+    emailTakenCaption:
+      "Giriş yapmayı ya da başka bir e-posta kullanmayı deneyebilirsin.",
+    failed: "Kayıt başarısız",
+    failedCaption: "Bir şeyler yanlış gitti. Lütfen tekrar dene.",
+  },
+  main: {
+    header: "Uygulamam",
+  },
+  sidebar: {
+    searchNotes: "Not ara..",
+    newNote: "Yeni Not",
+    newTask: "Yeni Görev",
+    home: "Anasayfa",
+    notes: "Notlar",
+    tasks: "Görevler",
+    calendar: "Takvim",
+    shared:"Paylaşılanlar",
+    welcome: "Hoşgeldin",
+  },
+  home: {
+    noNote: "Henüz not yok",
+    firstNote: "İlk notunu oluştur",
+    firstNoteBtn: "İlk not",
+    sort: "Sırala",
+    sortNewest: "En Yeni",
+    sortOldest: "En Eski",
+    sortUpdated: "Son Güncellenen",
+  },
+  notes: {
+    empty: "Bir not seçin",
+  },
+  confirm: {
+    deleteTitle: "Notu sil",
+    deleteMessage: "Bu notu silmek istediğine emin misin?",
+    delete: "Sİl",
+    cancel: "İptal",
+  },
+  editor: {
+    editNote: "Not Detayı",
+    newNote: "Not Ekle",
+    title: "Başlık",
+    add: "Ekle",
+  },
+  noteList: {
+    header: "Notlarım",
+    sort: "Sırala",
+    empty: "Henüz not yok.",
+    sortNewest: "En Yeni",
+    sortOldest: "En Eski",
+    sortUpdated: "Son Güncellenen",
+    search: "Not ara..",
+  },
+  tasks: {
+    empty: "Detayları görmek için bir görev seçin",
+  },
+  taskList: {
+    header: "Görevlerim",
+    sort: "Sırala",
+    empty: "Henüz görev yok. İlk görevini oluştur!",
+    sortNewest: "En Yeni",
+    sortOldest: "En Eski",
+    sortDueDate: "Bitiş Tarihi",
+    sortPriority: "Öncelik",
+    search: "Görev ara..",
+  },
+  taskEditor: {
+    newTask: "Yeni Görev",
+    taskDetail: "Görev Detayı",
+    title: "Başlık",
+    description: "Açıklama",
+    dueDate: "Bitiş Tarihi",
+    priority: "Öncelik",
+    low: "Düşük",
+    medium: "Orta",
+    high: "Yüksek",
+    add: "Görev Ekle",
+    cancel: "İptal",
+    deleteTitle: "Görevi Sil",
+    deleteMessage: "Bu görevi silmek istediğine emin misin?",
+    delete: "Sil",
+  },
+  pdf: {
+    deleteTitle: "PDF'i sil",
+    deleteMessage: "Bu Pdf'i silmek istediğine emin misin?",
+    cancel: "İptal",
+    delete: "Sİl",
+  },
+  calendarPicker: {
+    title: "Takvim",
+    badge: "Tarih aralığı seçmek için basınız",
+  },
+    eventFormDialog:{
+    add:"Etkinlik Ekle",
+    edit:"Etkinliği Düzenle",
+    title:"Başlık",
+    description:"Açıklama",
+    date:"Tarih",
+    time:"Saat",
+    type:"Tür",
+    save:"Save",
+    update:"Update",
+    event:"Etkinlik",
+    birthday:"Doğum Günü"
+  },
+    eventConfirm:{
+    title:"Etkinliği Sil",
+    message:"Bu etkinliği silmek istediğine emin misin?"
+  },
+    eventList:{
+    title:"Etkinlikler",
+    dayEmpty:"Bu tarihte bir etkinlik yok",
+    rangeEmpty:"Bu tarih aralığında bir etkinlik yok",
+  }
+};
