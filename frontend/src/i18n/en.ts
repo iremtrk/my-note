@@ -1,3 +1,5 @@
+import { all } from "node_modules/axios/index.cjs";
+
 export default {
   authLayout: {
     loginTitle: "Capture your notes, tasks, and ideas in one place.",
@@ -151,5 +153,7 @@ export default {
     dayEmpty:"There is no event for this date",
     rangeEmpty:"There are no events between the selected dates",
     allEvents:"All Events",
+    allEmpty:"There are no events in your calendar"
+    
   }
 };

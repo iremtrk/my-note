@@ -1,9 +1,12 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import { swaggerSpec } from "./swagger.js";
+import swaggerDocument from "../swagger-output.json" with {type: "json"};
 
 import notesRouter from "./routes/notes.routes.js";
+import tasksRouter from "./routes/tasks.routes.js";
+import eventsRouter from "./routes/events.routes.js";
+
 import authRouter from "./routes/auth.routes.js";
 
 import uploadRouter from "./routes/upload.routes.js";
@@ -18,8 +21,11 @@ app.get("/", (_req: Request, res: Response) => {
   res.send("My Note backend is running");
 });
 
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/notes", notesRouter);
+app.use("/api/tasks", tasksRouter);
+app.use("/api/events", eventsRouter);
+
 app.use("/api/auth", authRouter);
 
 app.use("/uploads", express.static("uploads"));

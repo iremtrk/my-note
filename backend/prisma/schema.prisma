@@ -52,18 +52,23 @@ model NotePdf {
 model Task {
   id        Int      @id @default(autoincrement())
   title     String
-  description String?
+  content   String?
   completed Boolean  @default(false)
   priority  String   // "low" | "medium" | "high"
   dueDate   DateTime?
+  starred   Boolean  @default(false)
 
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
+enum EventType{
+  event
+  birthday
+}
 model Event {
   id        Int      @id @default(autoincrement())
   title     String
@@ -71,10 +76,11 @@ model Event {
   date      DateTime
   time      String?
   notified  Boolean  @default(false)
+  type      EventType
 
   userId    Int
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  updatedAt DateTime @default(now()) @updatedAt
 }

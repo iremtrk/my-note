@@ -17,7 +17,7 @@ export const useEventsStore = defineStore("events", () => {
   const hasFetched = ref(false);
 
   const loading = useLoadingStore();
-  const API_URL = "http://localhost:3001/events";
+  const API_URL = "http://localhost:5000/api/events";
 
   const fetchEvents = async (userId?: string | number) => {
     if (!userId) {

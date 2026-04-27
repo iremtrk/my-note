@@ -11,51 +11,38 @@ router.get("/", async (req: Request, res: Response) => {
       return res.status(400).json({ message: "userId is required." });
     }
 
-    const notes = await prisma.note.findMany({
+    const tasks = await prisma.task.findMany({
       where: {
         userId,
-      },
-      include: {
-        pdfs: true,
       },
       orderBy: {
         createdAt: "desc",
       },
     });
 
-    res.json(notes);
+    res.json(tasks);
   } catch (error) {
-    console.error("FETCH NOTES ERROR:", error);
-    res.status(500).json({ message: "Notes could not be fetched." });
+    res.status(500).json({ message: "Tasks could not be fetched." });
   }
 });
 
-
 router.post("/", async (req: Request, res: Response) => {
   try {
-    console.log("BODY:", req.body);
+    const { title, content, userId, priority, dueDate, starred } = req.body;
 
-    const { title, content, userId, starred, pdfs } = req.body;
-
-    const note = await prisma.note.create({
+    const task = await prisma.task.create({
       data: {
         title,
         content,
         userId: Number(userId),
+        priority,
+        dueDate: dueDate ? new Date(dueDate) : null,
         starred: starred ?? false,
-        pdfs: {
-          create: (pdfs ?? []).map((pdf: any) => ({
-            name: pdf.name,
-            url: pdf.url,
-          })),
-        },
       },
     });
 
-    res.status(201).json(note);
+    res.status(201).json(task);
   } catch (error) {
-    console.error("CREATE NOTE ERROR:", error);
-
     res.status(500).json({
       message: "Note could not be created.",
     });
@@ -65,25 +52,23 @@ router.post("/", async (req: Request, res: Response) => {
 router.patch("/:id", async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
-    const { title, content, starred } = req.body;
+    const { title, content, starred, priority, dueDate } = req.body;
 
-    const note = await prisma.note.update({
+    const task = await prisma.task.update({
       where: { id },
       data: {
         title,
         content,
         starred,
+        dueDate,
+        priority,
         updatedAt: new Date(),
       },
-      include: {
-        pdfs: true,
-      },
     });
-
-    res.json(note);
+    res.json(task);
   } catch (error) {
     res.status(500).json({
-      message: "Note could not be updated.",
+      message: "Task could not be updated.",
       error,
     });
   }
@@ -93,13 +78,14 @@ router.delete("/:id", async (req: Request, res: Response) => {
   try {
     const id = Number(req.params.id);
 
-    await prisma.note.delete({
+    await prisma.task.delete({
       where: { id },
     });
-
     res.status(204).send();
   } catch {
-    res.status(500).json({ message: "Note could not be deleted." });
+    res.status(500).json({
+      message: "Task could not be deleted.",
+    });
   }
 });
 

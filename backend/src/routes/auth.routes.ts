@@ -5,29 +5,6 @@ import { prisma } from "../prisma.js";
 
 const router = Router();
 
-
-/**
- * @swagger
- * /api/auth/register:
- *   post:
- *     summary: Register new user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/RegisterInput'
- *     responses:
- *       201:
- *         description: User successfully registered
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthResponse'
- *       400:
- *         description: Email already exists
- */
 router.post("/register", async (req: Request, res: Response) => {
   try {
     const name = String(req.body.name).trim();
@@ -72,29 +49,6 @@ router.post("/register", async (req: Request, res: Response) => {
   }
 });
 
-
-/**
- * @swagger
- * /api/auth/login:
- *   post:
- *     summary: Login user
- *     tags: [Auth]
- *     requestBody:
- *       required: true
- *       content:
- *         application/json:
- *           schema:
- *             $ref: '#/components/schemas/LoginInput'
- *     responses:
- *       200:
- *         description: Login successful
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/AuthResponse'
- *       401:
- *         description: Invalid email or password
- */
 router.post("/login", async (req: Request, res: Response) => {
   try {
     const email = String(req.body.email).trim().toLowerCase();

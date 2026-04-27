@@ -149,5 +149,6 @@ export default {
     title:"Etkinlikler",
     dayEmpty:"Bu tarihte bir etkinlik yok",
     rangeEmpty:"Bu tarih aralığında bir etkinlik yok",
+    allEmpty:"Takviminizde hiç etkinlik yok"
   }
 };

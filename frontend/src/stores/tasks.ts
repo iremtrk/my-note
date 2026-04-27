@@ -14,7 +14,7 @@ export const useTasksStore = defineStore("tasks", () => {
   const hasFetched = ref(false);
 
   const loading = useLoadingStore();
-  const API_URL = "http://localhost:3001/tasks";
+  const API_URL = "http://localhost:5000/api/tasks";
 
   const fetchTasks = async (userId?: string | number) => {
     if (!userId) {
