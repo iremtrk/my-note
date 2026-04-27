@@ -1,5 +1,8 @@
 import express, { type Request, type Response } from "express";
 import cors from "cors";
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./swagger.js";
+
 import notesRouter from "./routes/notes.routes.js";
 import authRouter from "./routes/auth.routes.js";
 
@@ -15,6 +18,7 @@ app.get("/", (_req: Request, res: Response) => {
   res.send("My Note backend is running");
 });
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 app.use("/api/notes", notesRouter);
 app.use("/api/auth", authRouter);
 

@@ -3,6 +3,27 @@ import { prisma } from "../prisma.js";
 
 const router = Router();
 
+/**
+ * @swagger
+ * /api/notes:
+ *   get:
+ *     summary: Get notes by userId
+ *     tags: [Notes]
+ *     parameters:
+ *       - in: query
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     responses:
+ *       200:
+ *         description: Notes fetched successfully
+ *       400:
+ *         description: userId is required
+ *       500:
+ *         description: Notes could not be fetched
+ */
 router.get("/", async (req: Request, res: Response) => {
   try {
     const userId = Number(req.query.userId);
@@ -30,6 +51,52 @@ router.get("/", async (req: Request, res: Response) => {
   }
 });
 
+/**
+ * @swagger
+ * /api/notes:
+ *   post:
+ *     summary: Create a new note
+ *     tags: [Notes]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - title
+ *               - content
+ *               - userId
+ *             properties:
+ *               title:
+ *                 type: string
+ *                 example: My first note
+ *               content:
+ *                 type: string
+ *                 example: This is note content.
+ *               userId:
+ *                 type: integer
+ *                 example: 1
+ *               starred:
+ *                 type: boolean
+ *                 example: false
+ *               pdfs:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     name:
+ *                       type: string
+ *                       example: document.pdf
+ *                     url:
+ *                       type: string
+ *                       example: /uploads/document.pdf
+ *     responses:
+ *       201:
+ *         description: Note created successfully
+ *       500:
+ *         description: Note could not be created
+ */
 router.post("/", async (req: Request, res: Response) => {
   try {
     console.log("BODY:", req.body);
@@ -57,7 +124,6 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.status(500).json({
       message: "Note could not be created.",
-      error: error instanceof Error ? error.message : error,
     });
   }
 });
