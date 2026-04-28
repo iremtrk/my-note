@@ -21,6 +21,8 @@ model User {
   tasks     Task[]
   events    Event[]
 
+  sharedNotes  NoteShare[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -37,7 +39,26 @@ model Note {
 
   pdfs      NotePdf[]
 
+  shares    NoteShare[]
+
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model NoteShare {
+  id         Int      @id @default(autoincrement())
+
+  noteId     Int
+  note       Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  permission String   @default("read") // read veya edit
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @default(now()) @updatedAt
+
+  @@unique([noteId, userId])
 }
 
 model NotePdf {

@@ -4,7 +4,7 @@ export interface NotePdf {
   url: string
 }
 
-export interface SharedUser{
+export interface NoteShare{
   userId:string
   email:string
   permission:"read"|"edit"
@@ -19,5 +19,5 @@ export interface Note {
   updatedAt: string
   starred: boolean
   pdfs?:NotePdf[]
-  sharedWith:SharedUser[]
+  sharedWith:NoteShare[]
 }
