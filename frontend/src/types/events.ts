@@ -1,6 +1,6 @@
 export interface CalendarEvent {
   id: number
-  userId: string
+  userId: number
   title: string
   description: string
   date: string

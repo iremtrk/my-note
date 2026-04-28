@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import axios from "axios";
+import api from "@/lib/axios"
 import type { CalendarEvent } from "@/types/events";
 import { useLoadingStore } from "./loading";
 
@@ -15,22 +15,14 @@ export const useEventsStore = defineStore("events", () => {
   const selectedDate = ref("");
   const selectedRanges = ref<DateRange[]>([]);
   const hasFetched = ref(false);
-
   const loading = useLoadingStore();
-  const API_URL = "http://localhost:5000/api/events";
 
-  const fetchEvents = async (userId?: string | number) => {
-    if (!userId) {
-      events.value = [];
-      hasFetched.value = true;
-      return;
-    }
+  const API_URL = "/events"
 
-
-
+  const fetchEvents = async () => {
     await loading.wrap("events", async () => {
-      const response = await axios.get(`${API_URL}?userId=${userId}`);
-      events.value = response.data;
+    const response = await api.get(API_URL);
+    events.value = response.data;
     });
 
     if (selectedEvent.value) {
@@ -58,7 +50,7 @@ export const useEventsStore = defineStore("events", () => {
 
   const addEvent = async (payload: Omit<CalendarEvent, "id">) => {
     await loading.wrap("events:add", async () => {
-      const response = await axios.post(API_URL, payload);
+      const response = await api.post(API_URL, payload);
       events.value.push(response.data);
       selectedEvent.value = response.data;
     });
@@ -71,7 +63,7 @@ export const useEventsStore = defineStore("events", () => {
     const currentEvent = events.value.find((event) => event.id === id);
     if (!currentEvent) return;
 
-    const response = await axios.patch(`${API_URL}/${id}`, {
+    const response = await api.patch(`${API_URL}/${id}`, {
       ...currentEvent,
       ...payload,
     });
@@ -86,8 +78,8 @@ export const useEventsStore = defineStore("events", () => {
     }
   };
 
-  const deleteEvent = async (id: number) => {
-    await axios.delete(`${API_URL}/${id}`);
+  const deleteEvent = async (id:number) => {
+    await api.delete(`${API_URL}/${id}`);
     events.value = events.value.filter((event) => event.id !== id);
 
     if (selectedEvent.value?.id === id) {

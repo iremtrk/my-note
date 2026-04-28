@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import axios from "axios";
+import axios from "axios"; //silllllllllllllllllllllllll
+import api from "@/lib/axios"
 import type { Task } from "@/types/tasks";
 import { useLoadingStore } from "./loading";
 
@@ -12,19 +13,13 @@ export const useTasksStore = defineStore("tasks", () => {
   const searchQuery = ref("");
   const sortOrder = ref<TaskSortOrder>("newest");
   const hasFetched = ref(false);
-
   const loading = useLoadingStore();
-  const API_URL = "http://localhost:5000/api/tasks";
 
-  const fetchTasks = async (userId?: string | number) => {
-    if (!userId) {
-      tasks.value = [];
-      hasFetched.value = true;
-      return;
-    }
+  const API_URL = "/tasks";
 
+  const fetchTasks = async () => {
     await loading.wrap("tasks", async () => {
-      const response = await axios.get(`${API_URL}?userId=${userId}`);
+      const response = await api.get(API_URL);
       tasks.value = response.data;
     });
 
@@ -44,7 +39,7 @@ export const useTasksStore = defineStore("tasks", () => {
 
   const addTask = async (payload: Omit<Task, "id">) => {
     await loading.wrap("tasks:add", async () => {
-      const response = await axios.post(API_URL, payload);
+      const response = await api.post(API_URL, payload);
       tasks.value.push(response.data);
       selectedTask.value = response.data;
     });
@@ -57,7 +52,7 @@ export const useTasksStore = defineStore("tasks", () => {
     const currentTask = tasks.value.find((task) => task.id === id);
     if (!currentTask) return;
 
-    const response = await axios.patch(`${API_URL}/${id}`, {
+    const response = await api.patch(`${API_URL}/${id}`, {
       ...currentTask,
       ...payload,
     });
@@ -71,7 +66,7 @@ export const useTasksStore = defineStore("tasks", () => {
   };
 
   const deleteTask = async (id: number) => {
-    await axios.delete(`${API_URL}/${id}`);
+    await api.delete(`${API_URL}/${id}`);
     tasks.value = tasks.value.filter((task) => task.id !== id);
 
     if (selectedTask.value?.id === id) {

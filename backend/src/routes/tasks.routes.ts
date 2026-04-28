@@ -1,58 +1,71 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Response } from "express";
 import { prisma } from "../prisma.js";
+import { authMiddleware, type AuthRequest } from "../middleware/auth.js";
 
 const router = Router();
+router.use(authMiddleware);
 
-router.get("/", async (req: Request, res: Response) => {
+const formatTask = (task: any) => ({
+  ...task,
+  dueDate: task.dueDate
+    ? task.dueDate.toISOString().split("T")[0]
+    : null,
+});
+
+router.get("/", async (req: AuthRequest, res: Response) => {
   try {
-    const userId = Number(req.query.userId);
-
-    if (!userId) {
-      return res.status(400).json({ message: "userId is required." });
-    }
+    const userId = req.user!.userId;
 
     const tasks = await prisma.task.findMany({
-      where: {
-        userId,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
+      where: { userId },
+      orderBy: { createdAt: "desc" },
     });
 
-    res.json(tasks);
-  } catch (error) {
+    res.json(tasks.map(formatTask));
+  } catch {
     res.status(500).json({ message: "Tasks could not be fetched." });
   }
 });
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req: AuthRequest, res: Response) => {
   try {
-    const { title, content, userId, priority, dueDate, starred } = req.body;
+    const userId = req.user!.userId;
+    const { title, content, priority, dueDate, starred, completed } = req.body;
 
     const task = await prisma.task.create({
       data: {
+        userId,
         title,
         content,
-        userId: Number(userId),
         priority,
         dueDate: dueDate ? new Date(dueDate) : null,
         starred: starred ?? false,
+        completed: completed ?? false,
       },
     });
 
-    res.status(201).json(task);
-  } catch (error) {
+    res.status(201).json(formatTask(task));
+  } catch {
     res.status(500).json({
-      message: "Note could not be created.",
+      message: "Task could not be created.",
     });
   }
 });
 
-router.patch("/:id", async (req: Request, res: Response) => {
+router.patch("/:id", async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
-    const { title, content, starred, priority, dueDate } = req.body;
+    const userId = req.user!.userId;
+
+    const { title, content, starred, completed, priority, dueDate } = req.body;
+
+    const existing = await prisma.task.findFirst({
+      where: { id, userId },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ message: "Task not found." });
+    }
 
     const task = await prisma.task.update({
       where: { id },
@@ -60,12 +73,14 @@ router.patch("/:id", async (req: Request, res: Response) => {
         title,
         content,
         starred,
-        dueDate,
+        completed,
         priority,
+        dueDate: dueDate ? new Date(dueDate) : existing.dueDate,
         updatedAt: new Date(),
       },
     });
-    res.json(task);
+
+    res.json(formatTask(task));
   } catch (error) {
     res.status(500).json({
       message: "Task could not be updated.",
@@ -74,13 +89,23 @@ router.patch("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
+    const userId = req.user!.userId;
+
+    const existing = await prisma.task.findFirst({
+      where: { id, userId },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ message: "Task not found." });
+    }
 
     await prisma.task.delete({
       where: { id },
     });
+
     res.status(204).send();
   } catch {
     res.status(500).json({

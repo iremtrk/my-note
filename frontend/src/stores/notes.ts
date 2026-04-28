@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import axios from "axios";
+import api from "@/lib/axios"
 import type { Note, NotePdf } from "@/types/notes";
 import { stripHtml } from "@/utils/html";
 import { useLoadingStore } from "./loading";
@@ -15,17 +15,11 @@ export const useNotesStore = defineStore("notes", () => {
   const hasFetched = ref(false);
 
   const loading = useLoadingStore();
-  const API_URL = "http://localhost:5000/api/notes";
+  const API_URL = "/notes";
 
-  const fetchNotes = async (userId?: string | number) => {
-    if (!userId) {
-      notes.value = [];
-      hasFetched.value = true;
-      return;
-    }
-
+  const fetchNotes = async () => {
     await loading.wrap("notes", async () => {
-      const response = await axios.get(`${API_URL}?userId=${userId}`);
+      const response = await api.get(API_URL);
       notes.value = response.data;
     });
 
@@ -45,7 +39,7 @@ export const useNotesStore = defineStore("notes", () => {
 
   const addNote = async (payload: Omit<Note, "id">) => {
     await loading.wrap("notes:add", async () => {
-      const response = await axios.post(API_URL, {
+      const response = await api.post(API_URL, {
       title: payload.title,
       content: payload.content,
       userId: Number(payload.userId),
@@ -64,7 +58,7 @@ export const useNotesStore = defineStore("notes", () => {
     const currentNote = notes.value.find((note) => note.id === id);
     if (!currentNote) return;
 
-    const response = await axios.patch(`${API_URL}/${id}`, {
+    const response = await api.patch(`${API_URL}/${id}`, {
       ...payload,
       userId: currentNote.userId,
       createdAt: currentNote.createdAt,
@@ -81,7 +75,7 @@ export const useNotesStore = defineStore("notes", () => {
   };
 
   const deleteNote = async (id: number) => {
-    await axios.delete(`${API_URL}/${id}`);
+    await api.delete(`${API_URL}/${id}`);
     notes.value = notes.value.filter((note) => note.id !== id);
 
     if (selectedNote.value?.id === id) {
@@ -93,7 +87,7 @@ export const useNotesStore = defineStore("notes", () => {
     const note = notes.value.find((n) => n.id === id);
     if (!note) return;
 
-    const response = await axios.patch(`${API_URL}/${id}`, {
+    const response = await api.patch(`${API_URL}/${id}`, {
       starred: !note.starred,
     });
 

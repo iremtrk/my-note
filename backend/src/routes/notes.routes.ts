@@ -1,15 +1,14 @@
 import { Router, type Request, type Response } from "express";
 import { prisma } from "../prisma.js";
+import { authMiddleware, type AuthRequest } from "../middleware/auth.js";
+
 
 const router = Router();
+router.use(authMiddleware);
 
-router.get("/", async (req: Request, res: Response) => {
+router.get("/", async (req: AuthRequest, res: Response) => {
   try {
-    const userId = Number(req.query.userId);
-
-    if (!userId) {
-      return res.status(400).json({ message: "userId is required." });
-    }
+    const userId = req.user!.userId;
 
     const notes = await prisma.note.findMany({
       where: {
@@ -31,11 +30,10 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 
-router.post("/", async (req: Request, res: Response) => {
+router.post("/", async (req: AuthRequest, res: Response) => {
   try {
-    console.log("BODY:", req.body);
-
-    const { title, content, userId, starred, pdfs } = req.body;
+    const userId = req.user!.userId;
+    const {title, content, starred, pdfs } = req.body;
 
     const note = await prisma.note.create({
       data: {
@@ -54,15 +52,13 @@ router.post("/", async (req: Request, res: Response) => {
 
     res.status(201).json(note);
   } catch (error) {
-    console.error("CREATE NOTE ERROR:", error);
-
     res.status(500).json({
       message: "Note could not be created.",
     });
   }
 });
 
-router.patch("/:id", async (req: Request, res: Response) => {
+router.patch("/:id", async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
     const { title, content, starred } = req.body;
@@ -89,7 +85,7 @@ router.patch("/:id", async (req: Request, res: Response) => {
   }
 });
 
-router.delete("/:id", async (req: Request, res: Response) => {
+router.delete("/:id", async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
 

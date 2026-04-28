@@ -46,7 +46,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount, watch } from "vue";
-import { useQuasar } from "quasar";
+import { useQuasar, Notify } from "quasar";
 import { useAuthStore } from "@/stores/auth";
 import { useEventsStore } from "@/stores/events";
 import type { CalendarEvent } from "@/types/events";
@@ -71,10 +71,9 @@ const handleFetchAllEvents = async () => {
   const userId = authStore.user?.id;
   if (!userId) return;
 
-  await eventsStore.fetchEvents(userId);
+  await eventsStore.fetchEvents();
   activeView.value = "all";
 };
-
 
 const form = ref({
   title: "",
@@ -181,6 +180,8 @@ const handleDelete = async (id: number) => {
   await eventsStore.deleteEvent(id);
 };
 
+let activeNotify: any = null;
+
 const checkUpcomingEvents = async () => {
   const now = new Date();
 
@@ -188,16 +189,29 @@ const checkUpcomingEvents = async () => {
     if (!event.time || event.notified) continue;
 
     const eventDateTime = new Date(`${event.date}T${event.time}`);
-    const diffMs = eventDateTime.getTime() - now.getTime();
-    const diffMinutes = Math.floor(diffMs / 1000 / 60);
+    const diffMinutes = Math.floor(
+      (eventDateTime.getTime() - now.getTime()) / 1000 / 60
+    );
 
     if (diffMinutes >= 0 && diffMinutes <= 10) {
-      $q.notify({
-        type: "info",
-        message: `${event.title} yaklaşıyor (${event.time})`,
-        position: "bottom-right",
-        timeout: 10000,
-      });
+      if (!activeNotify) {
+        activeNotify = Notify.create({
+          type: "info",
+          color:"primary",
+          message: `${event.title} yaklaşıyor (${event.time})`,
+          position: "bottom-right",
+          timeout: 0, 
+          actions: [
+            {
+              icon: "close",
+              color: "white",
+              handler: () => {
+                activeNotify = null;
+              },
+            },
+          ],
+        });
+      }
 
       await eventsStore.updateEvent(event.id, {
         notified: true,
@@ -221,7 +235,7 @@ onMounted(async () => {
   const today = new Date().toISOString().split("T")[0];
   eventsStore.setSelectedDate(today);
 
-  await eventsStore.fetchEvents(authStore.user.id);
+  await eventsStore.fetchEvents();
 
   notifyInterval = setInterval(() => {
     checkUpcomingEvents();

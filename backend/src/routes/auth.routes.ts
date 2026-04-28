@@ -54,21 +54,15 @@ router.post("/login", async (req: Request, res: Response) => {
     const email = String(req.body.email).trim().toLowerCase();
     const password = String(req.body.password);
 
-    console.log("login mail:", email);
-
     const user = await prisma.user.findUnique({
       where: { email },
     });
-
-    console.log("kullanici:", user);
 
     if (!user) {
       return res.status(401).json({ message: "Invalid email or password." });
     }
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
-
-    console.log("sifre dogru:", isPasswordValid);
 
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid email or password." });
