@@ -28,7 +28,7 @@ export function useNoteActions() {
         content: payload.content,
         pdfs: payload.pdfs ?? [],
         userId,
-        sharedWith:[],
+        shares:[],
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         starred: false,
@@ -76,7 +76,7 @@ export function useNoteActions() {
       noteEditor.closeAll();
 
       if (authStore.user?.id) {
-        await notesStore.fetchNotes(authStore.user.id);
+        await notesStore.fetchNotes();
       }
     });
 

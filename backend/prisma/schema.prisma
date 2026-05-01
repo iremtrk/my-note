@@ -70,12 +70,18 @@ model NotePdf {
   note    Note   @relation(fields: [noteId], references: [id], onDelete: Cascade)
 }
 
+enum PriorityType{
+  low
+  medium
+  high
+}
+
 model Task {
   id        Int      @id @default(autoincrement())
   title     String
   content   String?
   completed Boolean  @default(false)
-  priority  String   // "low" | "medium" | "high"
+  priority  PriorityType   @default(low)
   dueDate   DateTime?
   starred   Boolean  @default(false)
 

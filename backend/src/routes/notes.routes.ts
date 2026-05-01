@@ -124,42 +124,6 @@ router.post("/", async (req: AuthRequest, res: Response) => {
   }
 });
 
-// router.patch("/:id", async (req: AuthRequest, res: Response) => {
-//   try {
-//     const id = Number(req.params.id);
-//     const { title, content, starred, pdfs } = req.body;
-
-//     const note = await prisma.note.update({
-//       where: { id },
-//       data: {
-//         title,
-//         content,
-//         starred,
-//         updatedAt: new Date(),
-//         ...(pdfs && {
-//           pdfs: {
-//             deleteMany: {},
-//             create: pdfs.map((pdf: any) => ({
-//               name: pdf.name,
-//               url: pdf.url,
-//             })),
-//           },
-//         }),
-//       },
-//       include: {
-//         pdfs: true,
-//       },
-//     });
-
-//     res.json(note);
-//   } catch (error) {
-//     res.status(500).json({
-//       message: "Note could not be updated.",
-//       error,
-//     });
-//   }
-// });
-
 router.patch("/:id", async (req: AuthRequest, res: Response) => {
   try {
     const noteId = Number(req.params.id);
