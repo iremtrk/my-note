@@ -153,7 +153,12 @@ export default {
     dayEmpty:"There is no event for this date",
     rangeEmpty:"There are no events between the selected dates",
     allEvents:"All Events",
-    allEmpty:"There are no events in your calendar"
-    
+    allEmpty:"There are no events in your calendar" 
+  },
+  shared:{
+    title:"Shared Notes",
+    noNotes:"No shared notes yet",
+    noNotesinfo:"Notes shared with you will appear here.",
+    sharedWithyou:"shared with you",
   }
 };

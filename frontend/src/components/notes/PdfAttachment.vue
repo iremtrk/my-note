@@ -2,6 +2,7 @@
   <div class="pdf-section">
     <div class="row items-center q-gutter-sm">
       <q-btn
+      v-if="!props.readonly"
         outline
         color="primary"
         icon="attach_file"
@@ -33,6 +34,7 @@
         </div>
 
         <q-btn
+          v-if="!props.readonly"
           flat
           round
           dense
@@ -77,9 +79,11 @@ const confirmDelete = () =>{
 const props = withDefaults(
   defineProps<{
     pdfs?: NotePdf[];
+    readonly?:boolean
   }>(),
   {
     pdfs: () => [],
+    readonly:false
   },
 );
 

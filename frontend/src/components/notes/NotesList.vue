@@ -21,6 +21,7 @@
               <q-item-label header class="text-caption text-grey-6">
                 {{ t("noteList.sort") }}
               </q-item-label>
+
               <q-item
                 v-for="opt in sortOptions"
                 :key="opt.value"
@@ -33,7 +34,9 @@
                 <q-item-section avatar>
                   <q-icon :name="opt.icon" size="18px" />
                 </q-item-section>
+
                 <q-item-section>{{ opt.label }}</q-item-section>
+
                 <q-item-section side v-if="notesStore.sortOrder === opt.value">
                   <q-icon name="check" size="16px" color="primary" />
                 </q-item-section>
@@ -58,8 +61,7 @@
       <q-spinner color="primary" size="50px" />
     </q-card-section>
 
-    <q-card-section
-      v-else-if="notes.length === 0" class="text-grey">
+    <q-card-section v-else-if="notes.length === 0" class="text-grey">
       {{ t("noteList.empty") }}
     </q-card-section>
 
@@ -75,12 +77,12 @@
           @click="$emit('select-note', note)"
         >
           <q-item-section>
-            <div class="row items-start justify-between no-wrap">
+            <div class="note-title-row row items-start no-wrap">
               <q-item-label class="text-weight-medium note-title">
                 {{ note.title }}
               </q-item-label>
 
-              <div class="row items-center">
+              <div class="note-actions row items-center">
                 <q-btn
                   :icon="note.starred ? 'star' : 'star_border'"
                   :color="note.starred ? 'primary' : 'grey-5'"
@@ -90,6 +92,7 @@
                   size="sm"
                   @click.stop="$emit('toggle-star', note.id)"
                 />
+
                 <q-btn
                   icon="close"
                   flat
@@ -135,21 +138,6 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-const showDeleteConfirm = ref(false);
-const deletingNoteId = ref<number | null>(null);
-
-const openDeleteConfirm = (id: number) => {
-  deletingNoteId.value = id;
-  showDeleteConfirm.value = true;
-};
-
-const confirmDelete = () => {
-  if (!deletingNoteId.value) return;
-  emit("delete-note", deletingNoteId.value);
-  showDeleteConfirm.value = false;
-  deletingNoteId.value = null;
-};
-
 defineProps<{
   notes: Note[];
   selectedNoteId: string | number | null;
@@ -164,6 +152,23 @@ const emit = defineEmits<{
 
 const noteEditor = useNoteEditorStore();
 const notesStore = useNotesStore();
+
+const showDeleteConfirm = ref(false);
+const deletingNoteId = ref<number | null>(null);
+
+const openDeleteConfirm = (id: number) => {
+  deletingNoteId.value = id;
+  showDeleteConfirm.value = true;
+};
+
+const confirmDelete = () => {
+  if (!deletingNoteId.value) return;
+
+  emit("delete-note", deletingNoteId.value);
+
+  showDeleteConfirm.value = false;
+  deletingNoteId.value = null;
+};
 
 const sortOptions = computed<
   { label: string; value: SortOrder; icon: string }[]
@@ -186,6 +191,11 @@ const sortOptions = computed<
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+.search-area {
+  flex: 1;
+  min-width: 0;
 }
 
 .search-area :deep(.q-field) {
@@ -213,19 +223,37 @@ const sortOptions = computed<
   overflow-y: auto;
 }
 
-.note-item :deep(.q-item__section) {
+.note-item {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.note-item :deep(.q-item__section--main) {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.note-title-row {
+  width: 100%;
   min-width: 0;
 }
 
 .note-title {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
+  max-width: 100%;
+  display: block;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.note-actions {
+  flex-shrink: 0;
+}
+
 .note-preview {
+  max-width: 100%;
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -233,6 +261,7 @@ const sortOptions = computed<
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: normal;
+  overflow-wrap: anywhere;
   word-break: break-word;
 }
 

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import api from "@/lib/axios"
+import api from "@/lib/axios";
 import type { Note, NotePdf } from "@/types/notes";
 import { stripHtml } from "@/utils/html";
 import { useLoadingStore } from "./loading";
@@ -16,6 +16,12 @@ export const useNotesStore = defineStore("notes", () => {
 
   const loading = useLoadingStore();
   const API_URL = "/notes";
+
+  const ownedNotes = computed(() => notes.value.filter((note) => note.isOwner));
+
+  const sharedNotes = computed(() =>
+    notes.value.filter((note) => !note.isOwner),
+  );
 
   const fetchNotes = async () => {
     await loading.wrap("notes", async () => {
@@ -40,14 +46,20 @@ export const useNotesStore = defineStore("notes", () => {
   const addNote = async (payload: Omit<Note, "id">) => {
     await loading.wrap("notes:add", async () => {
       const response = await api.post(API_URL, {
-      title: payload.title,
-      content: payload.content,
-      userId: Number(payload.userId),
-      starred: payload.starred ?? false,
-      pdfs:payload.pdfs ?? [],
-    });
-      notes.value.push(response.data);
-      selectedNote.value = response.data;
+        title: payload.title,
+        content: payload.content,
+        userId: Number(payload.userId),
+        starred: payload.starred ?? false,
+        pdfs: payload.pdfs ?? [],
+      });
+
+      const newNote = {
+        ...response.data,
+        isOwner: true,
+      };
+
+      notes.value.push(newNote);
+      selectedNote.value = newNote;
     });
   };
 
@@ -82,6 +94,21 @@ export const useNotesStore = defineStore("notes", () => {
       selectedNote.value = null;
     }
   };
+
+const shareNote = async (noteId: number, payload: any) => {
+  try {
+    const response = await api.post(`${API_URL}/${noteId}/share`, payload);
+
+    const index = notes.value.findIndex((n) => n.id === noteId);
+    if (index !== -1) {
+      notes.value[index] = response.data.data;
+    }
+
+    return response.data; // { message, data }
+  } catch (error: any) {
+    throw error.response?.data || { message: "Something went wrong" };
+  }
+};
 
   const toggleStar = async (id: number) => {
     const note = notes.value.find((n) => n.id === id);
@@ -143,18 +170,31 @@ export const useNotesStore = defineStore("notes", () => {
     });
   });
 
+  const filteredOwnedNotes = computed(() =>
+    filteredNotes.value.filter((note) => note.isOwner),
+  );
+
+  const filteredSharedNotes = computed(() =>
+    filteredNotes.value.filter((note) => !note.isOwner),
+  );
+
   return {
     notes,
     selectedNote,
     searchQuery,
     sortOrder,
     filteredNotes,
+    filteredOwnedNotes,
+    filteredSharedNotes,
     hasFetched,
+    ownedNotes,
+    sharedNotes,
     fetchNotes,
     selectNote,
     addNote,
     updateNote,
     deleteNote,
+    shareNote,
     toggleStar,
     clearNotes,
     clearSelectedNote,

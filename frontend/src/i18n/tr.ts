@@ -53,7 +53,7 @@ export default {
     notes: "Notlar",
     tasks: "Görevler",
     calendar: "Takvim",
-    shared:"Paylaşılanlar",
+    shared: "Paylaşılanlar",
     welcome: "Hoşgeldin",
   },
   home: {
@@ -88,6 +88,8 @@ export default {
     sortOldest: "En Eski",
     sortUpdated: "Son Güncellenen",
     search: "Not ara..",
+    deleteTitle: "Notu Sil",
+    deleteMessage: "Bu notu silmek istediğine emin misin?",
   },
   tasks: {
     empty: "Detayları görmek için bir görev seçin",
@@ -126,29 +128,37 @@ export default {
   },
   calendarPicker: {
     title: "Takvim",
-    badge: "Tarih aralığı seçmek için basınız",
+    badgeDay:"Gün seçmek için tıklayın",
+    badgeRange:"Tarih aralığı seçmek için tıklayın"
   },
-    eventFormDialog:{
-    add:"Etkinlik Ekle",
-    edit:"Etkinliği Düzenle",
-    title:"Başlık",
-    description:"Açıklama",
-    date:"Tarih",
-    time:"Saat",
-    type:"Tür",
-    save:"Save",
-    update:"Update",
-    event:"Etkinlik",
-    birthday:"Doğum Günü"
+  eventFormDialog: {
+    add: "Etkinlik Ekle",
+    edit: "Etkinliği Düzenle",
+    title: "Başlık",
+    description: "Açıklama",
+    date: "Tarih",
+    time: "Saat",
+    type: "Tür",
+    save: "Save",
+    update: "Update",
+    event: "Etkinlik",
+    birthday: "Doğum Günü",
   },
-    eventConfirm:{
-    title:"Etkinliği Sil",
-    message:"Bu etkinliği silmek istediğine emin misin?"
+  eventConfirm: {
+    title: "Etkinliği Sil",
+    message: "Bu etkinliği silmek istediğine emin misin?",
   },
-    eventList:{
-    title:"Etkinlikler",
-    dayEmpty:"Bu tarihte bir etkinlik yok",
-    rangeEmpty:"Bu tarih aralığında bir etkinlik yok",
-    allEmpty:"Takviminizde hiç etkinlik yok"
-  }
+  eventList: {
+    title: "Etkinlikler",
+    dayEmpty: "Bu tarihte bir etkinlik yok",
+    rangeEmpty: "Bu tarih aralığında bir etkinlik yok",
+    allEvents:"Tüm etkinlikler",
+    allEmpty: "Takviminizde hiç etkinlik yok",
+  },
+  shared: {
+    title: "Paylaşılan Notlar",
+    noNotes: "Henüz paylaşılan not yok",
+    info: "Sizinle paylaşılan notlar burada gözükecek",
+    sharedWithyou: "seninle paylaştı",
+  },
 };

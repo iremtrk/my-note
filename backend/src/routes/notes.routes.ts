@@ -5,23 +5,6 @@ import { authMiddleware, type AuthRequest } from "../middleware/auth.js";
 const router = Router();
 router.use(authMiddleware);
 
-const canViewNote = async (noteId: number, userId: number) => {
-  return prisma.note.findFirst({
-    where: {
-      id: noteId,
-      OR: [
-        { userId },
-        {
-          shares: {
-            some: {
-              userId,
-            },
-          },
-        },
-      ],
-    },
-  });
-};
 
 const canEditNote = async (noteId: number, userId: number) => {
   return prisma.note.findFirst({
@@ -240,8 +223,7 @@ router.patch("/:id", async (req: AuthRequest, res: Response) => {
       isOwner: updatedNote.userId === userId,
       permission: updatedNote.userId === userId ? "owner" : "edit",
     });
-  } catch (error) {
-    console.error("UPDATE NOTE ERROR:", error);
+  } catch {
     res.status(500).json({
       message: "Note could not be updated.",
     });

@@ -5,7 +5,9 @@
         <div class="section-header row items-center justify-between">
           <div class="text-h6">{{ t("sidebar.notes") }}</div>
 
-          <q-btn icon="sort" flat round dense color="grey-7">
+
+          <!--şimdilik kaldırıcam component yapim bunu 3 sayfada kullanıyorum-->
+          <!-- <q-btn icon="sort" flat round dense color="grey-7">
             <q-menu anchor="bottom right" self="top right">
               <q-list style="min-width: 200px">
                 <q-item-label header class="text-caption text-grey-6">
@@ -34,14 +36,14 @@
                 </q-item>
               </q-list>
             </q-menu>
-          </q-btn>
+          </q-btn> -->
         </div>
 
         <div v-if="!notesStore.hasFetched" class="panel-loading">
           <q-spinner color="primary" size="44px" />
         </div>
 
-        <div v-else-if="notesStore.notes.length === 0" class="panel-empty">
+        <div v-else-if="notesStore.ownedNotes.length === 0" class="panel-empty">
           <q-btn
             icon="task"
             color="primary"
@@ -56,7 +58,7 @@
         <div v-else class="section-content notes-content">
           <div class="notes-scroll">
             <NoteCard
-              v-for="note in notesStore.filteredNotes"
+              v-for="note in notesStore.ownedNotes"
               :key="note.id"
               :note="note"
               @select="handleSelect"
@@ -72,6 +74,7 @@
               :initial-content="noteEditor.content"
               :initial-pdfs="noteEditor.pdfs"
               :is-editing="noteEditor.editingNoteId !== null"
+              :is-owner="notesStore.selectedNote?.userId === authStore.user?.id"
               @save="handleSave"
               @cancel="noteEditor.closeSideEditor()"
               @delete="handleDelete"
@@ -143,6 +146,9 @@ import TaskEditor from "@/components/tasks/TaskEditor.vue";
 import { useNoteActions } from "@/composables/useNoteActions";
 import { useTaskActions } from "@/composables/useTaskActions";
 import type { SortOrder } from "@/stores/notes";
+import { useAuthStore } from "@/stores/auth";
+
+const authStore = useAuthStore();
 
 const { t } = useI18n();
 

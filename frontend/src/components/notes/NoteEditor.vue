@@ -57,10 +57,17 @@
   <q-card v-else bordered class="editor-card side-editor-card">
     <q-card-section class="row items-center justify-between editor-header">
       <div class="text-h6">{{ t("editor.editNote") }}</div>
-
       <div class="row items-center q-gutter-xs">
         <q-btn
-          v-if="isEditing"
+          v-if="isEditing && props.isOwner"
+          icon="share"
+          flat
+          round
+          @click="showShareModal = true"
+        >
+        </q-btn>
+        <q-btn
+          v-if="isEditing && props.isOwner"
           icon="delete"
           flat
           round
@@ -80,6 +87,7 @@
         maxlength="80"
         counter
         autogrow
+        :readonly="props.readonly"
       />
 
       <div class="editor-wrapper">
@@ -87,11 +95,13 @@
           v-model="localContent"
           :toolbar="editorToolbar"
           class="editor-content"
+          :readonly="props.readonly"
         />
       </div>
 
       <PdfAttachment
         :pdfs="localPdfs"
+        :readonly="props.readonly"
         @attach="handlePdfAttach"
         @remove="handlePdfRemove"
         @preview="handlePdfPreview"
@@ -107,6 +117,8 @@
       />
     </q-card-actions>
   </q-card>
+
+  <ShareModal v-model="showShareModal" @share="handleShareNote" />
 
   <ConfirmDelete
     v-model="showDeleteConfirm"
@@ -145,6 +157,11 @@ import PdfAttachment from "@/components/notes/PdfAttachment.vue";
 import PdfViewer from "@/components/pdf/PdfViewer.vue";
 import { useI18n } from "vue-i18n";
 import type { NotePdf } from "@/types/notes";
+import ShareModal from "@/components/notes/ShareModal.vue";
+import { useNotesStore } from "@/stores/notes";
+import { useQuasar } from "quasar";
+
+const $q = useQuasar();
 
 const { t } = useI18n();
 
@@ -158,11 +175,16 @@ const props = withDefaults(
     initialPdfs?: NotePdf[];
     isEditing: boolean;
     variant?: "modal" | "side";
+    readonly?: boolean;
+    isOwner?: boolean;
+    noteId?: number;
   }>(),
   {
     modelValue: false,
     variant: "modal",
     initialPdfs: () => [],
+    readonly: false,
+    isOwner: false,
   },
 );
 
@@ -186,6 +208,9 @@ const localPdfs = ref<NotePdf[]>([]);
 const selectedPreviewPdf = ref<NotePdf | null>(null);
 const isHydrating = ref(false);
 const showDeleteConfirm = ref(false);
+
+const notesStore = useNotesStore();
+const showShareModal = ref(false);
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -266,6 +291,31 @@ const handleRemoveAllPdfs = () => {
 const handlePdfPreview = (pdf: NotePdf) => {
   selectedPreviewPdf.value = pdf;
   showPdfPreview.value = true;
+};
+
+const handleShareNote = async (payload: {
+  email: string;
+  permission: "read" | "edit";
+}) => {
+  if (!props.noteId) return;
+
+  try {
+    const res = await notesStore.shareNote(props.noteId, payload);
+
+    $q.notify({
+      type: "positive",
+      message: res.message || "Note shared successfully",
+      position: "top-right",
+    });
+
+    showShareModal.value = false;
+  } catch (err: any) {
+    $q.notify({
+      type: "negative",
+      message: err.message || "Share failed",
+      position: "top-right",
+    });
+  }
 };
 
 const handleSave = () => {

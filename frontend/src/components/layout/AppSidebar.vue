@@ -6,6 +6,7 @@
           <q-btn
             :label="t('sidebar.newNote')"
             color="primary"
+            :no-caps="true"
             @click="noteEditor.openNewNoteModal()"
           />
         </div>
@@ -14,6 +15,7 @@
           <q-btn
             :label="t('sidebar.newTask')"
             color="primary"
+            :no-caps="true"
             @click="taskEditor.openAddModal()"
           />
         </div>
@@ -95,7 +97,7 @@
         <q-icon
           name="logout"
           size="20px"
-          class="cursor-pointer text-grey"
+          class="cursor-pointer"
           @click="handleLogout"
         />
       </q-item>

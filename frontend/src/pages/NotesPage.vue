@@ -2,12 +2,15 @@
   <div class="row q-col-gutter-md notes-page">
     <div class="col-4 full-height">
       <NotesList
-        :notes="notesStore.filteredNotes"
+        :notes="notesStore.filteredOwnedNotes"
         :selected-note-id="notesStore.selectedNote?.id ?? null"
         :has-fetched="notesStore.hasFetched"
         @select-note="handleSelect"
         @delete-note="handleDelete"
-        @toggle-star="(id) => notesStore.toggleStar(typeof id === 'string' ? parseInt(id) : id)"
+        @toggle-star="
+          (id) =>
+            notesStore.toggleStar(typeof id === 'string' ? parseInt(id) : id)
+        "
       />
     </div>
 
@@ -15,10 +18,12 @@
       <div v-if="noteEditor.showSideEditor" class="full-height">
         <NoteEditor
           variant="side"
+          :note-id="notesStore.selectedNote?.id"
           :initial-title="noteEditor.title"
           :initial-content="noteEditor.content"
           :initial-pdfs="noteEditor.pdfs"
           :is-editing="noteEditor.editingNoteId !== null"
+          :is-owner="notesStore.selectedNote?.userId === authStore.user?.id"
           @save="handleSave"
           @cancel="noteEditor.closeSideEditor()"
           @delete="handleDelete"
@@ -35,10 +40,17 @@
 </template>
 
 <script setup lang="ts">
+import {ref} from 'vue'
 import NoteEditor from "@/components/notes/NoteEditor.vue";
 import NotesList from "@/components/notes/NotesList.vue";
 import { useNoteActions } from "@/composables/useNoteActions";
 import { useI18n } from "vue-i18n";
+import { useAuthStore } from "@/stores/auth";
+import ShareModal from "@/components/notes/ShareModal.vue";
+
+const showShareModal = ref(false);
+
+const authStore = useAuthStore();
 
 const { t } = useI18n();
 

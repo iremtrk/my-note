@@ -51,6 +51,7 @@
       :initial-content="noteEditor.content"
       :initial-pdfs="noteEditor.pdfs"
       :is-editing="noteEditor.editingNoteId !== null"
+      :is-owner="notesStore.selectedNote?.userId === authStore.user?.id"
       @save="handleSave"
       @cancel="noteEditor.closeModal()"
     />
@@ -118,7 +119,6 @@ const handleSave = async (payload: {
       content: payload.content,
       pdfs: payload.pdfs ?? [],
       userId,
-      sharedWith: [],
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
       starred: false,
