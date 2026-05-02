@@ -36,7 +36,7 @@
                 @click="openSharedNote(note)"
               >
                 <q-card-section>
-                  <div class="text-caption q-mt-xs">
+                  <div class="text-caption text-grey q-mt-xs">
                     {{ note.user?.email }} {{t('shared.sharedWithyou')}}
                   </div>
                   <div class="row items-center justify-between no-wrap">

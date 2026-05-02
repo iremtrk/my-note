@@ -58,7 +58,7 @@
         <div v-else class="section-content notes-content">
           <div class="notes-scroll">
             <NoteCard
-              v-for="note in notesStore.ownedNotes"
+              v-for="note in notesStore.filteredOwnedNotes"
               :key="note.id"
               :note="note"
               @select="handleSelect"
@@ -70,6 +70,7 @@
           <div v-if="noteEditor.showSideEditor" class="detail-panel">
             <NoteEditor
               variant="side"
+              :note-id="notesStore.selectedNote?.id"
               :initial-title="noteEditor.title"
               :initial-content="noteEditor.content"
               :initial-pdfs="noteEditor.pdfs"

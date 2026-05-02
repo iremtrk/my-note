@@ -95,20 +95,29 @@ export const useNotesStore = defineStore("notes", () => {
     }
   };
 
-const shareNote = async (noteId: number, payload: any) => {
-  try {
-    const response = await api.post(`${API_URL}/${noteId}/share`, payload);
+  const shareNote = async (noteId: number, payload: any) => {
+    try {
+      const response = await api.post(`${API_URL}/${noteId}/share`, payload);
 
-    const index = notes.value.findIndex((n) => n.id === noteId);
-    if (index !== -1) {
-      notes.value[index] = response.data.data;
+      const index = notes.value.findIndex((n) => n.id === noteId);
+      if (index !== -1) {
+        const shareData = response.data;
+        if (!notes.value[index].shares) {
+          notes.value[index].shares = [];
+        }
+        const existingShareIndex = notes.value[index].shares.findIndex((s: any) => s.userId === shareData.userId);
+        if (existingShareIndex !== -1) {
+          notes.value[index].shares[existingShareIndex] = shareData;
+        } else {
+          notes.value[index].shares.push(shareData);
+        }
+      }
+
+      return { message: "Note shared successfully", data: response.data };
+    } catch (error: any) {
+      throw error.response?.data || { message: "Something went wrong" };
     }
-
-    return response.data; // { message, data }
-  } catch (error: any) {
-    throw error.response?.data || { message: "Something went wrong" };
-  }
-};
+  };
 
   const toggleStar = async (id: number) => {
     const note = notes.value.find((n) => n.id === id);

@@ -77,6 +77,14 @@
         <q-btn icon="close" flat round @click="handleCancel" />
       </div>
     </q-card-section>
+    <div
+      v-if="sharedWithText"
+      class="text-caption text-grey-6 q-px-md"
+      style="margin-top: -8px; margin-bottom: 8px"
+    >
+      <q-icon name="group" size="14px" class="q-mr-xs" />
+      {{ sharedWithText }}
+    </div>
     <q-separator />
 
     <q-card-section class="editor-body">
@@ -151,7 +159,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from "vue";
+import { ref, watch, computed, onBeforeUnmount } from "vue";
 import ConfirmDelete from "@/common/ConfirmDelete.vue";
 import PdfAttachment from "@/components/notes/PdfAttachment.vue";
 import PdfViewer from "@/components/pdf/PdfViewer.vue";
@@ -213,6 +221,24 @@ const notesStore = useNotesStore();
 const showShareModal = ref(false);
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
+
+const currentNote = computed(() => {
+  if (!props.noteId) return null;
+  return notesStore.notes.find((n) => n.id === props.noteId) || null;
+});
+
+const sharedWithText = computed(() => {
+  if (!props.isOwner) return "";
+
+  const shares = currentNote.value?.shares || [];
+  const emails = shares.map((s) => s.user?.email).filter(Boolean);
+
+  if (emails.length === 0) return "";
+
+  return emails.length === 1
+    ? t("editor.sharedWithOne", { email: emails[0] })
+    : t("editor.sharedWithMany", { emails: emails.join(", ") });
+});
 
 const editorToolbar = [
   ["left", "center", "right", "justify"],

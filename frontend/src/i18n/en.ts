@@ -82,6 +82,8 @@ export default {
     newNote: "New Note",
     title: "Title",
     add: "Add",
+    sharedWithOne: "You shared this note with {email}",
+    sharedWithMany: "You shared this note with {emails}"
   },
   noteList: {
     header: "My notes",

@@ -79,6 +79,8 @@ export default {
     newNote: "Not Ekle",
     title: "Başlık",
     add: "Ekle",
+    sharedWithOne: "Bu notu {email} ile paylaştın",
+    sharedWithMany: "Bu notu {emails} ile paylaştın"
   },
   noteList: {
     header: "Notlarım",

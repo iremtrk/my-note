@@ -126,7 +126,7 @@ const getColor = (id: string | number) => {
 
 .note-date {
   font-size: 11px;
-  color: #9ca3af;
+  color: grey;
 }
 
 .star-btn {
