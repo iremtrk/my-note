@@ -58,7 +58,7 @@
         <div v-else class="section-content notes-content">
           <div class="notes-scroll">
             <NoteCard
-              v-for="note in notesStore.filteredOwnedNotes"
+              v-for="note in notesStore.sortedOwnedNotes"
               :key="note.id"
               :note="note"
               @select="handleSelect"
@@ -108,7 +108,7 @@
         <div v-else class="section-content tasks-content">
           <HomeTaskList
             class="task-list-panel"
-            :tasks="tasksStore.filteredTasks"
+            :tasks="tasksStore.sortedTasks"
             :selected-task-id="tasksStore.selectedTask?.id ?? null"
             :has-fetched="tasksStore.hasFetched"
             @select-task="handleSelectTask"

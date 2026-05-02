@@ -179,6 +179,10 @@ export const useNotesStore = defineStore("notes", () => {
     });
   });
 
+  const sortedOwnedNotes = computed(() =>
+    sortedNotes.value.filter((note) => note.isOwner),
+  );
+
   const filteredOwnedNotes = computed(() =>
     filteredNotes.value.filter((note) => note.isOwner),
   );
@@ -193,6 +197,7 @@ export const useNotesStore = defineStore("notes", () => {
     searchQuery,
     sortOrder,
     filteredNotes,
+    sortedOwnedNotes,
     filteredOwnedNotes,
     filteredSharedNotes,
     hasFetched,
