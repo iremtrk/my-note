@@ -81,8 +81,9 @@ import { useI18n } from "vue-i18n";
 import TaskEditor from "@/components/tasks/TaskEditor.vue";
 import { useTaskEditorStore } from "@/stores/task-editor";
 import { useTasksStore } from "@/stores/tasks";
-
 import type { NotePdf } from "@/types/notes";
+import { useNoteActions } from "@/composables/useNoteActions";
+import { useTaskActions } from "@/composables/useTaskActions";
 
 const $q = useQuasar();
 const { t, locale } = useI18n();
@@ -103,56 +104,9 @@ const noteEditor = useNoteEditorStore();
 const notesStore = useNotesStore();
 const authStore = useAuthStore();
 const taskEditor = useTaskEditorStore();
-const tasksStore = useTasksStore();
 
-const handleSave = async (payload: {
-  title: string;
-  content: string;
-  pdfs?: NotePdf[];
-}) => {
-  if (noteEditor.editingNoteId === null) {
-    const userId = authStore.user?.id;
-    if (!userId) return;
-
-    await notesStore.addNote({
-      title: payload.title,
-      content: payload.content,
-      pdfs: payload.pdfs ?? [],
-      userId,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      starred: false,
-    });
-  } else {
-    await notesStore.updateNote(noteEditor.editingNoteId, {
-      title: payload.title,
-      content: payload.content,
-      pdfs: payload.pdfs ?? [],
-    });
-  }
-
-  noteEditor.closeModal();
-};
-
-const handleAddTask = async (payload: {
-  title: string;
-  content: string;
-  dueDate: string | null;
-  priority: "low" | "medium" | "high";
-}) => {
-  const userId = authStore.user?.id;
-  if (!userId) return;
-
-  await tasksStore.addTask({
-    ...payload,
-    userId,
-    createdAt: new Date().toISOString(),
-    starred: false,
-    completed: false,
-  });
-
-  taskEditor.closeAddModal();
-};
+const { handleSave } = useNoteActions();
+const { handleAddTask } = useTaskActions();
 </script>
 
 <style scoped>

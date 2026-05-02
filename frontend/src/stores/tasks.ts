@@ -37,7 +37,7 @@ export const useTasksStore = defineStore("tasks", () => {
     selectedTask.value = task;
   };
 
-  const addTask = async (payload: Omit<Task, "id">) => {
+  const addTask = async (payload: Pick<Task, "title" | "content" | "priority" | "dueDate" | "starred" | "completed">) => {
     await loading.wrap("tasks:add", async () => {
       const response = await api.post(API_URL, payload);
       tasks.value.push(response.data);

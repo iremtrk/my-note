@@ -116,7 +116,11 @@ router.post("/", async (req: AuthRequest, res: Response) => {
       },
     });
 
-    res.status(201).json(note);
+    res.status(201).json({
+      ...note,
+      isOwner: true,
+      permission: "owner"
+    });
   } catch (error) {
     res.status(500).json({
       message: "Note could not be created.",

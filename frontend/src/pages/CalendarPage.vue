@@ -153,13 +153,11 @@ const handleSubmit = async () => {
 
   if (editingEventId.value === null) {
     await eventsStore.addEvent({
-      userId: authStore.user.id,
       title: form.value.title.trim(),
       description: form.value.description.trim(),
       date: form.value.date,
       time: form.value.time || undefined,
       type: form.value.type,
-      createdAt: new Date().toISOString(),
       notified: false,
     });
   } else {

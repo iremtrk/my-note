@@ -40,16 +40,6 @@
     </div>
   </div>
 
-  <TaskEditor
-    v-model="taskEditor.showAddModal"
-    variant="modal"
-    :initial-title="taskEditor.title"
-    :initial-content="taskEditor.content"
-    :initial-due-date="taskEditor.dueDate"
-    :initial-priority="taskEditor.priority"
-    @save="handleAddTask"
-    @cancel="taskEditor.closeAddModal()"
-  />
 </template>
 
 <script setup lang="ts">

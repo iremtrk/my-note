@@ -27,14 +27,13 @@ export function useNoteActions() {
         title: payload.title,
         content: payload.content,
         pdfs: payload.pdfs ?? [],
-        userId,
-        shares:[],
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
         starred: false,
       });
 
-      noteEditor.closeSideEditor();
+      noteEditor.closeModal();
+      if (notesStore.selectedNote) {
+        noteEditor.openEditNoteSide(notesStore.selectedNote);
+      }
       return;
     }
 

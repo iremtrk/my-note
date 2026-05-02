@@ -43,23 +43,17 @@ export const useNotesStore = defineStore("notes", () => {
     selectedNote.value = note;
   };
 
-  const addNote = async (payload: Omit<Note, "id">) => {
+  const addNote = async (payload: Pick<Note, "title" | "content" | "starred" | "pdfs">) => {
     await loading.wrap("notes:add", async () => {
       const response = await api.post(API_URL, {
         title: payload.title,
         content: payload.content,
-        userId: Number(payload.userId),
         starred: payload.starred ?? false,
         pdfs: payload.pdfs ?? [],
       });
 
-      const newNote = {
-        ...response.data,
-        isOwner: true,
-      };
-
-      notes.value.push(newNote);
-      selectedNote.value = newNote;
+      notes.value.push(response.data);
+      selectedNote.value = response.data;
     });
   };
 
@@ -72,10 +66,7 @@ export const useNotesStore = defineStore("notes", () => {
 
     const response = await api.patch(`${API_URL}/${id}`, {
       ...payload,
-      userId: currentNote.userId,
-      createdAt: currentNote.createdAt,
       starred: currentNote.starred,
-      updatedAt: new Date().toISOString(),
     });
 
     const index = notes.value.findIndex((note) => note.id === id);

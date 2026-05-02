@@ -48,7 +48,7 @@ export const useEventsStore = defineStore("events", () => {
     selectedRanges.value = ranges;
   };
 
-  const addEvent = async (payload: Omit<CalendarEvent, "id">) => {
+  const addEvent = async (payload: Pick<CalendarEvent, "title" | "description" | "date" | "time" | "type" | "notified">) => {
     await loading.wrap("events:add", async () => {
       const response = await api.post(API_URL, payload);
       events.value.push(response.data);

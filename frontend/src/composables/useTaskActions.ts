@@ -20,18 +20,16 @@ export function useTaskActions() {
     dueDate: string | null
     priority: Task['priority']
   }) => {
-    const userId = authStore.user?.id
-    if (!userId) return
-
     await tasksStore.addTask({
       ...payload,
-      userId,
-      createdAt: new Date().toISOString(),
       starred: false,
       completed: false,
     })
 
     taskEditor.closeAddModal()
+    if (tasksStore.selectedTask) {
+      taskEditor.openSideEditor(tasksStore.selectedTask)
+    }
   }
 
   const handleUpdateTask = async (payload: {
@@ -63,7 +61,7 @@ export function useTaskActions() {
     onMounted(async () => {
       taskEditor.closeAll()
       if (authStore.user?.id) {
-        await tasksStore.fetchTasks(authStore.user.id)
+        await tasksStore.fetchTasks()
       }
     })
 
