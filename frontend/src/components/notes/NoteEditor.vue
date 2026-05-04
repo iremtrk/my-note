@@ -140,6 +140,7 @@
     v-model="showPinModal"
     :mode="pinModalMode"
     :noteId="props.noteId ?? null"
+    @success="handlePinSuccess"
   />
 
   <ConfirmDelete
@@ -240,6 +241,12 @@ const pinModalMode = ref<"lock" | "remove-lock" | "verify">("lock");
 const openPinModal = (mode: "lock" | "remove-lock" | "verify") => {
   pinModalMode.value = mode;
   showPinModal.value = true;
+};
+
+const handlePinSuccess = () => {
+  if (pinModalMode.value === "lock") {
+    handleCancel();
+  }
 };
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
