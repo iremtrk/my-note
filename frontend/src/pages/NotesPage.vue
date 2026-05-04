@@ -68,7 +68,7 @@ setupLifecycle();
 
 <style scoped>
 .notes-page {
-  height: calc(100vh - 60px);
+  height: calc(100vh - 82px);
 }
 
 .detail-card {

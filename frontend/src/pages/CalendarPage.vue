@@ -1,5 +1,5 @@
 <template>
-  <q-page class="calendar-page q-pa-md">
+  <div class="calendar-page q-pa-md">
     <div class="row q-col-gutter-lg" style="min-height: calc(100vh - 90px)">
       <div class="col-12 col-md-5 col-lg-4">
         <CalendarPickerPanel
@@ -41,7 +41,7 @@
       @update:form="form = $event"
       @submit="handleSubmit"
     />
-  </q-page>
+  </div>
 </template>
 
 <script setup lang="ts">

@@ -65,7 +65,7 @@ setupLifecycle();
 
 <style scoped>
 .tasks-page {
-  height: calc(100vh - 60px);
+  height: calc(100vh - 82px);
 }
 .detail-card {
   display: flex;

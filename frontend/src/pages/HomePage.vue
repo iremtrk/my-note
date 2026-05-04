@@ -4,39 +4,6 @@
       <section class="section-card notes-section">
         <div class="section-header row items-center justify-between">
           <div class="text-h6">{{ t("sidebar.notes") }}</div>
-
-
-          <!--şimdilik kaldırıcam component yapim bunu 3 sayfada kullanıyorum-->
-          <!-- <q-btn icon="sort" flat round dense color="grey-7">
-            <q-menu anchor="bottom right" self="top right">
-              <q-list style="min-width: 200px">
-                <q-item-label header class="text-caption text-grey-6">
-                  {{ t("home.sort") }}
-                </q-item-label>
-
-                <q-item
-                  v-for="opt in sortOptions"
-                  :key="opt.value"
-                  clickable
-                  v-close-popup
-                  :active="notesStore.sortOrder === opt.value"
-                  active-class="text-primary"
-                  @click="notesStore.sortOrder = opt.value"
-                >
-                  <q-item-section avatar>
-                    <q-icon :name="opt.icon" size="18px" />
-                  </q-item-section>
-                  <q-item-section>{{ opt.label }}</q-item-section>
-                  <q-item-section
-                    side
-                    v-if="notesStore.sortOrder === opt.value"
-                  >
-                    <q-icon name="check" size="16px" color="primary" />
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </q-menu>
-          </q-btn> -->
         </div>
 
         <div v-if="!notesStore.hasFetched" class="panel-loading">
@@ -210,11 +177,11 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
 }
 
 .notes-section {
-  min-height: 420px;
+  min-height: 400px;
 }
 
 .tasks-section {
-  min-height: 420px;
+  min-height: 400px;
 }
 
 .section-header {

@@ -283,7 +283,6 @@ router.delete("/:id", async (req: AuthRequest, res: Response) => {
   }
 });
 
-// SHARE ENDPOINTS
 
 router.post("/:id/share", async (req: AuthRequest, res: Response) => {
   try {
@@ -444,8 +443,6 @@ router.delete("/:id/share/:userId", async (req: AuthRequest, res: Response) => {
     });
   }
 });
-
-// LOCK ENDPOINTS
 
 router.post("/:id/lock", async (req: AuthRequest, res: Response) => {
   try {
