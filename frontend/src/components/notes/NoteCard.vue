@@ -44,7 +44,7 @@
     </q-card-section>
 
     <q-card-section class="card-footer">
-      <span class="note-date" style="font-size: 11px;">{{ formattedDate }}</span>
+      <span class="note-date" style="font-size: 11px">{{ formattedDate }}</span>
     </q-card-section>
   </q-card>
 
@@ -57,8 +57,8 @@
 
   <PinModal
     v-model="showPinModal"
-    mode="verify"
-    :noteId="verifyingNoteId"
+    v-model:mode="pinMode"
+    :note-id="verifyingNoteId"
     @success="onPinSuccess"
   />
 </template>
@@ -90,9 +90,12 @@ const notesStore = useNotesStore();
 const showPinModal = ref(false);
 const verifyingNoteId = ref<number | null>(null);
 
+const pinMode = ref<"lock" | "remove-lock" | "verify" | "reset">("verify");
+
 const handleNoteClick = (note: Note) => {
   if (note.isLocked) {
     verifyingNoteId.value = note.id;
+    pinMode.value = "verify";
     showPinModal.value = true;
   } else {
     emit("select", note);
@@ -101,11 +104,17 @@ const handleNoteClick = (note: Note) => {
 
 const onPinSuccess = () => {
   if (verifyingNoteId.value) {
-    const verifiedNote = notesStore.notes.find((n) => n.id === verifyingNoteId.value);
+    const verifiedNote = notesStore.notes.find(
+      (n) => n.id === verifyingNoteId.value,
+    );
+
     if (verifiedNote) {
       emit("select", verifiedNote);
     }
   }
+
+  verifyingNoteId.value = null;
+  pinMode.value = "verify";
 };
 
 const props = defineProps<{ note: Note }>();

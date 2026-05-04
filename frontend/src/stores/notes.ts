@@ -180,6 +180,19 @@ export const useNotesStore = defineStore("notes", () => {
     }
   };
 
+  const resetPin = async (
+  noteId: number,
+  password: string,
+  newPin: string,
+) => {
+  const response = await api.post(`${API_URL}/${noteId}/reset-pin`, {
+    password,
+    newPin,
+  });
+
+  return response.data;
+};
+
   const clearNotes = () => {
     notes.value = [];
     selectedNote.value = null;
@@ -258,6 +271,7 @@ export const useNotesStore = defineStore("notes", () => {
     lockNote,
     removeLock,
     verifyPin,
+    resetPin,
     clearNotes,
     clearSelectedNote,
   };

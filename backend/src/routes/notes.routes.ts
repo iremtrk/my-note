@@ -636,4 +636,87 @@ router.post("/:id/verify-pin", async (req: AuthRequest, res: Response) => {
   }
 });
 
+router.post("/:id/reset-pin", async (req: AuthRequest, res: Response) => {
+  try {
+    const noteId = Number(req.params.id);
+    const userId = req.user!.userId;
+    const { password, newPin } = req.body;
+
+    if (!password) {
+      return res.status(400).json({ message: "Password is required." });
+    }
+
+    if (!newPin || newPin.length < 4) {
+      return res.status(400).json({
+        message: "New PIN must be at least 4 characters long.",
+      });
+    }
+
+    const noteAccess = await canViewNote(noteId, userId);
+
+    if (!noteAccess) {
+      return res.status(403).json({
+        message: "You do not have access to this note.",
+      });
+    }
+
+    const lock = await prisma.noteLock.findUnique({
+      where: {
+        noteId_userId: {
+          noteId,
+          userId,
+        },
+      },
+    });
+
+    if (!lock) {
+      return res.status(400).json({
+        message: "This note is not locked for you.",
+      });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found.",
+      });
+    }
+
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordCorrect) {
+      return res.status(401).json({
+        message: "Incorrect password.",
+      });
+    }
+
+    const newPinHash = await bcrypt.hash(newPin, 10);
+
+    await prisma.noteLock.update({
+      where: {
+        noteId_userId: {
+          noteId,
+          userId,
+        },
+      },
+      data: {
+        pinHash: newPinHash,
+      },
+    });
+
+    res.json({
+      message: "PIN reset successfully.",
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not reset PIN.",
+    });
+  }
+});
+
 export default router;

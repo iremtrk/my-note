@@ -163,4 +163,28 @@ export default {
     info: "Sizinle paylaşılan notlar burada gözükecek",
     sharedWithyou: "seninle paylaştı",
   },
+  pin: {
+  lockTit: "Notu Kilitle",
+  removeTit: "Kilidi Kaldır",
+  unlockTit: "Notu Aç",
+  resetTit:"PIN'i Sıfırla",
+  lockDesc: "Bu notu kilitlemek için en az 4 karakterli bir PIN belirleyin.",
+  removeDesc: "Kilidi kalıcı olarak kaldırmak için PIN'inizi girin.",
+  unlockDesc: "Bu kilitli notu görüntülemek için PIN'inizi girin.",
+  resetDesc:"Pin kodunu sıfırlamak için hesap şifrenizi giriniz",
+  lockAct: "Kilitle",
+  removeAct: "Kilidi Kaldır",
+  unlockAct: "Aç",
+  cancel:"İptal",
+    resetAct: "PIN’i Sıfırla",
+
+  password: "Hesap Şifresi",
+  newPin: "Yeni PIN",
+  forgotPin: "PIN’i mi unuttunuz?",
+
+  lockSuccess: "Not başarıyla kilitlendi.",
+  removeSuccess: "Kilit başarıyla kaldırıldı.",
+  unlockSuccess: "Not açıldı.",
+  resetSuccess: "PIN başarıyla sıfırlandı.",
+}
 };

@@ -106,7 +106,12 @@
 
             <q-item-label caption class="note-preview q-mt-xs">
               <template v-if="note.isLocked">
-                <q-icon name="lock" size="14px" class="q-mr-xs" color="primary" />
+                <q-icon
+                  name="lock"
+                  size="14px"
+                  class="q-mr-xs"
+                  color="primary"
+                />
                 <span class="text-italic text-grey-6">Locked Note</span>
               </template>
               <template v-else>
@@ -130,8 +135,8 @@
 
       <PinModal
         v-model="showPinModal"
-        mode="verify"
-        :noteId="verifyingNoteId"
+        v-model:mode="pinMode"
+        :note-id="verifyingNoteId"
         @success="onPinSuccess"
       />
     </q-card-section>
@@ -173,9 +178,12 @@ const deletingNoteId = ref<number | null>(null);
 const showPinModal = ref(false);
 const verifyingNoteId = ref<number | null>(null);
 
+const pinMode = ref<"lock" | "remove-lock" | "verify" | "reset">("verify");
+
 const handleNoteClick = (note: Note) => {
   if (note.isLocked) {
     verifyingNoteId.value = note.id;
+    pinMode.value = "verify";
     showPinModal.value = true;
   } else {
     emit("select-note", note);
@@ -184,11 +192,17 @@ const handleNoteClick = (note: Note) => {
 
 const onPinSuccess = () => {
   if (verifyingNoteId.value) {
-    const verifiedNote = notesStore.notes.find((n) => n.id === verifyingNoteId.value);
+    const verifiedNote = notesStore.notes.find(
+      (n) => n.id === verifyingNoteId.value,
+    );
+
     if (verifiedNote) {
       emit("select-note", verifiedNote);
     }
   }
+
+  verifyingNoteId.value = null;
+  pinMode.value = "verify";
 };
 
 const openDeleteConfirm = (id: number) => {

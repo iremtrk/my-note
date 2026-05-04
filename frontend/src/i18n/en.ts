@@ -54,7 +54,7 @@ export default {
     notes: "Notes",
     tasks: "Tasks",
     calendar: "Calendar",
-    shared:"Shared With Me",
+    shared: "Shared With Me",
     welcome: "Welcome",
   },
   home: {
@@ -83,7 +83,7 @@ export default {
     title: "Title",
     add: "Add",
     sharedWithOne: "You shared this note with {email}",
-    sharedWithMany: "You shared this note with {emails}"
+    sharedWithMany: "You shared this note with {emails}",
   },
   noteList: {
     header: "My notes",
@@ -126,41 +126,64 @@ export default {
   pdf: {
     deleteTitle: "Delete PDF",
     deleteMessage: "Are you sure you want to delete this PDF?",
+  },
+  calendarPicker: {
+    title: "Calendar",
+    badgeDay: "Click for day selection",
+    badgeRange: "Click for range selection",
+  },
+  eventFormDialog: {
+    add: "Add Event",
+    edit: "Edit Event",
+    title: "Title",
+    description: "Description",
+    date: "Date",
+    time: "Time",
+    type: "Type",
+    save: "Save",
+    update: "Update",
+    event: "Event",
+    birthday: "Birthday",
+  },
+  eventConfirm: {
+    title: "Delete Event",
+    message: "Are you sure you want to delete this event?",
+  },
+  eventList: {
+    title: "Events",
+    dayEmpty: "There is no event for this date",
+    rangeEmpty: "There are no events between the selected dates",
+    allEvents: "All Events",
+    allEmpty: "There are no events in your calendar",
+  },
+  shared: {
+    title: "Shared Notes",
+    noNotes: "No shared notes yet",
+    noNotesinfo: "Notes shared with you will appear here.",
+    sharedWithyou: "shared with you",
+  },
+  pin: {
+    lockTit: "Lock Note",
+    removeTit: "Remove Lock",
+    unlockTit: "Unlock Note",
+    resetTit:"Reset PIN",
+    lockDesc: "Set a PIN (min 4 chars) to lock this note.",
+    removeDesc: "Enter your PIN to remove the lock permanently.",
+    unlockDesc: "Enter your PIN to view this locked note.",
+    resetDesc:"Enter your account password to reset PIN",
+    lockAct: "Lock",
+    removeAct: "Remove Lock",
+    unlockAct: "Unlock",
+    cancel: "Cancel",
+    resetAct: "Reset PIN",
 
+    password: "Account Password",
+    newPin: "New PIN",
+    forgotPin: "Forgot PIN?",
+
+    lockSuccess: "Note locked successfully.",
+    removeSuccess: "Lock removed successfully.",
+    unlockSuccess: "Note unlocked.",
+    resetSuccess: "PIN reset successfully.",
   },
-  calendarPicker:{
-    title:"Calendar",
-    badgeDay:"Click for day selection",
-    badgeRange:"Click for range selection"
-  },
-  eventFormDialog:{
-    add:"Add Event",
-    edit:"Edit Event",
-    title:"Title",
-    description:"Description",
-    date:"Date",
-    time:"Time",
-    type:"Type",
-    save:"Save",
-    update:"Update",
-    event:"Event",
-    birthday:"Birthday"
-  },
-  eventConfirm:{
-    title:"Delete Event",
-    message:"Are you sure you want to delete this event?"
-  },
-  eventList:{
-    title:"Events",
-    dayEmpty:"There is no event for this date",
-    rangeEmpty:"There are no events between the selected dates",
-    allEvents:"All Events",
-    allEmpty:"There are no events in your calendar" 
-  },
-  shared:{
-    title:"Shared Notes",
-    noNotes:"No shared notes yet",
-    noNotesinfo:"Notes shared with you will appear here.",
-    sharedWithyou:"shared with you",
-  }
 };
