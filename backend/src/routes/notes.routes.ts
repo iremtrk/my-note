@@ -80,12 +80,15 @@ router.get("/", async (req: AuthRequest, res: Response) => {
     });
 
     const formattedNotes = notes.map((note) => {
+      const isOwner = note.userId === userId;
       const shareInfo = note.shares.find((share) => share.userId === userId);
+      const filteredShares = isOwner ? note.shares : (shareInfo ? [shareInfo] : []);
 
       return {
         ...note,
-        isOwner: note.userId === userId,
-        permission: note.userId === userId ? "owner" : shareInfo?.permission,
+        shares: filteredShares,
+        isOwner,
+        permission: isOwner ? "owner" : shareInfo?.permission,
       };
     });
 
@@ -186,10 +189,15 @@ router.patch("/:id", async (req: AuthRequest, res: Response) => {
       },
     });
 
+    const isOwner = updatedNote.userId === userId;
+    const shareInfo = updatedNote.shares.find((share) => share.userId === userId);
+    const filteredShares = isOwner ? updatedNote.shares : (shareInfo ? [shareInfo] : []);
+
     res.json({
       ...updatedNote,
-      isOwner: updatedNote.userId === userId,
-      permission: updatedNote.userId === userId ? "owner" : "edit",
+      shares: filteredShares,
+      isOwner,
+      permission: isOwner ? "owner" : "edit",
     });
   } catch {
     res.status(500).json({
