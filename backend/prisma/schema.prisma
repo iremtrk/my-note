@@ -23,8 +23,9 @@ model User {
 
   sharedNotes NoteShare[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  notenoteLocks NoteLock[]
 }
 
 model Note {
@@ -42,6 +43,8 @@ model Note {
   shares NoteShare[]
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  notenoteLocks NoteLock[]
 }
 
 model NoteShare {
@@ -68,6 +71,23 @@ model NotePdf {
 
   noteId Int
   note   Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+}
+
+model NoteLock {
+  id Int @id @default(autoincrement())
+
+  noteId Int
+  note   Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  pinHash String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([noteId, userId])
 }
 
 enum PriorityType {

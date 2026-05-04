@@ -303,6 +303,7 @@ onBeforeUnmount(() => {
   width: 92vw;
   height: 85vh;
   max-height: 85vh;
+  border-radius: 18px;
 }
 
 .side-editor-card {
@@ -325,6 +326,8 @@ onBeforeUnmount(() => {
 
 .editor-actions {
   flex-shrink: 0;
+  padding: 0 20px 20px;
+  gap: 8px;
 }
 
 .top-fields {

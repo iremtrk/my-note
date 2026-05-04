@@ -32,4 +32,5 @@ export interface Note {
   permission?: "owner" | "read" | "edit";
   shares?: NoteShare[];
   user?: NoteShareUser;
+  isLocked: boolean
 }

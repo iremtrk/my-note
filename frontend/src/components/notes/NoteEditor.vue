@@ -60,6 +60,15 @@
       <div class="row items-center q-gutter-xs">
         <q-btn
           v-if="isEditing && props.isOwner"
+          :icon="currentNote?.isLocked ? 'lock' : 'lock_open'"
+          flat
+          round
+          
+          @click="openPinModal(currentNote?.isLocked ? 'remove-lock' : 'lock')"
+        >
+        </q-btn>
+        <q-btn
+          v-if="isEditing && props.isOwner"
           icon="share"
           flat
           round
@@ -127,6 +136,11 @@
   </q-card>
 
   <ShareModal v-model="showShareModal" @share="handleShareNote" />
+  <PinModal
+    v-model="showPinModal"
+    :mode="pinModalMode"
+    :noteId="props.noteId ?? null"
+  />
 
   <ConfirmDelete
     v-model="showDeleteConfirm"
@@ -166,6 +180,7 @@ import PdfViewer from "@/components/pdf/PdfViewer.vue";
 import { useI18n } from "vue-i18n";
 import type { NotePdf } from "@/types/notes";
 import ShareModal from "@/components/notes/ShareModal.vue";
+import PinModal from "@/components/notes/PinModal.vue";
 import { useNotesStore } from "@/stores/notes";
 import { useQuasar } from "quasar";
 
@@ -219,6 +234,13 @@ const showDeleteConfirm = ref(false);
 
 const notesStore = useNotesStore();
 const showShareModal = ref(false);
+const showPinModal = ref(false);
+const pinModalMode = ref<"lock" | "remove-lock" | "verify">("lock");
+
+const openPinModal = (mode: "lock" | "remove-lock" | "verify") => {
+  pinModalMode.value = mode;
+  showPinModal.value = true;
+};
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
@@ -396,6 +418,7 @@ onBeforeUnmount(() => {
   width: 92vw;
   height: 85vh;
   max-height: 85vh;
+  border-radius: 18px;
 }
 
 .side-editor-card {
@@ -418,6 +441,8 @@ onBeforeUnmount(() => {
 
 .editor-actions {
   flex-shrink: 0;
+  padding: 0 20px 20px;
+  gap: 8px;
 }
 
 .editor-wrapper {

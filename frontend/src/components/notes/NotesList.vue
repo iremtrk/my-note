@@ -74,7 +74,7 @@
           :active="selectedNoteId === note.id"
           active-class="bg-grey-4"
           class="note-item"
-          @click="$emit('select-note', note)"
+          @click="handleNoteClick(note)"
         >
           <q-item-section>
             <div class="note-title-row row items-start no-wrap">
@@ -105,7 +105,13 @@
             </div>
 
             <q-item-label caption class="note-preview q-mt-xs">
-              {{ stripHtml(note.content) }}
+              <template v-if="note.isLocked">
+                <q-icon name="lock" size="14px" class="q-mr-xs" color="primary" />
+                <span class="text-italic text-grey-6">Locked Note</span>
+              </template>
+              <template v-else>
+                {{ stripHtml(note.content) }}
+              </template>
             </q-item-label>
 
             <q-item-label caption class="note-date q-mt-xs">
@@ -121,6 +127,13 @@
         :message="t('noteList.deleteMessage')"
         @confirm="confirmDelete"
       />
+
+      <PinModal
+        v-model="showPinModal"
+        mode="verify"
+        :noteId="verifyingNoteId"
+        @success="onPinSuccess"
+      />
     </q-card-section>
   </q-card>
 </template>
@@ -128,6 +141,7 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import ConfirmDelete from "@/common/ConfirmDelete.vue";
+import PinModal from "@/components/notes/PinModal.vue";
 import type { Note } from "@/types/notes";
 import { stripHtml } from "@/utils/html";
 import { formatNoteDate } from "@/utils/date";
@@ -155,6 +169,27 @@ const notesStore = useNotesStore();
 
 const showDeleteConfirm = ref(false);
 const deletingNoteId = ref<number | null>(null);
+
+const showPinModal = ref(false);
+const verifyingNoteId = ref<number | null>(null);
+
+const handleNoteClick = (note: Note) => {
+  if (note.isLocked) {
+    verifyingNoteId.value = note.id;
+    showPinModal.value = true;
+  } else {
+    emit("select-note", note);
+  }
+};
+
+const onPinSuccess = () => {
+  if (verifyingNoteId.value) {
+    const verifiedNote = notesStore.notes.find((n) => n.id === verifyingNoteId.value);
+    if (verifiedNote) {
+      emit("select-note", verifiedNote);
+    }
+  }
+};
 
 const openDeleteConfirm = (id: number) => {
   deletingNoteId.value = id;

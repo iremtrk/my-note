@@ -1,10 +1,10 @@
-import { Router, type Request, type Response } from "express";
+import { Router, type Response } from "express";
 import { prisma } from "../prisma.js";
 import { authMiddleware, type AuthRequest } from "../middleware/auth.js";
+import bcrypt from "bcryptjs";
 
 const router = Router();
 router.use(authMiddleware);
-
 
 const canEditNote = async (noteId: number, userId: number) => {
   return prisma.note.findFirst({
@@ -17,6 +17,24 @@ const canEditNote = async (noteId: number, userId: number) => {
             some: {
               userId,
               permission: "edit",
+            },
+          },
+        },
+      ],
+    },
+  });
+};
+
+const canViewNote = async (noteId: number, userId: number) => {
+  return prisma.note.findFirst({
+    where: {
+      id: noteId,
+      OR: [
+        { userId },
+        {
+          shares: {
+            some: {
+              userId,
             },
           },
         },
@@ -41,9 +59,7 @@ router.get("/", async (req: AuthRequest, res: Response) => {
     const notes = await prisma.note.findMany({
       where: {
         OR: [
-          {
-            userId,
-          },
+          { userId },
           {
             shares: {
               some: {
@@ -55,6 +71,11 @@ router.get("/", async (req: AuthRequest, res: Response) => {
       },
       include: {
         pdfs: true,
+        noteLocks: {
+          where: {
+            userId,
+          },
+        },
         shares: {
           include: {
             user: {
@@ -82,11 +103,18 @@ router.get("/", async (req: AuthRequest, res: Response) => {
     const formattedNotes = notes.map((note) => {
       const isOwner = note.userId === userId;
       const shareInfo = note.shares.find((share) => share.userId === userId);
-      const filteredShares = isOwner ? note.shares : (shareInfo ? [shareInfo] : []);
+      const filteredShares = isOwner ? note.shares : shareInfo ? [shareInfo] : [];
+
+      const isLockedForMe = note.noteLocks.length > 0;
+
+      const { noteLocks, ...safeNote } = note;
 
       return {
-        ...note,
+        ...safeNote,
+        content: isLockedForMe ? "" : note.content,
+        pdfs: isLockedForMe ? [] : note.pdfs,
         shares: filteredShares,
+        isLocked: isLockedForMe,
         isOwner,
         permission: isOwner ? "owner" : shareInfo?.permission,
       };
@@ -117,12 +145,24 @@ router.post("/", async (req: AuthRequest, res: Response) => {
           })),
         },
       },
+      include: {
+        pdfs: true,
+        shares: true,
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
     });
 
     res.status(201).json({
       ...note,
+      isLocked: false,
       isOwner: true,
-      permission: "owner"
+      permission: "owner",
     });
   } catch (error) {
     res.status(500).json({
@@ -168,6 +208,11 @@ router.patch("/:id", async (req: AuthRequest, res: Response) => {
       data: updateData,
       include: {
         pdfs: true,
+        noteLocks: {
+          where: {
+            userId,
+          },
+        },
         shares: {
           include: {
             user: {
@@ -191,11 +236,18 @@ router.patch("/:id", async (req: AuthRequest, res: Response) => {
 
     const isOwner = updatedNote.userId === userId;
     const shareInfo = updatedNote.shares.find((share) => share.userId === userId);
-    const filteredShares = isOwner ? updatedNote.shares : (shareInfo ? [shareInfo] : []);
+    const filteredShares = isOwner ? updatedNote.shares : shareInfo ? [shareInfo] : [];
+
+    const isLockedForMe = updatedNote.noteLocks.length > 0;
+
+    const { noteLocks, ...safeNote } = updatedNote;
 
     res.json({
-      ...updatedNote,
+      ...safeNote,
+      content: isLockedForMe ? "" : updatedNote.content,
+      pdfs: isLockedForMe ? [] : updatedNote.pdfs,
       shares: filteredShares,
+      isLocked: isLockedForMe,
       isOwner,
       permission: isOwner ? "owner" : "edit",
     });
@@ -231,7 +283,7 @@ router.delete("/:id", async (req: AuthRequest, res: Response) => {
   }
 });
 
-//share kısmının post patch ve delete kısmı
+// SHARE ENDPOINTS
 
 router.post("/:id/share", async (req: AuthRequest, res: Response) => {
   try {
@@ -244,9 +296,9 @@ router.post("/:id/share", async (req: AuthRequest, res: Response) => {
     }
 
     if (!["read", "edit"].includes(permission)) {
-      return res
-        .status(400)
-        .json({ message: "Permission must be read or edit." });
+      return res.status(400).json({
+        message: "Permission must be read or edit.",
+      });
     }
 
     const note = await isNoteOwner(noteId, ownerId);
@@ -320,7 +372,9 @@ router.patch("/:id/share/:userId", async (req: AuthRequest, res: Response) => {
     const { permission } = req.body;
 
     if (!["read", "edit"].includes(permission)) {
-      return res.status(400).json({ message: "Permission must be read or edit." });
+      return res.status(400).json({
+        message: "Permission must be read or edit.",
+      });
     }
 
     const note = await isNoteOwner(noteId, ownerId);
@@ -354,7 +408,9 @@ router.patch("/:id/share/:userId", async (req: AuthRequest, res: Response) => {
 
     res.json(updatedShare);
   } catch {
-    res.status(500).json({ message: "Sharing permission could not be updated." });
+    res.status(500).json({
+      message: "Sharing permission could not be updated.",
+    });
   }
 });
 
@@ -383,7 +439,201 @@ router.delete("/:id/share/:userId", async (req: AuthRequest, res: Response) => {
 
     res.json({ message: "Sharing removed successfully." });
   } catch {
-    res.status(500).json({ message: "Sharing could not be removed." });
+    res.status(500).json({
+      message: "Sharing could not be removed.",
+    });
   }
 });
+
+// LOCK ENDPOINTS
+
+router.post("/:id/lock", async (req: AuthRequest, res: Response) => {
+  try {
+    const noteId = Number(req.params.id);
+    const userId = req.user!.userId;
+    const { pin } = req.body;
+
+    if (!pin || pin.length < 4) {
+      return res.status(400).json({
+        message: "PIN must be at least 4 characters long.",
+      });
+    }
+
+    const noteAccess = await canViewNote(noteId, userId);
+
+    if (!noteAccess) {
+      return res.status(403).json({
+        message: "You do not have access to this note.",
+      });
+    }
+
+    const pinHash = await bcrypt.hash(pin, 10);
+
+    await prisma.noteLock.upsert({
+      where: {
+        noteId_userId: {
+          noteId,
+          userId,
+        },
+      },
+      update: {
+        pinHash,
+      },
+      create: {
+        noteId,
+        userId,
+        pinHash,
+      },
+    });
+
+    res.json({
+      message: "Note locked successfully.",
+      isLocked: true,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not lock the note.",
+    });
+  }
+});
+
+router.post("/:id/remove-lock", async (req: AuthRequest, res: Response) => {
+  try {
+    const noteId = Number(req.params.id);
+    const userId = req.user!.userId;
+    const { pin } = req.body;
+
+    const lock = await prisma.noteLock.findUnique({
+      where: {
+        noteId_userId: {
+          noteId,
+          userId,
+        },
+      },
+    });
+
+    if (!lock) {
+      return res.status(400).json({
+        message: "This note is not locked for you.",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(pin, lock.pinHash);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Incorrect PIN.",
+      });
+    }
+
+    await prisma.noteLock.delete({
+      where: {
+        noteId_userId: {
+          noteId,
+          userId,
+        },
+      },
+    });
+
+    res.json({
+      message: "Lock removed successfully.",
+      isLocked: false,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not remove lock.",
+    });
+  }
+});
+
+router.post("/:id/verify-pin", async (req: AuthRequest, res: Response) => {
+  try {
+    const noteId = Number(req.params.id);
+    const userId = req.user!.userId;
+    const { pin } = req.body;
+
+    const note = await prisma.note.findFirst({
+      where: {
+        id: noteId,
+        OR: [
+          { userId },
+          {
+            shares: {
+              some: {
+                userId,
+              },
+            },
+          },
+        ],
+      },
+      include: {
+        pdfs: true,
+        noteLocks: {
+          where: {
+            userId,
+          },
+        },
+        shares: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                name: true,
+                email: true,
+              },
+            },
+          },
+        },
+        user: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
+
+    if (!note) {
+      return res.status(403).json({
+        message: "You do not have access to this note.",
+      });
+    }
+
+    const lock = note.noteLocks[0];
+
+    if (!lock) {
+      return res.status(400).json({
+        message: "This note is not locked for you.",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(pin, lock.pinHash);
+
+    if (!isMatch) {
+      return res.status(401).json({
+        message: "Incorrect PIN.",
+      });
+    }
+
+    const isOwner = note.userId === userId;
+    const shareInfo = note.shares.find((share) => share.userId === userId);
+    const filteredShares = isOwner ? note.shares : shareInfo ? [shareInfo] : [];
+
+    const { noteLocks, ...safeNote } = note;
+
+    res.json({
+      ...safeNote,
+      shares: filteredShares,
+      isLocked: false,
+      isOwner,
+      permission: isOwner ? "owner" : shareInfo?.permission,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Could not verify PIN.",
+    });
+  }
+});
+
 export default router;

@@ -6,7 +6,7 @@
     }"
     class="my-card"
     clickable
-    @click="emit('select', note)"
+    @click="handleNoteClick(note)"
   >
     <q-card-section class="row items-start justify-between no-wrap">
       <div class="text-h6 note-title">
@@ -36,11 +36,15 @@
     </q-card-section>
 
     <q-card-section class="card-preview">
-      <div class="note-content">{{ previewText }}</div>
+      <div v-if="note.isLocked" class="note-content">
+        <q-icon name="lock" size="16px" class="q-mr-xs" color="primary" />
+        <span class="text-italic">Locked Note</span>
+      </div>
+      <div v-else class="note-content">{{ previewText }}</div>
     </q-card-section>
 
     <q-card-section class="card-footer">
-      <span class="note-date">{{ formattedDate }}</span>
+      <span class="note-date" style="font-size: 11px;">{{ formattedDate }}</span>
     </q-card-section>
   </q-card>
 
@@ -50,13 +54,22 @@
     :message="t('noteList.deleteMessage')"
     @confirm="emit('delete', note.id)"
   />
+
+  <PinModal
+    v-model="showPinModal"
+    mode="verify"
+    :noteId="verifyingNoteId"
+    @success="onPinSuccess"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from "vue";
 import ConfirmDelete from "@/common/ConfirmDelete.vue";
+import PinModal from "@/components/notes/PinModal.vue";
 import type { Note } from "@/types/notes";
 import { stripHtml } from "@/utils/html";
+import { useNotesStore } from "@/stores/notes";
 import { formatNoteDate } from "@/utils/date";
 import { useQuasar } from "quasar";
 import { useI18n } from "vue-i18n";
@@ -72,6 +85,28 @@ const emit = defineEmits<{
   (e: "delete", id: string | number): void;
   (e: "toggle-star", id: string | number): void;
 }>();
+
+const notesStore = useNotesStore();
+const showPinModal = ref(false);
+const verifyingNoteId = ref<number | null>(null);
+
+const handleNoteClick = (note: Note) => {
+  if (note.isLocked) {
+    verifyingNoteId.value = note.id;
+    showPinModal.value = true;
+  } else {
+    emit("select", note);
+  }
+};
+
+const onPinSuccess = () => {
+  if (verifyingNoteId.value) {
+    const verifiedNote = notesStore.notes.find((n) => n.id === verifyingNoteId.value);
+    if (verifiedNote) {
+      emit("select", verifiedNote);
+    }
+  }
+};
 
 const props = defineProps<{ note: Note }>();
 

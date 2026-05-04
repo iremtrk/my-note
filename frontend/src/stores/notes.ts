@@ -126,6 +126,60 @@ export const useNotesStore = defineStore("notes", () => {
     }
   };
 
+  const lockNote = async (id: number, pin: string) => {
+    try {
+      const response = await api.post(`${API_URL}/${id}/lock`, { pin });
+      const index = notes.value.findIndex((n) => n.id === id);
+      if (index !== -1) {
+        notes.value[index].isLocked = true;
+        notes.value[index].content = "";
+        notes.value[index].pdfs = [];
+      }
+      if (selectedNote.value?.id === id) {
+        selectedNote.value.isLocked = true;
+        selectedNote.value.content = "";
+        selectedNote.value.pdfs = [];
+      }
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { message: "Could not lock the note" };
+    }
+  };
+
+  const removeLock = async (id: number, pin: string) => {
+    try {
+      const response = await api.post(`${API_URL}/${id}/remove-lock`, { pin });
+      const index = notes.value.findIndex((n) => n.id === id);
+      if (index !== -1) {
+        notes.value[index].isLocked = false;
+      }
+      if (selectedNote.value?.id === id) {
+        selectedNote.value.isLocked = false;
+      }
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { message: "Could not remove lock" };
+    }
+  };
+
+  const verifyPin = async (id: number, pin: string) => {
+    try {
+      const response = await api.post(`${API_URL}/${id}/verify-pin`, { pin });
+      const index = notes.value.findIndex((n) => n.id === id);
+      if (index !== -1) {
+        notes.value[index].content = response.data.content;
+        notes.value[index].pdfs = response.data.pdfs;
+      }
+      if (selectedNote.value?.id === id) {
+        selectedNote.value.content = response.data.content;
+        selectedNote.value.pdfs = response.data.pdfs;
+      }
+      return response.data;
+    } catch (error: any) {
+      throw error.response?.data || { message: "Incorrect PIN" };
+    }
+  };
+
   const clearNotes = () => {
     notes.value = [];
     selectedNote.value = null;
@@ -201,6 +255,9 @@ export const useNotesStore = defineStore("notes", () => {
     deleteNote,
     shareNote,
     toggleStar,
+    lockNote,
+    removeLock,
+    verifyPin,
     clearNotes,
     clearSelectedNote,
   };
