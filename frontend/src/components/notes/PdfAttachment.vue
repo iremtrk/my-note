@@ -6,7 +6,7 @@
         outline
         color="primary"
         icon="attach_file"
-        label="PDF Yükle"
+        label="Dosya Yükle"
         @click="openFilePicker"
       />
     </div>
@@ -14,7 +14,7 @@
     <input
       ref="fileInput"
       type="file"
-      accept="application/pdf"
+      accept="application/pdf,.docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document,.txt,image/*"
       multiple
       class="hidden-input"
       @change="handleFileChange"
@@ -108,7 +108,15 @@ const handleFileChange = async (event: Event) => {
 
   if (!files.length) return;
 
-  const validFiles = files.filter((file) => file.type === "application/pdf");
+  const validFiles = files.filter(
+    (file) =>
+      file.type === "application/pdf" ||
+      file.name.endsWith(".docx") ||
+      file.type === "application/vnd.openxmlformats-officedocument.wordprocessingml.document" ||
+      file.name.endsWith(".txt") ||
+      file.type === "text/plain" ||
+      file.type.startsWith("image/")
+  );
 
   if (!validFiles.length) {
     target.value = "";

@@ -332,6 +332,7 @@ const handleShareNote = async (payload: {
       type: "positive",
       message: res.message || "Note shared successfully",
       position: "top-right",
+      timeout:1000
     });
 
     showShareModal.value = false;
@@ -340,6 +341,7 @@ const handleShareNote = async (payload: {
       type: "negative",
       message: err.message || "Share failed",
       position: "top-right",
+      timeout:1500
     });
   }
 };

@@ -1,13 +1,15 @@
 <template>
   <div class="pdf-viewer">
     <div class="toolbar">
-      <q-btn flat dense label="-" @click="zoomOut" :disable="scale <= 0.6" />
-      <span>% {{ Math.round(scale * 100) }}</span>
-      <q-btn flat dense label="+" @click="zoomIn" />
+      <template v-if="isPdf">
+        <q-btn flat dense label="-" @click="zoomOut" :disable="scale <= 0.6" />
+        <span>% {{ Math.round(scale * 100) }}</span>
+        <q-btn flat dense label="+" @click="zoomIn" />
 
-      <q-btn flat dense label="ÖNCEKİ" @click="prevPage" :disable="pageNum <= 1" />
-      <span>Sayfa {{ pageNum }} / {{ totalPages }}</span>
-      <q-btn flat dense label="SONRAKİ" @click="nextPage" :disable="pageNum >= totalPages" />
+        <q-btn flat dense label="ÖNCEKİ" @click="prevPage" :disable="pageNum <= 1" />
+        <span>Sayfa {{ pageNum }} / {{ totalPages }}</span>
+        <q-btn flat dense label="SONRAKİ" @click="nextPage" :disable="pageNum >= totalPages" />
+      </template>
       <q-btn flat padding="2px" icon="download" @click="downloadPdf" />
       <q-space />
 
@@ -15,21 +17,37 @@
     </div>
 
     <div class="canvas-wrapper">
-      <canvas ref="canvasRef"></canvas>
+      <template v-if="isPdf">
+        <canvas ref="canvasRef"></canvas>
 
-      <div v-if="loading" class="overlay-message">
-        PDF yükleniyor...
-      </div>
+        <div v-if="loading" class="overlay-message">
+          PDF yükleniyor...
+        </div>
 
-      <div v-else-if="errorMessage" class="overlay-message error-box">
-        {{ errorMessage }}
-      </div>
+        <div v-else-if="errorMessage" class="overlay-message error-box">
+          {{ errorMessage }}
+        </div>
+      </template>
+      <template v-else-if="isImage">
+        <img :src="fileUrl" class="image-preview" alt="Preview" />
+      </template>
+      <template v-else-if="isText">
+        <pre v-if="!loading && !errorMessage" class="text-preview">{{ textContent }}</pre>
+        <div v-if="loading" class="overlay-message">Metin yükleniyor...</div>
+        <div v-else-if="errorMessage" class="overlay-message error-box">{{ errorMessage }}</div>
+      </template>
+      <template v-else>
+        <div class="overlay-message">
+          Bu dosya formatı önizlenemiyor. <br>
+          Lütfen indirme butonunu kullanarak dosyayı indirin.
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, nextTick,shallowRef } from "vue";
+import { ref, watch, nextTick, shallowRef, computed } from "vue";
 import { getDocument, GlobalWorkerOptions } from "pdfjs-dist";
 
 GlobalWorkerOptions.workerSrc = new URL(
@@ -50,6 +68,33 @@ const totalPages = ref(0);
 const scale = ref(0.8);
 const loading = ref(false);
 const errorMessage = ref("");
+const textContent = ref("");
+
+const fileUrl = computed(() => {
+  if (!props.pdfData) return "";
+  const isBase64 = props.pdfData.startsWith("data:");
+  return isBase64 
+    ? props.pdfData 
+    : (props.pdfData.startsWith("/") ? `http://localhost:5000${props.pdfData}` : props.pdfData);
+});
+
+const isPdf = computed(() => {
+  if (!props.pdfData && !props.fileName) return false;
+  const nameOrUrl = (props.fileName || props.pdfData || "").toLowerCase();
+  return nameOrUrl.endsWith('.pdf') || nameOrUrl.includes('application/pdf') || nameOrUrl.startsWith('data:application/pdf');
+});
+
+const isImage = computed(() => {
+  if (!props.pdfData && !props.fileName) return false;
+  const nameOrUrl = (props.fileName || props.pdfData || "").toLowerCase();
+  return nameOrUrl.match(/\.(jpeg|jpg|gif|png|webp|svg|bmp)$/) != null || nameOrUrl.startsWith('data:image/');
+});
+
+const isText = computed(() => {
+  if (!props.pdfData && !props.fileName) return false;
+  const nameOrUrl = (props.fileName || props.pdfData || "").toLowerCase();
+  return nameOrUrl.endsWith('.txt') || nameOrUrl.startsWith('data:text/');
+});
 
 // Removed legacy base64 convertors
 
@@ -75,19 +120,29 @@ const renderPage = async () => {
   }).promise;
 };
 
+const loadText = async () => {
+  if (!isText.value || !fileUrl.value) return;
+  loading.value = true;
+  errorMessage.value = "";
+  try {
+    const response = await fetch(fileUrl.value);
+    if (!response.ok) throw new Error("Ağ hatası");
+    textContent.value = await response.text();
+  } catch (error) {
+    errorMessage.value = "Metin dosyası yüklenemedi.";
+  } finally {
+    loading.value = false;
+  }
+};
+
 const loadPdf = async () => {
-  if (!props.pdfData) return;
+  if (!fileUrl.value) return;
 
   loading.value = true;
   errorMessage.value = "";
 
   try {
-    const isBase64 = props.pdfData.startsWith("data:");
-    const url = isBase64 
-      ? props.pdfData 
-      : (props.pdfData.startsWith("/") ? `http://localhost:5000${props.pdfData}` : props.pdfData);
-
-    const loadingTask = getDocument(url);
+    const loadingTask = getDocument(fileUrl.value);
     pdfDoc.value = await loadingTask.promise;
 
     totalPages.value = pdfDoc.value.numPages;
@@ -135,19 +190,14 @@ const zoomOut = async () => {
 
 const downloadPdf = () => {
   try {
-    const isBase64 = props.pdfData.startsWith("data:");
-    const url = isBase64 
-      ? props.pdfData 
-      : (props.pdfData.startsWith("/") ? `http://localhost:5000${props.pdfData}` : props.pdfData);
-
     const a = document.createElement("a");
-    a.href = url;
-    a.download = props.fileName || "document.pdf";
+    a.href = fileUrl.value;
+    a.download = props.fileName || "document";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
   } catch (error) {
-    console.error("PDF indirilemedi:", error);
+    console.error("Dosya indirilemedi:", error);
   }
 };
 
@@ -156,7 +206,11 @@ watch(
   async (newValue) => {
     if (!newValue) return;
     if (props.visible === false) return;
-    await loadPdf();
+    if (isPdf.value) {
+      await loadPdf();
+    } else if (isText.value) {
+      await loadText();
+    }
   },
   { immediate: true }
 );
@@ -167,10 +221,16 @@ watch(
     if (!isVisible) return;
     if (!props.pdfData) return;
 
-    if (!pdfDoc.value) {
-      await loadPdf();
-    } else {
-      await rerenderCurrentPage();
+    if (isPdf.value) {
+      if (!pdfDoc.value) {
+        await loadPdf();
+      } else {
+        await rerenderCurrentPage();
+      }
+    } else if (isText.value) {
+      if (!textContent.value) {
+        await loadText();
+      }
     }
   }
 );
@@ -223,5 +283,26 @@ canvas {
 
 .error-box {
   color: #c62828;
+}
+
+.image-preview {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+}
+
+.text-preview {
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  padding: 16px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  margin: 0;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: inherit;
 }
 </style>
