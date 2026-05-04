@@ -331,8 +331,8 @@ const handleShareNote = async (payload: {
     $q.notify({
       type: "positive",
       message: res.message || "Note shared successfully",
-      position: "top-right",
-      timeout:1000
+      position: "bottom-right",
+      timeout:1000,
     });
 
     showShareModal.value = false;
@@ -340,8 +340,8 @@ const handleShareNote = async (payload: {
     $q.notify({
       type: "negative",
       message: err.message || "Share failed",
-      position: "top-right",
-      timeout:1500
+      position: "bottom-right",
+      timeout:1500,
     });
   }
 };

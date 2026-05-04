@@ -265,17 +265,23 @@ router.post("/:id/share", async (req: AuthRequest, res: Response) => {
       });
     }
 
-    const share = await prisma.noteShare.upsert({
+    const existingShare = await prisma.noteShare.findUnique({
       where: {
         noteId_userId: {
           noteId,
           userId: targetUser.id,
         },
       },
-      update: {
-        permission,
-      },
-      create: {
+    });
+
+    if (existingShare) {
+      return res.status(400).json({
+        message: "This note is already shared with this user.",
+      });
+    }
+
+    const share = await prisma.noteShare.create({
+      data: {
         noteId,
         userId: targetUser.id,
         permission,
