@@ -12,101 +12,102 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String?
-  email     String   @unique
-  password  String
+  id       Int     @id @default(autoincrement())
+  name     String?
+  email    String  @unique
+  password String
 
-  notes     Note[]
-  tasks     Task[]
-  events    Event[]
+  notes  Note[]
+  tasks  Task[]
+  events Event[]
 
-  sharedNotes  NoteShare[]
+  sharedNotes NoteShare[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Note {
-  id        Int      @id @default(autoincrement())
-  title     String
-  content   String
-  starred   Boolean  @default(false)
-  userId    Int
+  id      Int     @id @default(autoincrement())
+  title   String
+  content String
+  starred Boolean @default(false)
+  userId  Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  pdfs      NotePdf[]
+  pdfs NotePdf[]
 
-  shares    NoteShare[]
+  shares NoteShare[]
 
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model NoteShare {
-  id         Int      @id @default(autoincrement())
+  id Int @id @default(autoincrement())
 
-  noteId     Int
-  note       Note     @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  noteId Int
+  note   Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
 
-  userId     Int
-  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  permission String   @default("read") // read veya edit
+  permission String @default("read") // read veya edit
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
   @@unique([noteId, userId])
 }
 
 model NotePdf {
-  id      Int    @id @default(autoincrement())
-  name    String
-  url     String
+  id   Int    @id @default(autoincrement())
+  name String
+  url  String
 
-  noteId  Int
-  note    Note   @relation(fields: [noteId], references: [id], onDelete: Cascade)
+  noteId Int
+  note   Note @relation(fields: [noteId], references: [id], onDelete: Cascade)
 }
 
-enum PriorityType{
+enum PriorityType {
   low
   medium
   high
 }
 
 model Task {
-  id        Int      @id @default(autoincrement())
+  id        Int          @id @default(autoincrement())
   title     String
   content   String?
-  completed Boolean  @default(false)
-  priority  PriorityType   @default(low)
+  completed Boolean      @default(false)
+  priority  PriorityType @default(low)
   dueDate   DateTime?
-  starred   Boolean  @default(false)
+  starred   Boolean      @default(false)
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
 
-enum EventType{
+enum EventType {
   event
   birthday
 }
-model Event {
-  id        Int      @id @default(autoincrement())
-  title     String
-  description String?
-  date      DateTime
-  time      String?
-  notified  Boolean  @default(false)
-  type      EventType
 
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+model Event {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String?
+  date        DateTime
+  time        String?
+  notified    Boolean   @default(false)
+  type        EventType
+
+  userId Int
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
