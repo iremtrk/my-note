@@ -50,10 +50,11 @@ router.post("/", async (req: AuthRequest, res: Response) => {
 router.patch("/:id", async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
+    const userId = req.user!.userId;
     const { title, description, date, time, type } = req.body;
 
     const existing = await prisma.event.findFirst({
-      where: { id },
+      where: { id, userId },
     });
 
     if (!existing) {
@@ -84,6 +85,15 @@ router.patch("/:id", async (req: AuthRequest, res: Response) => {
 router.delete("/:id", async (req: AuthRequest, res: Response) => {
   try {
     const id = Number(req.params.id);
+    const userId = req.user!.userId;
+
+        const existing = await prisma.event.findFirst({
+      where: { id, userId },
+    });
+
+    if (!existing) {
+      return res.status(404).json({ message: "Event not found." });
+    }
 
     await prisma.event.delete({ where: { id } });
 

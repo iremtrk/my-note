@@ -168,7 +168,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onBeforeUnmount } from "vue";
+import { ref, watch, onBeforeUnmount,computed } from "vue";
 import { useI18n } from "vue-i18n";
 import type { Task } from "@/types/tasks";
 
@@ -212,11 +212,11 @@ const isHydrating = ref(false);
 const showDeleteConfirm = ref(false);
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-const priorityOptions = [
+const priorityOptions = computed(() => [
   { value: "low" as const, label: t("taskEditor.low"), color: "positive" },
   { value: "medium" as const, label: t("taskEditor.medium"), color: "warning" },
   { value: "high" as const, label: t("taskEditor.high"), color: "negative" },
-];
+]);
 
 watch(
   () => [

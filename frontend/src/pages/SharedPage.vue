@@ -51,7 +51,7 @@
                     />
                   </div>
                   <div class="text-body2 q-mt-md note-preview">
-                    {{ note.content }}
+                    {{ stripHtml(note.content) }}
                   </div>
                 </q-card-section>
               </q-card>
@@ -86,6 +86,7 @@ import type { Note } from "@/types/notes";
 import NoteEditor from "@/components/notes/NoteEditor.vue";
 import { useAuthStore } from "@/stores/auth";
 import { useI18n } from "vue-i18n";
+import { stripHtml } from "@/utils/html";
 
 const { t } = useI18n();
 

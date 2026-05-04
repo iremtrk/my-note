@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
-import axios from "axios"; //silllllllllllllllllllllllll
 import api from "@/lib/axios"
 import type { Task } from "@/types/tasks";
 import { useLoadingStore } from "./loading";

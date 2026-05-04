@@ -58,6 +58,7 @@ import { ref } from "vue";
 import type { NotePdf } from "@/types/notes";
 import ConfirmDelete from "@/common/ConfirmDelete.vue";
 import { useI18n } from "vue-i18n";
+import api from "@/lib/axios";
 
 const { t } = useI18n();
 
@@ -100,7 +101,6 @@ const openFilePicker = () => {
   fileInput.value?.click();
 };
 
-import axios from "axios";
 
 const handleFileChange = async (event: Event) => {
   const target = event.target as HTMLInputElement;
@@ -122,7 +122,7 @@ const handleFileChange = async (event: Event) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await axios.post("http://localhost:5000/api/upload", formData, {
+      const response = await api.post("http://localhost:5000/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 

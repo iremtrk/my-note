@@ -2,6 +2,7 @@ export interface NotePdf {
   id: string;
   name: string;
   url: string;
+  type?:string
 }
 
 export interface NoteShareUser {

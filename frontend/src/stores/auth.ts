@@ -1,10 +1,10 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import axios from "axios";
+import api from "@/lib/axios";
 import type { LoginPayload, RegisterPayload, User } from "../types/auth";
 
 export const useAuthStore = defineStore("auth", () => {
-  const API_URL = "http://localhost:5000/api/auth";
+  const API_URL = "/auth";
 
   const user = ref<User | null>(null);
 
@@ -22,7 +22,7 @@ export const useAuthStore = defineStore("auth", () => {
     const email = payload.email.trim();
     const password = payload.password.trim();
 
-    const response = await axios.post(`${API_URL}/login`, {
+    const response = await api.post(`${API_URL}/login`, {
       email,
       password,
     });
@@ -38,11 +38,15 @@ export const useAuthStore = defineStore("auth", () => {
     const email = payload.email.trim();
     const password = payload.password.trim();
 
-    const response = await axios.post(`${API_URL}/register`, {
+    const response = await api.post(`${API_URL}/register`, {
       name,
       email,
       password,
     });
+
+    user.value = response.data.user;
+    localStorage.setItem("user", JSON.stringify(response.data.user));
+    localStorage.setItem("token", response.data.token);
   };
 
   const logout = () => {
