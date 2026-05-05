@@ -121,10 +121,16 @@ router.get("/", async (req: AuthRequest, res: Response) => {
     });
 
     res.json(formattedNotes);
-  } catch (error) {
-    console.error("FETCH NOTES ERROR:", error);
-    res.status(500).json({ message: "Notes could not be fetched." });
-  }
+  } catch (error: any) {
+  console.error("FETCH NOTES ERROR:", error);
+
+  res.status(500).json({
+    message: "Notes could not be fetched.",
+    error: error.message,
+    code: error.code,
+    meta: error.meta,
+  });
+}
 });
 
 router.post("/", async (req: AuthRequest, res: Response) => {
