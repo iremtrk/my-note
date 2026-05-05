@@ -64,23 +64,25 @@
 
     <q-card-section v-else class="list-section">
       <div class="task-scroll">
-        <TaskRow
-          v-for="task in tasks"
-          :key="task.id"
-          :task="task"
-          :is-active="selectedTaskId === task.id"
-          @select="$emit('select-task', $event)"
-          @toggle-star="$emit('toggle-star', $event)"
-          @toggle-complete="$emit('toggle-complete', $event)"
-          @delete="$emit('delete-task', $event)"
-        />
+        <template v-for="(task, index) in tasks" :key="task.id">
+          <TaskRow
+            :task="task"
+            :is-active="selectedTaskId === task.id"
+            @select="$emit('select-task', $event)"
+            @toggle-star="$emit('toggle-star', $event)"
+            @toggle-complete="$emit('toggle-complete', $event)"
+            @delete="$emit('delete-task', $event)"
+          />
+
+          <q-separator v-if="index !== tasks.length - 1" />
+        </template>
       </div>
     </q-card-section>
   </q-card>
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import TaskRow from "./TaskRow.vue";
 import type { Task } from "@/types/tasks";
@@ -113,6 +115,10 @@ const sortOptions = computed<
   { label: t("taskList.sortDueDate"), value: "dueDate", icon: "event" },
   { label: t("taskList.sortPriority"), value: "priority", icon: "flag" },
 ]);
+
+onUnmounted(() => {
+  tasksStore.clearSearch();
+});
 </script>
 
 <style scoped>

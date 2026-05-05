@@ -193,6 +193,10 @@ export const useNotesStore = defineStore("notes", () => {
   return response.data;
 };
 
+  const clearSearch =()=>{
+    searchQuery.value=""
+  }
+
   const clearNotes = () => {
     notes.value = [];
     selectedNote.value = null;
@@ -272,6 +276,7 @@ export const useNotesStore = defineStore("notes", () => {
     removeLock,
     verifyPin,
     resetPin,
+    clearSearch,
     clearNotes,
     clearSelectedNote,
   };

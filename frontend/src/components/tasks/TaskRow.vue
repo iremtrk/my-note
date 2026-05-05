@@ -5,14 +5,15 @@
       'task-row--active': isActive,
       'task-row--completed': task.completed,
     }"
-    @click="$emit('select', task)">
+    @click="$emit('select', task)"
+  >
     <div class="task-row__left">
       <q-checkbox
         :model-value="task.completed"
         color="primary"
         dense
         @update:model-value="$emit('toggle-complete', task.id)"
-        @click.stop
+        @click="$emit('select', task)"
       />
     </div>
 
@@ -21,7 +22,8 @@
         <span class="task-row__title">{{ task.title }}</span>
         <span
           class="task-row__priority-icon"
-          :class="`priority--${task.priority}`">
+          :class="`priority--${task.priority}`"
+        >
           {{ priorityIcon }}
         </span>
       </div>
@@ -42,11 +44,13 @@
         @click.stop="$emit('toggle-star', task.id)"
       />
 
-      <q-btn 
+      <q-btn
         icon="close"
-        flat round dense
+        flat
+        round
+        dense
         size="sm"
-        @click.stop="showDeleteConfirm =true"
+        @click.stop="showDeleteConfirm = true"
       />
     </div>
 
@@ -60,14 +64,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed,ref } from "vue";
+import { computed, ref } from "vue";
 import type { Task } from "@/types/tasks";
 import ConfirmDelete from "@/common/ConfirmDelete.vue";
 import { useI18n } from "vue-i18n";
+import { formatNoteDate } from "@/utils/date";
 
-const {t}= useI18n()
+const { t } = useI18n();
 
-const showDeleteConfirm = ref(false)
+const showDeleteConfirm = ref(false);
 
 const props = defineProps<{
   task: Task;
@@ -93,7 +98,6 @@ const priorityIcon = computed(() => {
   align-items: flex-start;
   gap: 10px;
   padding: 12px 14px;
-  border: 1px solid transparent;
 }
 .task-row:hover {
   background: rgba(0, 0, 0, 0.04);
@@ -165,5 +169,11 @@ const priorityIcon = computed(() => {
 
 .task-row__actions {
   flex-shrink: 0;
+}
+
+.task-date {
+  font-size: 11px;
+  color: #9ca3af;
+  text-align: right;
 }
 </style>

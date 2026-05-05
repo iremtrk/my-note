@@ -87,6 +87,10 @@ export const useTasksStore = defineStore("tasks", () => {
     await updateTask(id, { completed: !task.completed });
   };
 
+  const clearSearch = ()=>{
+    searchQuery.value=""
+  }
+
   const clearTasks = () => {
     tasks.value = [];
     selectedTask.value = null;
@@ -160,6 +164,7 @@ export const useTasksStore = defineStore("tasks", () => {
     deleteTask,
     toggleStar,
     toggleComplete,
+    clearSearch,
     clearTasks,
     clearSelectedTask,
   };

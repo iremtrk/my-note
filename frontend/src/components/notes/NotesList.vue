@@ -144,7 +144,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed,onUnmounted } from "vue";
 import ConfirmDelete from "@/common/ConfirmDelete.vue";
 import PinModal from "@/components/notes/PinModal.vue";
 import type { Note } from "@/types/notes";
@@ -226,6 +226,10 @@ const sortOptions = computed<
   { label: t("noteList.sortOldest"), value: "oldest", icon: "arrow_upward" },
   { label: t("noteList.sortUpdated"), value: "updated", icon: "update" },
 ]);
+
+onUnmounted(()=> {
+  notesStore.clearSearch()
+})
 </script>
 
 <style scoped>

@@ -156,7 +156,7 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
 <style scoped>
 .home-page {
   min-height: calc(100vh - 82px);
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
 }
 
@@ -173,7 +173,7 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
   padding: 16px;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; 
 }
 
 .notes-section {
@@ -223,6 +223,7 @@ const sortOptions: { label: string; value: SortOrder; icon: string }[] = [
   gap: 16px;
   align-content: start;
   padding-right: 4px;
+  padding-bottom: 4px;
 }
 
 .task-list-panel {
