@@ -14,7 +14,15 @@ import uploadRouter from "./routes/upload.routes.js";
 const app = express();
 const PORT = 5000;
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "http://localhost:5173", // local geliştirme
+      "https://remarkable-sprinkles-0f3c6d.netlify.app", // canlı frontend
+    ],
+    credentials: true,
+  })
+);
 app.use(express.json());
 
 app.get("/", (_req: Request, res: Response) => {
