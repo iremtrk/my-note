@@ -25,7 +25,7 @@ model User {
 
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
-  notenoteLocks NoteLock[]
+  noteLocks NoteLock[]
 }
 
 model Note {
@@ -44,7 +44,7 @@ model Note {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  notenoteLocks NoteLock[]
+  noteLocks NoteLock[]
 }
 
 model NoteShare {
