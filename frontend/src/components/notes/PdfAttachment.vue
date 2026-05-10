@@ -130,7 +130,7 @@ const handleFileChange = async (event: Event) => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const response = await api.post("http://localhost:5000/api/upload", formData, {
+      const response = await api.post("/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
