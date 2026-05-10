@@ -72,10 +72,14 @@ const textContent = ref("");
 
 const fileUrl = computed(() => {
   if (!props.pdfData) return "";
+
   const isBase64 = props.pdfData.startsWith("data:");
-  return isBase64 
-    ? props.pdfData 
-    : (props.pdfData.startsWith("/") ? `http://localhost:5000${props.pdfData}` : props.pdfData);
+
+  return isBase64
+    ? props.pdfData
+    : props.pdfData.startsWith("/")
+      ? `${import.meta.env.VITE_API_URL.replace("/api", "")}${props.pdfData}`
+      : props.pdfData;
 });
 
 const isPdf = computed(() => {
